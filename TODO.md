@@ -11,9 +11,7 @@ Use compiler flags, test suite, and log files to detect bugs before release.
 TODOs. Every game uses these things, so they're implemented by the engine:
 
 - [ ] Render map tiles, objects and vehicles in the map, and gui elements.
-
 - [ ] Play music and sounds.
-
 - [ ] Spaces and colliders. 
 Spaces can be bigger or smaller on the inside than on the outside. 
 Great for making large maps where space contraints are too much hassle to worry about, and/or for maps with impossible geometry.
@@ -23,8 +21,8 @@ Also useful when spaces can move or rotate, such as inside elevators, trains, sh
 - [ ] Keyboard, mouse, and game controllers.
 - [ ] Pathfinding.
 - [ ] State machines for GUIs, animations, sounds, vehicles, and events.
-- [ ] File save and load utilities.
-- [ ] Config file, to tell the engine which categories of game logic and game file your game has, and where the files are.
+- [x] File save and load utilities.
+- [X] Config file, to tell the engine which categories of game logic and game file your game has, and where the files are.
 
 # Game Logic
 
