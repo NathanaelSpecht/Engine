@@ -37,7 +37,8 @@ For example, keyboard key W may mean "walk forward" or "drive vehicle forward" d
 Write in Lua so developers don't have to recompile the project when making their game. 
 Makes distributing game updates and mods easy.
 
-TODOs. These things are unique to each game, so the game developer must implement them:
+TODOs. These things are unique to each game, so the game developer must implement them. 
+An example game is included with this engine:
 
 - [ ] Layout of new maps and objects. User-created custom vehicles also implemented here.
 Add functionality to developer mode, and/or spawn in new objects and maps during gameplay.
