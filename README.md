@@ -31,7 +31,7 @@ API changes will be backwards compatible from this point onward, unless explicit
 This project will always be free and open source.
 If you wish to support continued development of TIS, feel free to donate on Patreon here (***TODO link***).
 
-The included test files, graphics, music, and sounds are free and copyright free.
+The included test files, graphics, music, and sounds are royalty free.
 I obtained them from here:
 
 - ***TODO cite sources when there are files to cite sources for.***
