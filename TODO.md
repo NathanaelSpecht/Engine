@@ -12,7 +12,7 @@ Use compiler flags, test suite, and log files to detect bugs before release.
 TODOs. Every game uses these things, so they're implemented by the engine:
 
 - [ ] Developer mode, for creating new maps and objects.
-Use the engine as a modeling and development tool.
+Use the engine as a game design and modeling tool.
 
 - [ ] Render map tiles, objects and vehicles in the map, and gui elements.
 Vehicles are special objects that contain maps and objects, and may contain other vehicles, so they have special rendering.
