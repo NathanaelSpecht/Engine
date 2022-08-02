@@ -1,2 +1,2 @@
 # Version 0.0 (2022-08-02)
-- added README, TODO, CHANGELOG and LICENSE.
+- add INSTALL.md README.md TODO.md CHANGELOG.md LICENSE.md
