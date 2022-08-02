@@ -1,4 +1,4 @@
-#Game Engine
+# Game Engine
 
 Write in C for easy compatibility with SDL2.
 
@@ -8,6 +8,15 @@ Use makefile to pick which .c file to compile for a particular OS.
 
 Use compiler flags, test suite, and log files to detect bugs before release.
 
-#Game Logic
+TODOs. Every game uses these things:
+
+# Game Logic
 
 Write in Lua so developers don't have to recompile the project when making their game. Also makes modding easy.
+
+TODOs. These things are unique to each game:
+
+# Game Files
+
+TODOs. These are things unique to each user:
+
