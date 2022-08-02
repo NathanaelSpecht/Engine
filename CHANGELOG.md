@@ -1,0 +1,2 @@
+# Version 0.0 (2022-08-02)
+- added README, TODO, CHANGELOG and LICENSE.
