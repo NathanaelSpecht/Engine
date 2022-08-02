@@ -4,7 +4,7 @@ Hello!
 My name is Nathan Specht. 
 This is the game engine I'm making for my game studio, Trees in Space.
 
-If you're looking for API documentation, check the docs folder.
+If you're looking for API documentation, check the docs folder. ***TODO add docs folder.***
 
 Installation instructions are in INSTALL.md
 
