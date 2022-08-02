@@ -15,9 +15,11 @@ TODOs. Every game uses these things, so they're implemented by the engine:
 Use the engine as a modeling and development tool.
 
 - [ ] Render map tiles, objects and vehicles in the map, and gui elements.
+Vehicles are special objects that contain maps and objects, and may contain other vehicles, so they have special rendering.
+
 - [ ] Play music and sounds.
 - [ ] Spaces and colliders. 
-Spaces can be bigger or smaller on the inside than on the outside. 
+Spaces can be bigger or smaller on the inside than on the outside, and may contain other spaces.
 Great for making large maps where space contraints are too much hassle to worry about, and/or for maps with impossible geometry.
 Also useful when spaces can move or rotate, such as inside vehicles.
 
@@ -58,7 +60,7 @@ TODOs. These are things unique to each server, user, or save file:
 
 - [ ] Graphics for animations and GUIs.
 - [ ] Music and sounds.
-- [ ] Maps and objects.
+- [ ] Maps, vehicles, and objects.
 - [ ] Servers and users.
 - [ ] Keyboard, mouse, and game controller keybindings and contexts, and which user inputs they translate to for the game logic.
 - [ ] Settings.
