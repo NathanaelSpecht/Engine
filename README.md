@@ -7,7 +7,11 @@ You can check out Trees in Space here:
 
 - [Twitter](https://twitter.com/Trees_In_Space)
 
-This project will always be free and open source.
+This project will always be free and open source. 
+The included test files, graphics, music, and sounds are free and copyright free.
+I obtained them from here:
+
+- TODO cite sources when there are files to cite sources for.
 
 # Release
 
