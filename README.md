@@ -29,12 +29,12 @@ API changes will be backwards compatible from this point onward, unless explicit
 # Links
 
 This project will always be free and open source.
-If you wish to support continued development of TIS, feel free to donate on Patreon here (TODO link).
+If you wish to support continued development of TIS, feel free to donate on Patreon here (***TODO link***).
 
 The included test files, graphics, music, and sounds are free and copyright free.
 I obtained them from here:
 
-- TODO cite sources when there are files to cite sources for.
+- ***TODO cite sources when there are files to cite sources for.***
 
 To stay updated on all things Trees in Space, follow me on Twitter [here](https://twitter.com/Trees_In_Space).
 
