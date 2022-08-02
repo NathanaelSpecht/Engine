@@ -17,7 +17,7 @@ On release, TreesInSpaceEngine will be two things:
 
 - A game design and modeling tool for making such games.
 
-You can view my progress in TODO.md. 
+You can view my progress towards release in TODO.md. 
 Until that checklist is complete, expect breaking changes from time to time.
 
 # Updates After First Release
