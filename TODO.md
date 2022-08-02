@@ -57,7 +57,8 @@ Great for horror games and/or difficulty that changes dynamically with gameplay.
 
 # Game Files
 
-TODOs. These are things unique to each server, user, or save file:
+TODOs. These are things unique to each server, user, or save file. 
+Example files - used for testing all features - are included with this engine:
 
 - [ ] Mods.
 
