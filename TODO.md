@@ -29,6 +29,7 @@ For example, keyboard key W may mean "walk forward" or "drive vehicle forward" d
 
 - [ ] Pathfinding.
 - [ ] State machines for GUIs, animations, sounds, vehicles, and events.
+- [ ] State machines for each NPC category.
 - [ ] File save and load utilities.
 - [ ] Config file, to tell the engine which categories of game logic and game file your game has, and where the files are.
 
@@ -46,12 +47,13 @@ Add functionality to developer mode, and/or spawn in new objects and maps during
 - [ ] Logic of maps and objects.
 - [ ] Servers and users, user authentication, and network security logic.
 - [ ] Controls logic. This is what each user input does, not the keybindings for those inputs.
-- [ ] NPC logic. This code describes what NPCs do and how they decide to do it.
-Will move NPC decision making into state machines before release. Will need one state machine per category of NPC.
+- [ ] Logic of NPCs and events. State machines with machine-learning abilities.
+- [ ] Logic guidance. 
+Guides NPCs and events around players by adjusting the weights on their state machines.
+Great for horror games and/or difficulty that changes dynamically with gameplay.
 
 - [ ] Layout of GUIs and non-customizable vehicles.
-- [ ] Logic of GUIs, vehicles, animations, sounds, and events.
-These are the state transitions in the state machines, and the code that runs in each case.
+- [ ] Logic of GUIs, vehicles, animations, and sounds. Basic state machines.
 
 # Game Files
 
