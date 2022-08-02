@@ -1,30 +1,42 @@
 # TreesInSpaceEngine
 
-Hello. 
+Hello! 
 My name is Nathan Specht. 
-This is the game engine I'm making for my game studio, Trees in Space. 
-You can check out Trees in Space here:
+This is the game engine I'm making for my game studio, Trees in Space.
 
-- [Twitter](https://twitter.com/Trees_In_Space)
+If you're looking for API documentation, check the docs folder.
 
-This project will always be free and open source. 
-The included test files, graphics, music, and sounds are free and copyright free.
-I obtained them from here:
+Installation instructions are in INSTALL.md
 
-- TODO cite sources when there are files to cite sources for.
+The current version its changes can be found in CHANGELOG.md
 
-# Release
+My progress towards version 1.0 is in TODO.md. ***Until version 1.0, expect breaking changes to the API from time to time.***
 
-On release, TreesInSpaceEngine will be two things:
+# Road To 1.0
+
+On release of version 1.0, TreesInSpaceEngine will be two things:
 
 - A sprite-based game engine for games with a 3d world.
 
 - A game design and modeling tool for making such games.
 
-You can view my progress towards release in TODO.md. 
-Until that checklist is complete, expect breaking changes from time to time.
+# 1.0 And Beyond
 
-# Updates After First Release
+Updates after version 1.0 will continue to provide bug fixes, features, and performance improvements. 
+API changes will be backwards compatible from this point onward, unless explicitly stated in the changelog.
 
-Updates after first release will continue to provide bug fixes, features, and performance improvements. 
-Unless explicitly stated in the CHANGELOG.md, API changes shall be backwards compatible from this point onward.
+# Links
+
+This project will always be free and open source.
+If you wish to support continued development of TreesInSpaceEngine, feel free to donate here:
+
+- TODO link donation site.
+
+The included test files, graphics, music, and sounds are free and copyright free.
+I obtained them from here:
+
+- TODO cite sources when there are files to cite sources for.
+
+To stay updated on all things Trees in Space, follow me on Twitter [here](https://twitter.com/Trees_In_Space).
+
+Happy gaming!
