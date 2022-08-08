@@ -1,25 +1,37 @@
 
 #ifeq ($(OS),Windows_NT)
 #
-#TARGET = tisWindows
 #COMPILE = gcc -O0 -Wall -Wno-unused-variable -Wl,-subsystem,windows
-#SOURCE = main.c
+#SOURCE = 
 #LIBRARY = -IC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\include\SDL2 \
 #	-LC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\lib \
 #	-lmingw32 -lSDL2main -lSDL2 -lm
 #
 #else
 #
-#TARGET = tisUbuntu
 #COMPILE = gcc -O0 -Wall -Wno-unused-variable
-#SOURCE = main.c
+#SOURCE = 
 #LIBRARY = -I/usr/include/SDL2 -L/usr/lib \
 #	-lSDL2 -lm
 #
 #endif
 
-#all:
-#	$(COMPILE) $(SOURCE) -o $(TARGET) $(LIBRARY)
+#engine:
+#	$(COMPILE) main.c $(SOURCE) -o engine $(LIBRARY)
+#
+#help:
+#	@echo "Trees in Space Engine (TIS)"
+#	@echo "Type 'make' to compile TIS, or"
+#	@echo "     'make help' for this help message, or"
+#	@echo "     'make hello' to test your environment, or"
+#	@echo "     'make test' to compile unit tests"
+#	@echo "On Windows, use 'mingw32-make' instead of 'make'
+#
+#hello:
+#	$(COMPILE) hello.c -o hello $(LIBRARY)
+#
+#test:
+#	$(COMPILE) test.c $(SOURCE) -o test $(LIBRARY)
 
 COMPILE_UBUNTU = gcc -O0 -Wall -Wno-unused-variable
 SOURCE_UBUNTU = 
@@ -34,22 +46,19 @@ LIBRARY_WINDOWS = -IC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\include
 
 help:
 	@echo "Trees in Space Engine (TIS)"
-	@echo "To compile TIS, choose:"
-	@echo "    'make ubuntu' to produce tisUbuntu"
-	@echo "    'mingw32-make windows' to produce tisWindows.exe"
-	@echo "To test your environment, choose:"
-	@echo "    'make helloUbuntu' to produce hello"
-	@echo "    'mingw32-make helloWindows' to produce hello.exe"
+	@echo "To compile TIS:"
+	@echo "    'make ubuntu' or 'mingw32-make windows'"
+	@echo "To test your environment:"
+	@echo "    'make helloUbuntu' or 'mingw32-make helloWindows'"
 #TODO
-#	@echo "To compile the TIS test suite, choose:"
-#	@echo "    'make testUbuntu' to produce test"
-#	@echo "    'mingw32-make testWindows' to produce test.exe"
+#	@echo "To compile unit tests:"
+#	@echo "    'make testUbuntu' or 'mingw32-make testWindows'"
 
 ubuntu:
-	$(COMPILE_UBUNTU) main.c $(SOURCE_UBUNTU) -o tisUbuntu $(LIBRARY_UBUNTU)
+	$(COMPILE_UBUNTU) main.c $(SOURCE_UBUNTU) -o engine $(LIBRARY_UBUNTU)
 
 windows:
-	$(COMPILE_WINDOWS) main.c $(SOURCE_WINDOWS) -o tisWindows $(LIBRARY_WINDOWS)
+	$(COMPILE_WINDOWS) main.c $(SOURCE_WINDOWS) -o engine $(LIBRARY_WINDOWS)
 
 helloUbuntu:
 	$(COMPILE_UBUNTU) hello.c -o hello $(LIBRARY_UBUNTU)
