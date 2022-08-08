@@ -70,7 +70,7 @@ If TIS passes all unit tests, then it is ready to compile for real.
 
 ### Supported Operating Systems
 
-To compile TIS, type 'make ubuntu' on Ubuntu, or 'mingw32-make windows' on Windows.
+To compile TIS, type `make ubuntu` on Ubuntu, or `mingw32-make windows` on Windows.
 If TIS is free of errors, this should produce a program named "engine".
 
 ### Other
