@@ -3,7 +3,7 @@
 TIS can be cloned from GitHub using:
 ```git clone https://github.com/NathanaelSpecht/TreesInSpaceEngine
 ```
-On Windows, the above requires mingw is installed. See the Dependencies section for more details.
+On Windows, the above requires git is installed.
 
 Alternatively, download TIS as a zip file from GitHub:
 1. Open the TIS GitHub repository in a browser, [here](https://github.com/NathanaelSpecht/TreesInSpaceEngine).
@@ -27,6 +27,7 @@ On Ubuntu, you'll need these:
 On Windows, you'll need these:
 - [MinGW-w64](https://mingw-w64.org). Download and install, following the instructions on the site.
 - After installing mingw, add the folder containing mingw32-make.exe to your PATH.
+- There may be more steps as Windows changes. Use your best judgement.
 
 ##### Libraries
 
@@ -36,22 +37,37 @@ TIS depends on the following software libraries to compile:
 
 You may need to edit the makefile so it looks in the correct locations for the libraries.
 
-##### Test
+##### Test Your Setup
 
 At this point, we recommend you compile and run the included test program to test your setup:
 
 1. Open the terminal/Command Prompt and navigate to the root directory of the project.
 
-2. Type `make helloUbuntu` on Ubuntu, or `mingw32-make helloWin` on Windows.
+2. Type `make helloUbuntu` on Ubuntu, or `mingw32-make helloWindows` on Windows.
 If everything is installed correctly, this should produce a program named "hello".
 If there's something wrong with your install, or the makefile is looking for libraries in the wrong places, then make or gcc should tell you, and hello will fail to compile.
 
 3. Run hello using `./hello` on Ubuntu, or `hello.exe` on Windows.
 If you are set up correctly, then hello will print "hello" and exit.
-If hello thinks something is wrong, it will attempt to tell you and exit.
+If hello thinks something is wrong, it will attempt to tell you with an "ERROR" message and exit.
 
 If hello prints "hello", then any errors you get while compiling or running TIS are the fault of TIS and not your environment.
 **TIS is still in early development, so expect compilation errors from time to time**
+
+### Run Unit Tests
+
+If you wish, you may compile and run the included unit tests:
+
+1. Type `make testUbuntu` on Ubuntu, or `mingw32-make testWindows` on Windows.
+If all the code internal to TIS is free of errors, this should produce a program named "test".
+
+2. Run test using `./test` on Ubuntu, or `text.exe` on Windows.
+Test will conduct unit tests on every function internal to TIS.
+If all the code internal to TIS works as intended, test should print a "pass" message for every unit test.
+If test thinks something is wrong, it will attempt to tell you with a "FAILURE" message and continue to the next test.
+Groups of tests that depend on each other will be labeled as such in the output.
+
+If TIS passes all unit tests, then it is ready for playtesting.
 
 ### Ubuntu
 
@@ -63,7 +79,7 @@ If hello prints "hello", then any errors you get while compiling or running TIS 
 
 1. Type `mingw32-make windows`. This should produce a program called "tisWin.exe"
 
-2. Run TIS using `tisWin.exe` to ensure everything is working correctly before you install.
+2. Run TIS using `tisWindows.exe` to ensure everything is working correctly before you install.
 
 ### Other
 
