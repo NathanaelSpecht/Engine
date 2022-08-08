@@ -31,10 +31,11 @@ API changes will be backwards compatible from this point onward, unless explicit
 This project and its documentation will always be free and public domain.
 If you wish to support continued development of TIS, feel free to donate on Patreon here (***TODO link***).
 
-The included graphics, music, and sounds are royalty free.
-I obtained them from here:
+Sources for included files:
 
-- ***TODO cite sources when there are files to cite sources for.***
+- All the graphics are made by me. They are also free and public domain.
+
+- The license for SDL can be found in the sdl-license folder.
 
 To stay updated on all things Trees in Space, follow me on Twitter [here](https://twitter.com/Trees_In_Space).
 
