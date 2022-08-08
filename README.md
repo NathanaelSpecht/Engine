@@ -4,7 +4,7 @@ Hello!
 My name is Nathan Specht. I'm the founder of Trees in Space.
 This is the engine we use at Trees in Space for game development.
 
-If you're looking for API or modding information, check the docs folder.
+If you're looking for API documentation, check the docs folder.
 
 Installation instructions are in INSTALL.md
 
