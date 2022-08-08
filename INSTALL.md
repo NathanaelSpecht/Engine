@@ -1,9 +1,8 @@
 # Obtain
 
 TIS can be cloned from GitHub using:
-```git clone https://github.com/NathanaelSpecht/TreesInSpaceEngine
-```
-On Windows, the above requires git is installed.
+`git clone https://github.com/NathanaelSpecht/TreesInSpaceEngine`
+On Windows, this requires git is installed.
 
 Alternatively, download TIS as a zip file from GitHub:
 1. Open the TIS GitHub repository in a browser, [here](https://github.com/NathanaelSpecht/TreesInSpaceEngine).
@@ -67,19 +66,12 @@ If all the code internal to TIS works as intended, test should print a "pass" me
 If test thinks something is wrong, it will attempt to tell you with a "FAILURE" message and continue to the next test.
 Groups of tests that depend on each other will be labeled as such in the output.
 
-If TIS passes all unit tests, then it is ready for playtesting.
+If TIS passes all unit tests, then it is ready to compile for real.
 
-### Ubuntu
+### Supported Operating Systems
 
-1. Type `make ubuntu`. This should produce a program called "tisUbuntu".
-
-2. Run TIS using `./tisUbuntu` to ensure everything is working correctly before you install.
-
-### Windows
-
-1. Type `mingw32-make windows`. This should produce a program called "tisWin.exe"
-
-2. Run TIS using `./tisWindows` to ensure everything is working correctly before you install.
+To compile TIS, type 'make ubuntu' on Ubuntu, or 'mingw32-make windows' on Windows.
+If TIS is free of errors, this should produce a program named "engine".
 
 ### Other
 
@@ -103,7 +95,7 @@ If you want a desktop shortcut, then follow the instructions below for your OS:
 
 ### Windows
 
-1. Right-click tisWin.exe and choose "Create Shortcut".
+1. Right-click engine.exe and choose "Create Shortcut".
 
 2. Cut and paste the shortcut to your desktop.
 
