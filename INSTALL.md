@@ -47,7 +47,7 @@ At this point, we recommend you compile and run the included test program to tes
 If everything is installed correctly, this should produce a program named "hello".
 If there's something wrong with your install, or the makefile is looking for libraries in the wrong places, then make or gcc should tell you, and hello will fail to compile.
 
-3. Run hello using `./hello` on Ubuntu, or `hello.exe` on Windows.
+3. Run hello using `./hello`.
 If you are set up correctly, then hello will print "hello" and exit.
 If hello thinks something is wrong, it will attempt to tell you with an "ERROR" message and exit.
 
@@ -61,7 +61,7 @@ If you wish, you may compile and run the included unit tests:
 1. Type `make testUbuntu` on Ubuntu, or `mingw32-make testWindows` on Windows.
 If all the code internal to TIS is free of errors, this should produce a program named "test".
 
-2. Run test using `./test` on Ubuntu, or `text.exe` on Windows.
+2. Run test using `./test`.
 Test will conduct unit tests on every function internal to TIS.
 If all the code internal to TIS works as intended, test should print a "pass" message for every unit test.
 If test thinks something is wrong, it will attempt to tell you with a "FAILURE" message and continue to the next test.
@@ -79,7 +79,7 @@ If TIS passes all unit tests, then it is ready for playtesting.
 
 1. Type `mingw32-make windows`. This should produce a program called "tisWin.exe"
 
-2. Run TIS using `tisWindows.exe` to ensure everything is working correctly before you install.
+2. Run TIS using `./tisWindows` to ensure everything is working correctly before you install.
 
 ### Other
 
