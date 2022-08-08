@@ -1,10 +1,10 @@
-# TreesInSpaceEngine (TIS)
+# TreesInSpaceEngine ("libTIS" or "TIS")
 
 Hello! 
-My name is Nathan Specht. 
-This is the game engine I'm making for my game studio, Trees in Space.
+My name is Nathan Specht. I'm the founder of Trees in Space.
+This is the engine we use at Trees in Space for game development.
 
-If you're looking for API documentation, check the docs folder. ***TODO add docs folder.***
+If you're looking for API or modding information, check the docs folder.
 
 Installation instructions are in INSTALL.md
 
@@ -39,3 +39,4 @@ I obtained them from here:
 To stay updated on all things Trees in Space, follow me on Twitter [here](https://twitter.com/Trees_In_Space).
 
 Happy gaming!
+
