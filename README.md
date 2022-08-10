@@ -26,7 +26,8 @@ API changes will be backwards compatible from this point onward, unless explicit
 # Links
 
 This project and its documentation will always be free and public domain.
-If you're feeling generous, donate on Patreon here (***TODO link***). Every little bit helps!
+If you're feeling generous, donate on [Patreon](https://www.patreon.com/treesinspace) to support continued development.
+Every little bit helps!
 
 Sources for included files:
 - All graphics included with this project are made by Trees in Space. They are free and public domain.
