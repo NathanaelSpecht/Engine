@@ -29,7 +29,7 @@ This project and its documentation will always be free and public domain.
 If you're feeling generous, donate on Patreon here (***TODO link***). Every little bit helps!
 
 Sources for included files:
-- All the graphics are made by me. They are also free and public domain.
+- All graphics included with this project are made by Trees in Space. They are free and public domain.
 - The license for SDL can be found in the sdl-license folder.
 
 Happy gaming!
