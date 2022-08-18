@@ -33,7 +33,7 @@ For example, keyboard key W may mean "walk forward" or "drive vehicle forward" d
 
 # Game Logic
 
-- [ ] Write in C so we can use the game engine as a set of C functions. 
+- [x] Write in C so we can use the game engine as a set of functions. 
 - [x] Open-source to make modding easy.
 
 TODOs. These things are unique to each game, so the game developer must implement them. 
