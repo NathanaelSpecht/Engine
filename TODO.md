@@ -17,7 +17,6 @@ Vehicles are special objects that contain maps and objects, and may contain othe
 - [ ] Spaces and colliders. 
 Spaces can be bigger or smaller on the inside than on the outside, and may contain other spaces.
 Great for making large maps where space contraints are too much hassle to worry about, and/or for maps with impossible geometry.
-Also useful when spaces can move or rotate, such as inside vehicles.
 - [ ] Network protocols and multiplayer.
 - [ ] Translate keybindings to user inputs for use by the game logic, in context.
 For example, keyboard key W may mean "walk forward" or "drive vehicle forward" depending on the contexts "standing" or "sitting in driver's seat".
