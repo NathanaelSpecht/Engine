@@ -3,14 +3,17 @@
 - [x] Write in C for easy compatibility with SDL2.
 Not trying to re-invent the wheel here.
 
+
 Don't use macros for compilation:
 - [ ] Put OS-specific code in different win.c and linux.c files, and use one os.h file to ensure they all have the same API. 
 - [x] Use makefile to pick which .c file to compile for a particular OS. 
+
 
 Detect bugs before release with:
 - [x] Compiler flags
 - [ ] Test suite
 - [ ] Log files
+
 
 TODOs. Every game uses these things, so they're implemented by the engine:
 - [ ] Render map tiles, objects and vehicles in the map, and gui elements.
@@ -28,10 +31,12 @@ For example, keyboard key W may mean "walk forward" or "drive vehicle forward" d
 - [ ] File save and load utilities.
 - [ ] Config file, to tell the engine which categories of game logic and game file your game has, and where the files are.
 
+
 # Game Logic
 
 Open-source makes modding easy:
 - [ ] Write in C so we can use the game engine as a set of C functions. 
+
 
 TODOs. These things are unique to each game, so the game developer must implement them. 
 An example game - used for testing all features - is included with this engine:
@@ -47,6 +52,7 @@ Add functionality to developer mode, and/or spawn in new objects and maps during
 Great for horror games and/or difficulty that changes dynamically with gameplay.
 - [ ] Layout of GUIs and non-customizable vehicles.
 - [ ] Logic of GUIs, vehicles, animations, and sounds. Basic state machines.
+
 
 # Game Files
 
