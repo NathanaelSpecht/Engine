@@ -1,7 +1,7 @@
-# TreesInSpaceEngine ("libTIS" or "TIS")
+# TreesInSpaceEngine (TIS)
 
 Hello and welcome to Trees in Space!
-This is the engine and design tool we use for game development.
+This is my game engine.
 
 If you're looking for API documentation, check the docs folder.
 
@@ -9,29 +9,27 @@ Installation instructions are in INSTALL.md
 
 The current version and its changes can be found in CHANGELOG.md
 
-# Road To 1.0
+# Road To 1.0 and Beyond
 
-Our progress towards version 1.0 is in TODO.md. 
+My progress towards version 1.0 is in TODO.md. 
 ***Until version 1.0, expect breaking changes to the API from time to time.***
 
-# 1.0 And Beyond
-
-On release of version 1.0, TIS will be:
-- A sprite-based game engine for games with a 3d world.
-- A game design and modeling tool for making such games.
+My plan is for TIS to be a set of functions anyone can include in their C program to turn it into a functioning game.
 
 Updates after version 1.0 will continue to provide bug fixes, features, and performance improvements. 
 API changes will be backwards compatible from this point onward, unless explicitly stated in the changelog.
 
 # Links
 
-This project and its documentation will always be free and public domain.
-If you're feeling generous, donate on [Patreon](https://www.patreon.com/treesinspace) to support continued development.
+Included files:
+- The GPLv3 license, used by this software, can be found in the COPYING file.
+- This software links to SDL. The license for it can be found in the sdl-license folder.
+- All graphics included with this project are made by me and are free to use. Please give credit where you use them.
+
+This project and its documentation will always be free and open source.
+If you're feeling generous, donate on [Patreon](https://www.patreon.com/treesinspace).
 Every little bit helps!
 
-Sources for included files:
-- All graphics included with this project are made by Trees in Space. They are free and public domain.
-- The license for SDL can be found in the sdl-license folder.
-
-Happy gaming!
+Happy gaming,
+Nathanael Specht
 
