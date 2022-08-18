@@ -38,7 +38,7 @@ You may need to edit the makefile so it looks in the correct locations for the l
 
 ##### Test Your Setup
 
-At this point, we recommend you compile and run the included test program to test your setup:
+At this point, I recommend you compile and run the included test program to test your setup:
 
 1. Open the terminal/Command Prompt and navigate to the root directory of the project.
 
@@ -75,12 +75,12 @@ If TIS is free of errors, this should produce a program named "engine", which ca
 
 ### Other
 
-We intend to support only Ubuntu and Windows. 
+I intend to support only Ubuntu and Windows. 
 
 That said, TIS is organized such that only two files need to be implemented to get it working on your OS.
 os.h contains the cross-platform API for functions that use OS-specific code.
 Implement this in your-os-here.c and add an option for your OS in the makefile to compile it with the remainder of the project.
-You may also need to rewrite the makefile in a different format (for example, CMakeLists) for the compilation environment that works on your OS.
+You may also need to rewrite the makefile in a different format (for example, CMakeLists if using CMake) for the compilation environment that works on your OS.
 
 # Install
 
