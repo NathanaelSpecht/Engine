@@ -11,22 +11,16 @@ Use compiler flags, test suite, and log files to detect bugs before release.
 
 TODOs. Every game uses these things, so they're implemented by the engine:
 
-- [ ] Developer mode, for creating new maps and objects.
-Use the engine as a game design and modeling tool.
-
 - [ ] Render map tiles, objects and vehicles in the map, and gui elements.
 Vehicles are special objects that contain maps and objects, and may contain other vehicles, so they have special rendering.
-
-- [ ] Play music and sounds.
+- [ ] Play background music and event sounds.
 - [ ] Spaces and colliders. 
 Spaces can be bigger or smaller on the inside than on the outside, and may contain other spaces.
 Great for making large maps where space contraints are too much hassle to worry about, and/or for maps with impossible geometry.
 Also useful when spaces can move or rotate, such as inside vehicles.
-
 - [ ] Network protocols and multiplayer.
 - [ ] Translate keybindings to user inputs for use by the game logic, in context.
 For example, keyboard key W may mean "walk forward" or "drive vehicle forward" depending on the contexts "standing" or "sitting in driver's seat".
-
 - [ ] Pathfinding.
 - [ ] State machines for GUIs, animations, sounds, vehicles, and events.
 - [ ] State machines for each NPC category.
@@ -35,23 +29,22 @@ For example, keyboard key W may mean "walk forward" or "drive vehicle forward" d
 
 # Game Logic
 
-Write in Lua so developers don't have to recompile the project when making their game. 
-Makes distributing game updates and mods easy.
+Write in C so we can use the game engine as a set of C functions. 
+Open-source makes modding easy.
 
 TODOs. These things are unique to each game, so the game developer must implement them. 
 An example game - used for testing all features - is included with this engine:
 
+- [ ] Developer mode, for creating new maps and objects.
+Use the engine as a game design and modeling tool. This part is also multiplayer.
 - [ ] Layout of new maps and objects. User-created custom vehicles also implemented here.
 Add functionality to developer mode, and/or spawn in new objects and maps during gameplay.
-
 - [ ] Logic of maps and objects.
 - [ ] Servers and users, user authentication, and network security logic.
 - [ ] Controls logic. This is what each user input does, not the keybindings for those inputs.
 - [ ] Logic of NPCs and events. State machines with machine-learning abilities.
-- [ ] Logic guidance. 
-Guides NPCs and events around players by adjusting the weights on their state machines.
+- [ ] Logic guidance. Guides NPCs and events around players by adjusting the weights on their state machines.
 Great for horror games and/or difficulty that changes dynamically with gameplay.
-
 - [ ] Layout of GUIs and non-customizable vehicles.
 - [ ] Logic of GUIs, vehicles, animations, and sounds. Basic state machines.
 
@@ -59,8 +52,6 @@ Great for horror games and/or difficulty that changes dynamically with gameplay.
 
 TODOs. These are things unique to each server, user, or save file. 
 Example files - used for testing all features - are included with this engine:
-
-- [ ] Mods.
 
 - [ ] Graphics for animations and GUIs.
 - [ ] Music and sounds.
