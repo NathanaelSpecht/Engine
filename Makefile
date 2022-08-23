@@ -1,15 +1,15 @@
 
 ifeq ($(OS),Windows_NT)
 COMPILE = gcc -O0 -Wall -Wno-unused-variable -Wl,-subsystem,windows
-SOURCE = 
-LIBRARY = -IC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\include\SDL2 \
+SOURCE = tis\tis.c
+LIBRARY = -Itis -IC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\include\SDL2 \
 	-LC:\Libraries\SDL2\dev\SDL2-2.0.22\x86_64-w64-mingw32\lib \
 	-lmingw32 -lSDL2main -lSDL2 -lm
 
 else
 COMPILE = gcc -O0 -Wall -Wno-unused-variable
-SOURCE = 
-LIBRARY = -I/usr/include/SDL2 -L/usr/lib \
+SOURCE = tis/tis.c
+LIBRARY = -Itis -I/usr/include/SDL2 -L/usr/lib \
 	-lSDL2 -lm
 
 endif

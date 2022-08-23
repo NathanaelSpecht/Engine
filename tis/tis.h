@@ -1,0 +1,141 @@
+
+/*
+    Trees In Space Engine (TIS) game engine API.
+    Copyright (C) 2022  Trees in Space
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    Trees in Space  treesinspacecompany@gmail.com
+*/
+
+#ifndef TIS_H
+#define TIS_H
+
+#include "SDL.h"
+#include <tgmath.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define DEBUG(a); printf("%s:%d %s\n", __FILE__, __LINE__, a);
+#define ISNULL(a,b); if (a == NULL) { DEBUG(b); exit(EXIT_FAILURE); }
+
+// unoptimized, [u]nsigned integer types
+typedef unsigned char uchar;
+typedef unsigned int uint;
+
+// signed/[u]nsigned integer types, at least 8/16/32/64 bits
+// optimized for cpu speed
+typedef int_fast8_t fast8;
+typedef int_fast16_t fast16;
+typedef int_fast32_t fast32;
+typedef int_fast64_t fast64;
+typedef uint_fast8_t ufast8;
+typedef uint_fast16_t ufast16;
+typedef uint_fast32_t ufast32;
+typedef uint_fast64_t ufast64;
+
+// optimized for ram space
+typedef int_least8_t least8;
+typedef int_least16_t least16;
+typedef int_least32_t least32;
+typedef int_least64_t least64;
+typedef uint_least8_t uleast8;
+typedef uint_least16_t uleast16;
+typedef uint_least32_t uleast32;
+typedef uint_least64_t uleast64;
+
+typedef struct Box {
+	int x, y, c, r; // x, y, columns, rows
+} Box;
+
+typedef struct Image {
+	char* name;
+	int c, r;
+	int uw, uh; // image: unit width and height
+	SDL_Texture* texture;
+} Image;
+
+typedef struct State {
+	char* name;
+	float w, h;
+	int color1, color2, color3;
+	Image* image;
+} State;
+
+typedef struct Sprite {
+	int id;
+	float x, y; // center
+	int angle;
+	State* state;
+} Sprite;
+
+typedef struct Camera {
+	float wx, wy, ww, wh; //world-units: center x/y, width/height
+	int angle;
+	int sx, sy, sc, sr; //screen-units: top-left x/y, columns, rows
+	Sprite* target;
+} Camera;
+
+typedef struct Graphics {
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	int w, h;
+	int c, r;
+	int rotationspeed;
+	float movespeed;
+	int colorkey;
+	int bgcolor;
+	int txtcolor;
+} Graphics;
+
+Image* newImage (const char*, const char*, int, int, const Graphics*);
+void freeImage (Image*);
+
+State* newState (const char*, float, float, int, int, int, const char*, Image**);
+void freeState (State*);
+
+Sprite* newSprite (int, float, float, int, const char*, State**);
+void freeSprite (Sprite*);
+
+Camera* newCamera (int, int, int, int, int, Sprite**);
+void moveCamera (float, float, Camera*);
+void moveCameraTarget (float, float, Camera*);
+void rotateCamera (int, Camera*);
+void rotateCameraTarget (int, Camera*);
+void freeCamera (Camera*);
+
+void renderString (const char*, const Box*, Image*, const Graphics*);
+void renderSprite (Sprite*, Camera*, const Graphics*);
+
+int addAngle (int, int);
+void move (float*, float*, float, float, int);
+void rotate (float*, float*, int);
+
+int color (int, int, int);
+int red (int);
+int green (int);
+int blue (int);
+
+char* copyString (const char*);
+char* subString (const char*, int, int);
+bool equalsString (const char*, const char*);
+
+char* readFile (const char*, const char*);
+void writeFile (const char*, const char*, const char*);
+
+#endif
+

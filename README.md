@@ -3,16 +3,16 @@
 Hello and welcome to Trees in Space!
 This is my game engine.
 
-If you're looking for API documentation, check the docs folder.
+If you're looking for API documentation, check the `docs` folder.
 
-Installation instructions are in INSTALL.md.
+Installation instructions are in `docs/INSTALL.md`.
 
-The current major version and its major changes can be found in CHANGELOG.md.
+The current major version and its major changes can be found in `docs/CHANGELOG.md`.
 Check the git log for a detailed list of changes.
 
 # Road To 1.0 and Beyond
 
-My progress towards version 1.0 is in TODO.md. 
+My progress towards version 1.0 is in `docs/TODO.md`. 
 ***Until version 1.0, expect breaking changes to the API from time to time.***
 
 My plan is for TIS to be a set of functions anyone can include in their C program to turn it into a functioning game.
@@ -23,8 +23,8 @@ API changes will be backwards compatible from this point onward, unless explicit
 # Links
 
 Included files:
-- The GPLv3 license, used by this software, can be found in the COPYING file.
-- This software links to SDL. The license for it can be found in the sdl-license folder.
+- The GPLv3 and LGPLv3 licenses, used by this software, can be found in the `COPYING` and `COPYING.LESSER` files.
+- This software links to SDL. The license for it can be found in the `sdl` folder.
 - All graphics included with this project are made by me and are free to use. Please give credit where you use them.
 
 This project and its documentation will always be free and open source.
