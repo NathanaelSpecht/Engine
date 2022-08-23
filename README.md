@@ -5,9 +5,10 @@ This is my game engine.
 
 If you're looking for API documentation, check the docs folder.
 
-Installation instructions are in INSTALL.md
+Installation instructions are in INSTALL.md.
 
-The current version and its changes can be found in CHANGELOG.md
+The current major version and its major changes can be found in CHANGELOG.md.
+Check the git log for a detailed list of changes.
 
 # Road To 1.0 and Beyond
 
