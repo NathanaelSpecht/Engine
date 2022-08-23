@@ -73,18 +73,12 @@ typedef struct Image {
 	SDL_Texture* texture;
 } Image;
 
-Image* newImage (const char*, const char*, int, int);
-void freeImage (Image*);
-
 typedef struct State {
 	char* name;
 	float w, h;
 	int color1, color2, color3;
 	Image* image;
 } State;
-
-State* newState (const char*, float, float, int, int, int, const char*, Image**);
-void freeState (State*);
 
 typedef struct Sprite {
 	int id;
@@ -93,15 +87,35 @@ typedef struct Sprite {
 	State* state;
 } Sprite;
 
-Sprite* newSprite (int, float, float, int, const char*, State**);
-void freeSprite (Sprite*);
-
 typedef struct Camera {
 	float wx, wy, ww, wh; //world-units: center x/y, width/height
 	int angle;
 	int sx, sy, sc, sr; //screen-units: top-left x/y, columns, rows
 	Sprite* target;
 } Camera;
+
+typedef struct Graphics {
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	int w, h;
+	int c, r;
+	int rotationspeed;
+	float movespeed;
+	int colorkey;
+	int bgcolor;
+	int txtcolor;
+} Graphics;
+
+// ============= Function ============
+
+Image* newImage (const char*, const char*, int, int, const Graphics*);
+void freeImage (Image*);
+
+State* newState (const char*, float, float, int, int, int, const char*, Image**);
+void freeState (State*);
+
+Sprite* newSprite (int, float, float, int, const char*, State**);
+void freeSprite (Sprite*);
 
 Camera* newCamera (int, int, int, int, int, Sprite**);
 void moveCamera (float, float, Camera*);
@@ -110,10 +124,8 @@ void rotateCamera (int, Camera*);
 void rotateCameraTarget (int, Camera*);
 void freeCamera (Camera*);
 
-// ============= Function ============
-
-void renderString (const char*, const Box*, Image*);
-void renderSprite (Sprite*, Camera*);
+void renderString (const char*, const Box*, Image*, const Graphics*);
+void renderSprite (Sprite*, Camera*, const Graphics*);
 
 int addAngle (int, int);
 void move (float*, float*, float, float, int);
@@ -131,47 +143,44 @@ bool equalsString (const char*, const char*);
 char* readFile (const char*, const char*);
 void writeFile (const char*, const char*, const char*);
 
-// ================== Global =============
-
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-
-int UWIDTH = 12, UHEIGHT = 16; // unit width and height
-int UCOLUMNS = 80, UROWS = 30; // unit columns and rows
-
-int ROTATIONSPEED = 15;
-float MOVESPEED = 0.16;
-
-int COLORKEY = 0x000000;
-int BGCOLOR = 0x000000;
-int TXTCOLOR = 0x00ff00;
-
 // ==================== Main ==============
 
 int main (int argc, char** argv) {
 	printf("Starting app\n");
+	
+	Graphics g = {
+		.window = NULL,
+		.renderer = NULL,
+		.w = 12, .h = 16,
+		.c = 80, .r = 30,
+		.rotationspeed = 15,
+		.movespeed = 0.16,
+		.colorkey = 0x000000,
+		.bgcolor = 0x000000,
+		.txtcolor = 0x00ff00
+	};
 
 	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
 		DEBUG(SDL_GetError());
 		return(EXIT_FAILURE);
 	}
 	
-	window = SDL_CreateWindow("Example App", 
+	g.window = SDL_CreateWindow("Example App", 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-		UWIDTH * UCOLUMNS, UHEIGHT * UROWS, 0
+		g.w * g.c, g.h * g.r, 0
 	);
-	ISNULL(window, SDL_GetError());
+	ISNULL(g.window, SDL_GetError());
 	
-	renderer = SDL_CreateRenderer(window, -1, 0);
-	ISNULL(renderer, SDL_GetError());
+	g.renderer = SDL_CreateRenderer(g.window, -1, 0);
+	ISNULL(g.renderer, SDL_GetError());
 	
 	Image** images = NULL;
 	images = malloc(4 * sizeof(Image*));
 	ISNULL(images, "out of memory");
 	
-	images[0] = newImage("ansi", "ansi.bmp", 16, 8);
-	images[1] = newImage("tree", "tree.bmp", 16, 2);
-	images[2] = newImage("cylinder", "cylinder.bmp", 1, 1);
+	images[0] = newImage("ansi", "ansi.bmp", 16, 8, &g);
+	images[1] = newImage("tree", "tree.bmp", 16, 2, &g);
+	images[2] = newImage("cylinder", "cylinder.bmp", 1, 1, &g);
 	images[3] = NULL;
 	
 	State** states = NULL;
@@ -196,22 +205,6 @@ int main (int argc, char** argv) {
 	
 	Camera* camera = NULL;
 	camera = newCamera(0, 0, 80, 30, 0, sprites);
-	
-	//free(map);
-	
-	const char* t = " \001\002\003\004\005\006\007\010\011\012\013\014\015\016\017"
-		"\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037"
-		" !\"#$%&\'()*+,-./"
-		"0123456789:;<=>?"
-		"@ABCDEFGHIJKLMNO"
-		"PQRSTUVWXYZ[\\]^_"
-		"`abcdefghijklmno"
-		"pqrstuvwxyz{|}~\177";
-	
-	Box t1 = {.x=1, .y=0, .c=32, .r=4};
-	Box t2 = {1, 5, 32, 4};
-	Box t3 = {1, 10, 32, 4};
-	Box t4 = {1, 15, 32, 4};
 
 	SDL_Event event;
 	while (true) {
@@ -224,10 +217,10 @@ int main (int argc, char** argv) {
 						goto quit;
 						break;
 					} case SDLK_PERIOD: {
-						rotateCamera(ROTATIONSPEED, camera);
+						rotateCamera(g.rotationspeed, camera);
 						break;
 					} case SDLK_COMMA: {
-						rotateCamera(-ROTATIONSPEED, camera);
+						rotateCamera(-(g.rotationspeed), camera);
 						break;
 					} case SDLK_SLASH: {
 						// return camera to target, and turn in direction target is facing.
@@ -236,48 +229,48 @@ int main (int argc, char** argv) {
 						camera->angle = camera->target->angle;
 						break;
 					} case SDLK_RIGHT: {
-						moveCamera(-MOVESPEED, 0.0, camera);
+						moveCamera(-(g.movespeed), 0.0, camera);
 						break;
 					} case SDLK_LEFT: {
-						moveCamera(MOVESPEED, 0.0, camera);
+						moveCamera(g.movespeed, 0.0, camera);
 						break;
 					} case SDLK_UP: {
-						moveCamera(0.0, -MOVESPEED, camera);
+						moveCamera(0.0, -(g.movespeed), camera);
 						break;
 					} case SDLK_DOWN: {
-						moveCamera(0.0, MOVESPEED, camera);
+						moveCamera(0.0, g.movespeed, camera);
 						break;
 					} case SDLK_e: {
-						rotateCameraTarget(-ROTATIONSPEED, camera);
+						rotateCameraTarget(-(g.rotationspeed), camera);
 						break;
 					} case SDLK_q: {
-						rotateCameraTarget(ROTATIONSPEED, camera);
+						rotateCameraTarget(g.rotationspeed, camera);
 						break;
 					} case SDLK_d: {
-						moveCameraTarget(MOVESPEED, 0.0, camera);
+						moveCameraTarget(g.movespeed, 0.0, camera);
 						break;
 					} case SDLK_a: {
-						moveCameraTarget(-MOVESPEED, 0.0, camera);
+						moveCameraTarget(-(g.movespeed), 0.0, camera);
 						break;
 					} case SDLK_w: {
-						moveCameraTarget(0.0, MOVESPEED, camera);
+						moveCameraTarget(0.0, g.movespeed, camera);
 						break;
 					} case SDLK_s: {
-						moveCameraTarget(0.0, -MOVESPEED, camera);
+						moveCameraTarget(0.0, -(g.movespeed), camera);
 						break;
 					}
 				}
 			}
 		}
 		
-		SDL_SetRenderDrawColor(renderer, red(BGCOLOR), green(BGCOLOR), blue(BGCOLOR), 255);
-		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(g.renderer, red(g.bgcolor), green(g.bgcolor), blue(g.bgcolor), 255);
+		SDL_RenderClear(g.renderer);
 		
 		for (int i = 0; sprites[i] != NULL; i++) {
-			renderSprite(sprites[i], camera);
+			renderSprite(sprites[i], camera, &g);
 		}
 		
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(g.renderer);
 		SDL_Delay(10);
 	}
 	
@@ -301,8 +294,8 @@ quit:
 	}
 	free(images);
 	
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(g.renderer);
+	SDL_DestroyWindow(g.window);
 	SDL_Quit();
 	
 	return 0;
@@ -310,7 +303,7 @@ quit:
 
 // =========== Render =============
 
-void renderString (const char* s, const Box* box, Image* image) {
+void renderString (const char* s, const Box* box, Image* image, const Graphics* g) {
 	SDL_Rect src;
 	SDL_Rect dest;
 	
@@ -319,10 +312,10 @@ void renderString (const char* s, const Box* box, Image* image) {
 	src.w = image->uw;
 	src.h = image->uh;
 	
-	dest.x = UWIDTH * box->x;
-	dest.y = UHEIGHT * box->y;
-	dest.w = UWIDTH;
-	dest.h = UHEIGHT;
+	dest.x = g->w * box->x;
+	dest.y = g->h * box->y;
+	dest.w = g->w;
+	dest.h = g->h;
 	
 	int tx, ty; // text: x and y
 	int itc, itr; // image: text: column and row
@@ -335,15 +328,15 @@ void renderString (const char* s, const Box* box, Image* image) {
 		if (itr >= 0) {
 			src.x = image->uw * itc;
 			src.y = image->uh * itr;
-			dest.x = UWIDTH * (box->x + tx);
-			dest.y = UHEIGHT * (box->y + ty);
-			SDL_SetTextureColorMod(image->texture, red(TXTCOLOR), green(TXTCOLOR), blue(TXTCOLOR));
-			SDL_RenderCopy(renderer, image->texture, &src, &dest);
+			dest.x = g->w * (box->x + tx);
+			dest.y = g->h * (box->y + ty);
+			SDL_SetTextureColorMod(image->texture, red(g->txtcolor), green(g->txtcolor), blue(g->txtcolor));
+			SDL_RenderCopy(g->renderer, image->texture, &src, &dest);
 		}
 	}
 }
 
-void renderSprite (Sprite* sprite, Camera* camera) {
+void renderSprite (Sprite* sprite, Camera* camera, const Graphics* g) {
 	//find dest from sprite and camera.
 	SDL_Rect dest;
 	{	
@@ -359,8 +352,8 @@ void renderSprite (Sprite* sprite, Camera* camera) {
 		rotate(&dx, &dy, -camera->angle);
 		
 		//transform sprite x/y in world to x/y on screen.
-		float sw = (float)(camera->sc * UWIDTH) * 0.5;
-		float sh = (float)(camera->sr * UHEIGHT) * 0.5;
+		float sw = (float)(camera->sc * g->w) * 0.5;
+		float sh = (float)(camera->sr * g->h) * 0.5;
 		dx *= (sw / (camera->ww * 0.5));
 		dy *= (sh / (camera->wh * 0.5));
 		dy = -dy;
@@ -406,31 +399,31 @@ void renderSprite (Sprite* sprite, Camera* camera) {
 	if (c1 == 0 && c2 == 0 && c3 == 0) {
 		SDL_SetTextureColorMod(image->texture, 255, 255, 255);
 		src.y = 0;
-		SDL_RenderCopy(renderer, image->texture, &src, &dest);
+		SDL_RenderCopy(g->renderer, image->texture, &src, &dest);
 	} else {
 		if (c1 != 0) {
 			SDL_SetTextureColorMod(image->texture, red(c1), green(c1), blue(c1));
 			src.y = src.h * 0;
-			SDL_RenderCopy(renderer, image->texture, &src, &dest);
+			SDL_RenderCopy(g->renderer, image->texture, &src, &dest);
 		}
 		
 		if (c2 != 0) {
 			SDL_SetTextureColorMod(image->texture, red(c2), green(c2), blue(c2));
 			src.y = src.h * 1;
-			SDL_RenderCopy(renderer, image->texture, &src, &dest);
+			SDL_RenderCopy(g->renderer, image->texture, &src, &dest);
 		}
 		
 		if (c3 != 0) {
 			SDL_SetTextureColorMod(image->texture, red(c3), green(c3), blue(c3));
 			src.y = src.h * 2;
-			SDL_RenderCopy(renderer, image->texture, &src, &dest);
+			SDL_RenderCopy(g->renderer, image->texture, &src, &dest);
 		}
 	}
 }
 
 // =============== Struct ===============
 
-Image* newImage (const char* name, const char* filename, int c, int r) {
+Image* newImage (const char* name, const char* filename, int c, int r, const Graphics* g) {
 	SDL_Surface* surface = NULL;
 	SDL_Texture* texture = NULL;
 	Image* image = NULL;
@@ -441,12 +434,12 @@ Image* newImage (const char* name, const char* filename, int c, int r) {
 	int image_uw = surface->w / c;
 	int image_uh = surface->h / r;
 	
-	if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, red(COLORKEY), green(COLORKEY), blue(COLORKEY))) != 0) {
+	if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, red(g->colorkey), green(g->colorkey), blue(g->colorkey))) != 0) {
 		DEBUG(SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 	
-	texture = SDL_CreateTextureFromSurface(renderer, surface);
+	texture = SDL_CreateTextureFromSurface(g->renderer, surface);
 	ISNULL(texture, SDL_GetError());
 	
 	SDL_FreeSurface(surface);
