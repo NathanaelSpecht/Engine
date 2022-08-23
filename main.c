@@ -1,5 +1,5 @@
 /*
-    Trees In Space Engine (TIS) game engine.
+    Trees In Space Engine (TIS) game engine functions.
     Copyright (C) 2022  Trees in Space
 
     This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,8 @@
 
 // ============== Define ==============
 
-#define debug(a); printf("%s:%d %s\n", __FILE__, __LINE__, a);
-#define here(); printf("%s:%d\n", __FILE__, __LINE__);
-#define isnull(a,b); if (a == NULL) { debug(b); exit(EXIT_FAILURE); }
+#define DEBUG(a); printf("%s:%d %s\n", __FILE__, __LINE__, a);
+#define ISNULL(a,b); if (a == NULL) { DEBUG(b); exit(EXIT_FAILURE); }
 
 // ============== Type ==============
 
@@ -150,42 +149,34 @@ int TXTCOLOR = 0x00ff00;
 // ==================== Main ==============
 
 int main (int argc, char** argv) {
-	printf("Starting TIS\n");
+	printf("Starting app\n");
 
 	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
-		debug(SDL_GetError());
+		DEBUG(SDL_GetError());
 		return(EXIT_FAILURE);
 	}
 	
-	window = SDL_CreateWindow("Trees in Space Engine", 
+	window = SDL_CreateWindow("Example App", 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		UWIDTH * UCOLUMNS, UHEIGHT * UROWS, 0
 	);
-	isnull(window, SDL_GetError());
+	ISNULL(window, SDL_GetError());
 	
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	isnull(renderer, SDL_GetError());
-	
-	//TODO Load from file.
-	//char* map = NULL;
-	//map = readFile("map.txt", "r");
+	ISNULL(renderer, SDL_GetError());
 	
 	Image** images = NULL;
-	images = malloc(8 * sizeof(Image*));
-	isnull(images, "out of memory");
+	images = malloc(4 * sizeof(Image*));
+	ISNULL(images, "out of memory");
 	
 	images[0] = newImage("ansi", "ansi.bmp", 16, 8);
-	images[1] = newImage("icon", "icon.bmp", 16, 8);
-	images[2] = newImage("line", "line.bmp", 16, 8);
-	images[3] = newImage("rune", "rune.bmp", 16, 8);
-	images[4] = newImage("tree", "tree.bmp", 16, 2);
-	images[5] = newImage("cube", "cube.bmp", 16, 1);
-	images[6] = newImage("cylinder", "cylinder.bmp", 1, 1);
-	images[7] = NULL;
+	images[1] = newImage("tree", "tree.bmp", 16, 2);
+	images[2] = newImage("cylinder", "cylinder.bmp", 1, 1);
+	images[3] = NULL;
 	
 	State** states = NULL;
 	states = malloc(5 * sizeof(State*));
-	isnull(states, "out of memory");
+	ISNULL(states, "out of memory");
 	
 	states[0] = newState("tree-green", 1.0, 1.0, color(200, 100, 50), color(50, 200, 25), 0, "tree", images);
 	states[1] = newState("tree-dead", 1.0, 1.0, color(200, 50, 100), 0, 0, "tree", images);
@@ -195,7 +186,7 @@ int main (int argc, char** argv) {
 	
 	Sprite** sprites = NULL;
 	sprites = malloc(5 * sizeof(Sprite*));
-	isnull(sprites, "out of memory");
+	ISNULL(sprites, "out of memory");
 	
 	sprites[0] = newSprite(0, 0.0, 0.0, 0, "tree-green", states);
 	sprites[1] = newSprite(1, 1.0, 0.0, 30, "tree-dead", states);
@@ -291,7 +282,7 @@ int main (int argc, char** argv) {
 	}
 	
 quit:
-	printf("Exiting TIS\n");
+	printf("Closing app\n");
 	
 	freeCamera(camera);
 	
@@ -445,23 +436,23 @@ Image* newImage (const char* name, const char* filename, int c, int r) {
 	Image* image = NULL;
 	
 	surface = SDL_LoadBMP(filename);
-	isnull(surface, SDL_GetError());
+	ISNULL(surface, SDL_GetError());
 	
 	int image_uw = surface->w / c;
 	int image_uh = surface->h / r;
 	
 	if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, red(COLORKEY), green(COLORKEY), blue(COLORKEY))) != 0) {
-		debug(SDL_GetError());
+		DEBUG(SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 	
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
-	isnull(texture, SDL_GetError());
+	ISNULL(texture, SDL_GetError());
 	
 	SDL_FreeSurface(surface);
 	
 	image = malloc(sizeof(Image));
-	isnull(image, "out of memory");
+	ISNULL(image, "out of memory");
 	
 	image->name = copyString(name);
 	image->c = c;
@@ -483,7 +474,7 @@ State* newState (const char* name, float w, float h, int color1, int color2, int
 	State* state = NULL;
 	
 	state = malloc(sizeof(State));
-	isnull(state, "out of memory");
+	ISNULL(state, "out of memory");
 	
 	state->name = copyString(name);
 	state->w = w;
@@ -510,7 +501,7 @@ Sprite* newSprite (int id, float x, float y, int angle, const char* state, State
 	Sprite* sprite = NULL;
 	
 	sprite = malloc(sizeof(Sprite));
-	isnull(sprite, "out of memory");
+	ISNULL(sprite, "out of memory");
 	
 	sprite->id = id;
 	sprite->x = x;
@@ -536,7 +527,7 @@ Camera* newCamera (int x, int y, int c, int r, int spriteID, Sprite** sprites) {
 	Camera* camera = NULL;
 	
 	camera = malloc(sizeof(Camera));
-	isnull(camera, "out of memory");
+	ISNULL(camera, "out of memory");
 	
 	camera->sx = x;
 	camera->sy = y;
@@ -639,12 +630,12 @@ char* copyString (const char* a) {
 	char* s = NULL;
 	
 	s = malloc(1);
-	isnull(s, "out of memory");
+	ISNULL(s, "out of memory");
 	s[0] = '\0';
 	if (a != NULL) {
 		for(int i = 0; a[i] != '\0'; i++) {
 			s = realloc(s, i+2);
-			isnull(s, "out of memory");
+			ISNULL(s, "out of memory");
 			s[i] = a[i];
 			s[i+1] = '\0';
 		}
@@ -657,13 +648,13 @@ char* subString (const char* a, int i, int n) {
 	char* s = NULL;
 	
 	s = malloc(1);
-	isnull(s, "out of memory");
+	ISNULL(s, "out of memory");
 	s[0] = '\0';
 	if (a != NULL && i >= 0) {
 		for (int k = 0; a[k] != '\0'; k++) {
 			if (k >= i && k-i < n) {
 				s = realloc(s, (k-i)+2);
-				isnull(s, "out of memory");
+				ISNULL(s, "out of memory");
 				s[k-i] = a[k];
 				s[(k-i)+1] = '\0';
 			} else if (k-i >= n) {
@@ -694,18 +685,18 @@ bool equalsString (const char* a, const char* b) {
 char* readFile (const char* filename, const char* options) {
 	char* s = NULL;
 	s = malloc(1);
-	isnull(s, "out of memory");
+	ISNULL(s, "out of memory");
 	s[0] = '\0';
 	
 	FILE* f = NULL;
 	f = fopen(filename, options);
-	isnull(f, "cannot open file");
+	ISNULL(f, "cannot open file");
 	
 	int c = 0;
 	for (int i = 0; (c = fgetc(f)) != EOF; i++) {
 		s = realloc(s, i+2);
 		if (s == NULL) {
-			debug("out of memory");
+			DEBUG("out of memory");
 			fclose(f);
 			exit(EXIT_FAILURE);
 		}
@@ -714,7 +705,7 @@ char* readFile (const char* filename, const char* options) {
 	}
 	
 	if (ferror(f)) {
-		debug("cannot read file");
+		DEBUG("cannot read file");
 		fclose(f);
 		exit(EXIT_FAILURE);
 	} else {
@@ -727,12 +718,12 @@ char* readFile (const char* filename, const char* options) {
 void writeFile (const char* s, const char* filename, const char* options) {
 	FILE* f = NULL;
 	f = fopen(filename, options);
-	isnull(f, "cannot open file");
+	ISNULL(f, "cannot open file");
 	
 	if (s != NULL) {
 		for (int i = 0; s[i] != '\0'; i++) {
 			if (fputc(s[i], f) == EOF) {
-				debug("cannot write file");
+				DEBUG("cannot write file");
 				fclose(f);
 				exit(EXIT_FAILURE);
 			}
