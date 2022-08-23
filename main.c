@@ -53,9 +53,9 @@ int main (int argc, char** argv) {
 	images = malloc(4 * sizeof(Image*));
 	ISNULL(images, "out of memory");
 	
-	images[0] = newImage("print", "print.bmp", 32, 8, &g);
-	images[1] = newImage("tree", "tree.bmp", 16, 2, &g);
-	images[2] = newImage("cylinder", "cylinder.bmp", 1, 1, &g);
+	images[0] = newImage("print", "data/print.bmp", 32, 8, &g);
+	images[1] = newImage("tree", "data/tree.bmp", 16, 2, &g);
+	images[2] = newImage("cylinder", "data/cylinder.bmp", 1, 1, &g);
 	images[3] = NULL;
 	
 	State** states = NULL;
