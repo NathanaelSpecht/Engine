@@ -3,160 +3,408 @@
     Copyright (C) 2022  Trees in Space
 */
 
-#include "tis.h"
+#include "tis_string.h"
+#include "tis_file.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stddef.h>
 
 int main (int argc, char** argv) {
 	printf("Starting test\n");
 	
-	Graphics g = {
-		.window = NULL,
-		.renderer = NULL,
-		.w = 12, .h = 16,
-		.c = 80, .r = 30,
-		.rotationspeed = 15,
-		.movespeed = 0.16,
-		.colorkey = 0x000000,
-		.bgcolor = 0x000000,
-		.txtcolor = 0x00ff00
-	};
-
-	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
-		DEBUG(SDL_GetError());
-		return(EXIT_FAILURE);
-	}
+	printf("\n[tis_string]:\n");
 	
-	g.window = SDL_CreateWindow("Test", 
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-		g.w * g.c, g.h * g.r, 0
-	);
-	ISNULL(g.window, SDL_GetError());
-	
-	g.renderer = SDL_CreateRenderer(g.window, -1, 0);
-	ISNULL(g.renderer, SDL_GetError());
-	
-	Image** images = NULL;
-	images = malloc(4 * sizeof(Image*));
-	ISNULL(images, "out of memory");
-	
-	images[0] = newImage("print", "data/print.bmp", 32, 8, &g);
-	images[1] = newImage("tree", "data/tree.bmp", 16, 2, &g);
-	images[2] = newImage("cylinder", "data/cylinder.bmp", 1, 1, &g);
-	images[3] = NULL;
-	
-	State** states = NULL;
-	states = malloc(5 * sizeof(State*));
-	ISNULL(states, "out of memory");
-	
-	states[0] = newState("tree-green", 1.0, 1.0, color(200, 100, 50), color(50, 200, 25), 0, "tree", images);
-	states[1] = newState("tree-dead", 1.0, 1.0, color(200, 50, 100), 0, 0, "tree", images);
-	states[2] = newState("tree-onfire", 1.0, 1.0, color(200, 25, 50), color(25, 50, 200), 0, "tree", images);
-	states[3] = newState("cylinder", 1.0, 1.0, color(50, 50, 50), 0, 0, "cylinder", images);
-	states[4] = NULL;
-	
-	Sprite** sprites = NULL;
-	sprites = malloc(5 * sizeof(Sprite*));
-	ISNULL(sprites, "out of memory");
-	
-	sprites[0] = newSprite(0, 0.0, 0.0, 0, "tree-green", states);
-	sprites[1] = newSprite(1, 1.0, 0.0, 30, "tree-dead", states);
-	sprites[2] = newSprite(2, 0.0, 1.0, 90, "tree-onfire", states);
-	sprites[3] = newSprite(3, 1.0, 1.0, 120, "cylinder", states);
-	sprites[4] = NULL;
-	
-	Camera* camera = NULL;
-	camera = newCamera(0, 0, 80, 30, 0, sprites);
-
-	SDL_Event event;
-	while (true) {
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				goto quit;
-			} else if (event.type == SDL_KEYDOWN) {
-				switch (event.key.keysym.sym) {
-					case SDLK_ESCAPE: {
-						goto quit;
-						break;
-					} case SDLK_PERIOD: {
-						rotateCamera(g.rotationspeed, camera);
-						break;
-					} case SDLK_COMMA: {
-						rotateCamera(-(g.rotationspeed), camera);
-						break;
-					} case SDLK_SLASH: {
-						// return camera to target, and turn in direction target is facing.
-						camera->wx = -(camera->target->x);
-						camera->wy = -(camera->target->y);
-						camera->angle = camera->target->angle;
-						break;
-					} case SDLK_RIGHT: {
-						moveCamera(-(g.movespeed), 0.0, camera);
-						break;
-					} case SDLK_LEFT: {
-						moveCamera(g.movespeed, 0.0, camera);
-						break;
-					} case SDLK_UP: {
-						moveCamera(0.0, -(g.movespeed), camera);
-						break;
-					} case SDLK_DOWN: {
-						moveCamera(0.0, g.movespeed, camera);
-						break;
-					} case SDLK_e: {
-						rotateCameraTarget(-(g.rotationspeed), camera);
-						break;
-					} case SDLK_q: {
-						rotateCameraTarget(g.rotationspeed, camera);
-						break;
-					} case SDLK_d: {
-						moveCameraTarget(g.movespeed, 0.0, camera);
-						break;
-					} case SDLK_a: {
-						moveCameraTarget(-(g.movespeed), 0.0, camera);
-						break;
-					} case SDLK_w: {
-						moveCameraTarget(0.0, g.movespeed, camera);
-						break;
-					} case SDLK_s: {
-						moveCameraTarget(0.0, -(g.movespeed), camera);
-						break;
-					}
-				}
-			}
+	{
+		printf("string_length: ");
+		if (string_length(NULL) == -1 && string_length("") == 0 && 
+		string_length("a") == 1 && string_length("hi") == 2 &&
+		string_length("Hello\nWorld!") == 12) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
 		}
-		
-		SDL_SetRenderDrawColor(g.renderer, red(g.bgcolor), green(g.bgcolor), blue(g.bgcolor), 255);
-		SDL_RenderClear(g.renderer);
-		
-		for (int i = 0; sprites[i] != NULL; i++) {
-			renderSprite(sprites[i], camera, &g);
+	}
+	
+	{
+		printf("string_equals: ");
+		if (string_equals(NULL, NULL) == true && string_equals("", "") == true &&
+		string_equals("Hello", "Hello") == true && 
+		string_equals("Hello", NULL) == false && 
+		string_equals("Hello", "World") == false &&
+		string_equals(NULL, "World") == false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
 		}
-		
-		SDL_RenderPresent(g.renderer);
-		SDL_Delay(10);
 	}
 	
-quit:
-	printf("Closing test\n");
-	
-	freeCamera(camera);
-	
-	for (int i = 0; sprites[i] != NULL; i++) {
-		freeSprite(sprites[i]);
+	{
+		printf("string_copy: ");
+		char* a = NULL;
+		a = string_copy(NULL);
+		char* b = NULL;
+		b = string_copy("");
+		char* c = NULL;
+		c = string_copy("a");
+		char* d = NULL;
+		d = string_copy("Hello\nWorld!");
+		char* e = NULL;
+		e = string_copy("Fizz");
+		e = string_copy("");
+		char* f = NULL;
+		f = string_copy("Buzz");
+		f = string_copy(NULL);
+		if (a == NULL && string_equals("", b) && string_equals("a", c) &&
+		string_equals("Hello\nWorld!", d) && string_equals("", e) &&
+		f == NULL) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+		if (a != NULL) {
+			free(a);
+		}
+		if (b != NULL) {
+			free(b);
+		}
+		if (c != NULL) {
+			free(c);
+		}
+		if (d != NULL) {
+			free(d);
+		}
+		if (e != NULL) {
+			free(e);
+		}
+		if (f != NULL) {
+			free(f);
+		}
 	}
-	free(sprites);
 	
-	for (int i = 0; states[i] != NULL; i++) {
-		freeState(states[i]);
+	{
+		printf("string_trim: ");
+		char* a = NULL;
+		a = string_copy(NULL);
+		string_trim(&a);
+		char* b = NULL;
+		b = string_copy("");
+		string_trim(&b);
+		char* c = NULL;
+		c = string_copy(" ");
+		string_trim(&c);
+		char* d = NULL;
+		d = string_copy(" a ");
+		string_trim(&d);
+		char* e = NULL;
+		e = string_copy("\n\t Hello\n\tWorld ! \t\n");
+		string_trim(&e);
+		if (a == NULL && string_equals("", b) && string_equals("", c) &&
+		string_equals("a", d) && string_equals("Hello\n\tWorld !", e)) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+		if (a != NULL) {
+			free(a);
+		}
+		if (b != NULL) {
+			free(b);
+		}
+		if (c != NULL) {
+			free(c);
+		}
+		if (d != NULL) {
+			free(d);
+		}
+		if (e != NULL) {
+			free(e);
+		}
 	}
-	free(states);
 	
-	for (int i = 0; images[i] != NULL; i++) {
-		freeImage(images[i]);
+	{
+		printf("string_assign: ");
+		char* a = NULL;
+		a = string_copy(NULL);
+		string_assign(NULL, &a);
+		char* b = NULL;
+		b = string_copy("");
+		string_assign("", &b);
+		char* c = NULL;
+		c = string_copy("a");
+		string_assign("a", &c);
+		char* d = NULL;
+		d = string_copy("Hello");
+		string_assign("World", &d);
+		char* e = NULL;
+		e = string_copy("Hello");
+		string_assign("", &e);
+		char* f = NULL;
+		f = string_copy("World");
+		string_assign(NULL, &f);
+		if (a == NULL && string_equals("", b) && string_equals("a", c) &&
+		string_equals("World", d) && string_equals("", e) && f == NULL) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+		if (a != NULL) {
+			free(a);
+		}
+		if (b != NULL) {
+			free(b);
+		}
+		if (c != NULL) {
+			free(c);
+		}
+		if (d != NULL) {
+			free(d);
+		}
+		if (e != NULL) {
+			free(e);
+		}
+		if (f != NULL) {
+			free(f);
+		}
 	}
-	free(images);
 	
-	SDL_DestroyRenderer(g.renderer);
-	SDL_DestroyWindow(g.window);
-	SDL_Quit();
+	{
+		printf("string_append: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_prepend: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("substring: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_find: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_replace: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_replace_all: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_split: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_join: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_is_bool: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_is_int: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_is_float: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_to_bool: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_to_int: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("string_to_float: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("bool_to_string: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("int_to_string: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("float_to_string: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("ascii_to_hex: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("hex_to_ascii: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	printf("\n[tis_file]:\n");
+	
+	{
+		printf("file_read_ascii: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_read_hex: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_log: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_write_ascii: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_write_hex: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_append_ascii: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	{
+		printf("file_append_hex: ");
+		if (false) {
+			printf("pass\n");
+		} else {
+			printf("FAILURE\n");
+		}
+	}
+	
+	printf("\nClosing test\n");
 	
 	return 0;
 }
