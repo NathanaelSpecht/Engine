@@ -3,7 +3,9 @@
     Copyright (C) 2022  Trees in Space
 */
 
-#include "tis.h"
+#include "tis_string.h"
+#include "tis_file.h"
+#include <stdio.h>
 
 int main (int argc, char** argv) {
 	printf("hello\n");

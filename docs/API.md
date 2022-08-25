@@ -25,8 +25,6 @@ of life improvement.
 the game world, disparate from the process used to render it. Compatible with
 state machines.
 
-# tis.h
-
 # tis_string.h
 
 `int string_length (char* target)`
