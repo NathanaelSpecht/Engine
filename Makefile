@@ -14,20 +14,22 @@ LIBRARY = -Itis -I/usr/include/SDL2 -L/usr/lib \
 
 endif
 
-app:
-	$(COMPILE) main.c $(SOURCE) -o app $(LIBRARY)
-
-hello:
-	$(COMPILE) hello.c -o hello $(LIBRARY)
+main:
+	@echo "TODO Example app implemented with TIS."
+	@echo "Try 'make help'."
+#	$(COMPILE) main.c $(SOURCE) -o app $(LIBRARY)
 
 test:
 	$(COMPILE) test.c $(SOURCE) -o test $(LIBRARY)
+
+hello:
+	$(COMPILE) hello.c -o hello $(LIBRARY)
 
 help:
 	@echo "Trees In Space Engine (TIS) game engine functions."
 	@echo ""
 	@echo "  Command       App Name  Description"
-	@echo "  'make'        'app'     Example app implemented with TIS."
+#	@echo "  'make'        'app'     Example app implemented with TIS."
 	@echo "  'make test'   'test'    Unit tests."
 	@echo "  'make hello'  'hello'   Compilation environment test."
 	@echo "  'make help'             Display this message."

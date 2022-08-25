@@ -1,22 +1,6 @@
 
-/*
-    Trees In Space Engine (TIS) game engine API.
+/*  tis.h  Trees In Space game engine (TIS) API.
     Copyright (C) 2022  Trees in Space
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    Trees in Space  treesinspacecompany@gmail.com
 */
 
 #ifndef TIS_H
@@ -138,4 +122,20 @@ char* readFile (const char*, const char*);
 void writeFile (const char*, const char*, const char*);
 
 #endif
+
+/*  This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    Trees in Space  treesinspacecompany@gmail.com
+*/
 

@@ -1,8 +1,16 @@
 
-/*  Environment test for TIS.
+/*  Test the compilation environment for TIS.
     Copyright (C) 2022  Trees in Space
+*/
 
-    This program is free software: you can redistribute it and/or modify
+#include "tis.h"
+
+int main (int argc, char** argv) {
+	printf("hello\n");
+	return 0;
+}
+
+/*  This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     any later version.
@@ -17,11 +25,4 @@
     
     Trees in Space  treesinspacecompany@gmail.com
 */
-
-#include "tis.h"
-
-int main (int argc, char** argv) {
-	printf("hello\n");
-	return 0;
-}
 

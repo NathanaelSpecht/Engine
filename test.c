@@ -1,27 +1,12 @@
 
-/*  Example use of TIS.
+/*  test.c  Unit tests for TIS.
     Copyright (C) 2022  Trees in Space
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    
-    Trees in Space  treesinspacecompany@gmail.com
 */
 
 #include "tis.h"
 
 int main (int argc, char** argv) {
-	printf("Starting app\n");
+	printf("Starting test\n");
 	
 	Graphics g = {
 		.window = NULL,
@@ -40,7 +25,7 @@ int main (int argc, char** argv) {
 		return(EXIT_FAILURE);
 	}
 	
-	g.window = SDL_CreateWindow("app", 
+	g.window = SDL_CreateWindow("Test", 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		g.w * g.c, g.h * g.r, 0
 	);
@@ -150,7 +135,7 @@ int main (int argc, char** argv) {
 	}
 	
 quit:
-	printf("Closing app\n");
+	printf("Closing test\n");
 	
 	freeCamera(camera);
 	
@@ -175,4 +160,20 @@ quit:
 	
 	return 0;
 }
+
+/*  This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    
+    Trees in Space  treesinspacecompany@gmail.com
+*/
 
