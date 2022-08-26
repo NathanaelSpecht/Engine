@@ -10,6 +10,19 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+void test (bool b, char* s);
+
+void test (bool b, char* s) {
+	if (b) { 
+		printf("pass ");
+	} else {
+		printf("FAIL ");
+	}
+	if (s != NULL) {
+		free(s);
+	}
+}
+
 int main (int argc, char** argv) {
 	printf("Starting test\n");
 	
@@ -17,344 +30,297 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("string_length: ");
-		if (string_length(NULL) == -1 && string_length("") == 0 && 
-		string_length("a") == 1 && string_length("hi") == 2 &&
-		string_length("Hello\nWorld!") == 12) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		test(string_length(NULL) == -1, NULL);
+		test(string_length("") == 0, NULL);
+		test(string_length("a") == 1, NULL);
+		test(string_length("hi") == 2, NULL);
+		test(string_length("Hello\nWorld!") == 12, NULL);
+		printf("\n");
 	}
 	
 	{
 		printf("string_equals: ");
-		if (string_equals(NULL, NULL) == true && string_equals("", "") == true &&
-		string_equals("Hello", "Hello") == true && 
-		string_equals("Hello", NULL) == false && 
-		string_equals("Hello", "World") == false &&
-		string_equals(NULL, "World") == false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		test(string_equals(NULL, NULL) == true, NULL);
+		test(string_equals("", "") == true, NULL);
+		test(string_equals("Hello", "Hello") == true, NULL);
+		test(string_equals("Hello", NULL) == false, NULL);
+		test(string_equals("Hello", "World") == false, NULL);
+		test(string_equals(NULL, "World") == false, NULL);
+		printf("\n");
 	}
 	
 	{
 		printf("string_copy: ");
 		char* a = NULL;
 		string_copy(NULL, &a);
+		test(a == NULL, a);
 		char* b = NULL;
 		string_copy("", &b);
+		test(string_equals("", b), b);
 		char* c = NULL;
 		string_copy("a", &c);
+		test(string_equals("a", c), c);
 		char* d = NULL;
 		string_copy("Hello", &d);
+		test(string_equals("Hello", d), d);
 		char* e = NULL;
 		string_copy("World", &e);
 		string_copy("", &e);
+		test(string_equals("", e), e);
 		char* f = NULL;
 		string_copy("Hello World!", &f);
 		string_copy(NULL, &f);
-		if (a == NULL && string_equals("", b) && string_equals("a", c) &&
-		string_equals("Hello", d) && string_equals("", e) && f == NULL) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
-		if (a != NULL) {
-			free(a);
-		}
-		if (b != NULL) {
-			free(b);
-		}
-		if (c != NULL) {
-			free(c);
-		}
-		if (d != NULL) {
-			free(d);
-		}
-		if (e != NULL) {
-			free(e);
-		}
-		if (f != NULL) {
-			free(f);
-		}
+		test(f == NULL, f);
+		printf("\n");
 	}
 	
 	{
 		printf("string_trim: ");
 		char* a = NULL;
-		string_copy(NULL, &a);
 		string_trim(&a);
+		test(a == NULL, a);
 		char* b = NULL;
 		string_copy("", &b);
 		string_trim(&b);
+		test(string_equals("", b), b);
 		char* c = NULL;
-		string_copy(" ", &c);
+		string_copy("c", &c);
 		string_trim(&c);
+		test(string_equals("c", c), c);
 		char* d = NULL;
-		string_copy(" a ", &d);
+		string_copy("d ", &d);
 		string_trim(&d);
+		test(string_equals("d", d), d);
 		char* e = NULL;
-		string_copy("\n\t Hello\n\tWorld ! \t\n", &e);
+		string_copy(" e", &e);
 		string_trim(&e);
-		if (a == NULL && string_equals("", b) && string_equals("", c) &&
-		string_equals("a", d) && string_equals("Hello\n\tWorld !", e)) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
-		if (a != NULL) {
-			free(a);
-		}
-		if (b != NULL) {
-			free(b);
-		}
-		if (c != NULL) {
-			free(c);
-		}
-		if (d != NULL) {
-			free(d);
-		}
-		if (e != NULL) {
-			free(e);
-		}
+		test(string_equals("e", e), e);
+		char* f = NULL;
+		string_copy(" f ", &f);
+		string_trim(&f);
+		test(string_equals("f", f), f);
+		char* g = NULL;
+		string_copy(" hi ", &g);
+		string_trim(&g);
+		test(string_equals("hi", g), g);
+		printf("\n");
 	}
 	
 	{
 		printf("string_append: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_prepend: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("substring: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		substring(0, 0, &a);
+		test(a == NULL, a);
+		char* b = NULL;
+		string_copy("", &b);
+		substring(0, 0, &a);
+		test(string_equals("", b), b);
+		char* c = NULL;
+		string_copy("Hello World", &c);
+		substring(0, 5, &c);
+		test(string_equals("Hello", c), c);
+		char* d = NULL;
+		string_copy("Hello World", &d);
+		substring(6, 5, &d);
+		test(string_equals("World", d), d);
+		char* e = NULL;
+		string_copy("Hello", &e);
+		substring(2, 7, &e);
+		test(string_equals("llo", e), e);
+		char* f = NULL;
+		string_copy("Hello", &f);
+		substring(5, 5, &f);
+		test(string_equals("", f), f);
+		char* g = NULL;
+		string_copy("Hello", &g);
+		substring(-5, 5, &g);
+		test(string_equals("", g), g);
+		char* h = NULL;
+		string_copy("Hello", &h);
+		substring(-2, 4, &h);
+		test(string_equals("He", h), h);
+		char* i = NULL;
+		string_copy("Hello", &i);
+		substring(-2, 10, &i);
+		test(string_equals("Hello", i), i);
+		printf("\n");
 	}
 	
 	{
 		printf("string_find: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_replace: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_replace_all: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_split: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_join: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_is_bool: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_is_int: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_is_float: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_to_bool: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_to_int: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("string_to_float: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("bool_to_string: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("int_to_string: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("float_to_string: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("ascii_to_hex: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("hex_to_ascii: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	printf("\n[tis_file]:\n");
 	
 	{
 		printf("file_read_ascii: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_read_hex: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_log: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_write_ascii: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_write_hex: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_append_ascii: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	{
 		printf("file_append_hex: ");
-		if (false) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
+		char* a = NULL;
+		test(false, a);
+		printf("\n");
 	}
 	
 	printf("\nClosing test\n");

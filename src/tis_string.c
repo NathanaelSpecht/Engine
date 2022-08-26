@@ -5,27 +5,84 @@
 
 #include "tis_string.h"
 #include <stddef.h>
+#include <stdlib.h>
 
 int string_length (const char* s) {
 /* Finds the length of a string s, not including the null-terminator. Strings 
    with only null chars have a length of 0. Null pointers have a length of -1.
 */
-	return -1;
+	if (s == NULL) {
+		return -1;
+	} else {
+		int i = 0;
+		for (; s[i] != '\0'; i++) {}
+		return i;
+	}
 }
 
 bool string_equals (const char* a, const char* b) {
 /* Checks if two strings are equal. */
-	return false;
+	if (a == NULL && b == NULL) {
+		return true;
+	} else if (a == NULL || b == NULL) {
+		return false;
+	} else {
+		int i = 0;
+		for (; a[i] != '\0' && b[i] != '\0'; i++) {
+			if (a[i] != b[i]) {
+				return false;
+			}
+		}
+		if (a[i] != b[i]) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 
 void string_copy (const char* a, char** s) {
 /* Reallocates an existing string s and copies another string a into it. */
-
+	char* t = *s;
+	if (a == NULL && t == NULL) {
+		return;
+	} else if (a == NULL && t != NULL) {
+		free(t);
+		t = NULL;
+	} else {
+		int n = string_length(a) + 1;
+		t = realloc(t, n);
+		for (int i = 0; i < n; i++) {
+			t[i] = a[i];
+		}
+	}
+	*s = t;
 }
 
 void string_trim (char** s) {
 /* Reallocates an existing string s and trims all whitespace off both ends. */
-
+	char* t = *s;
+	int len = string_length(t);
+	if (len > 0) {
+		int i = 0; int j = len - 1;
+		for (; i != j && (t[i] <= 32 || t[i] == 127); i++) {}
+		for (; j != i && (t[j] <= 32 || t[j] == 127); j--) {}
+		int n = (j + 1) - i;
+		
+		// vvv substring(i, n, &t) in-place
+		if (n == 0) {
+			free(t);
+			t = NULL;
+		} else {
+			for (int k = 0; k < n; k++) {
+				t[k] = t[i + k];
+			}
+			t[n] = '\0';
+			t = realloc(t, n + 1);
+		}
+		// ^^^
+	}
+	*s = t;
 }
 
 void string_append (const char* a, char** s) {
@@ -42,7 +99,25 @@ void substring (int start, int length, char** s) {
 /* Reallocates an existing string s, keeping part of it. start and 
    length describe the part to keep.
 */
-
+	char* t = *s;
+	int len = string_length(t);
+	if (len > 0 && (start != 0 || length != len)) {
+		if (start < len) {
+			length += start;
+		}
+		if (start < 0) {
+			start = 0;
+		}
+		
+		int count = 0;
+		for (int i = start; count < length && i < len; i++) {
+			t[count] = t[i];
+			count++;
+		}
+		t[count] = '\0';
+		t = realloc(t, count + 1);
+	}
+	*s = t;
 }
 
 int string_find (const char* find, int start, const char* s) {
