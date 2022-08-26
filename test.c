@@ -42,22 +42,21 @@ int main (int argc, char** argv) {
 	{
 		printf("string_copy: ");
 		char* a = NULL;
-		a = string_copy(NULL);
+		string_copy(NULL, &a);
 		char* b = NULL;
-		b = string_copy("");
+		string_copy("", &b);
 		char* c = NULL;
-		c = string_copy("a");
+		string_copy("a", &c);
 		char* d = NULL;
-		d = string_copy("Hello\nWorld!");
+		string_copy("Hello", &d);
 		char* e = NULL;
-		e = string_copy("Fizz");
-		e = string_copy("");
+		string_copy("World", &e);
+		string_copy("", &e);
 		char* f = NULL;
-		f = string_copy("Buzz");
-		f = string_copy(NULL);
+		string_copy("Hello World!", &f);
+		string_copy(NULL, &f);
 		if (a == NULL && string_equals("", b) && string_equals("a", c) &&
-		string_equals("Hello\nWorld!", d) && string_equals("", e) &&
-		f == NULL) {
+		string_equals("Hello", d) && string_equals("", e) && f == NULL) {
 			printf("pass\n");
 		} else {
 			printf("FAILURE\n");
@@ -85,19 +84,19 @@ int main (int argc, char** argv) {
 	{
 		printf("string_trim: ");
 		char* a = NULL;
-		a = string_copy(NULL);
+		string_copy(NULL, &a);
 		string_trim(&a);
 		char* b = NULL;
-		b = string_copy("");
+		string_copy("", &b);
 		string_trim(&b);
 		char* c = NULL;
-		c = string_copy(" ");
+		string_copy(" ", &c);
 		string_trim(&c);
 		char* d = NULL;
-		d = string_copy(" a ");
+		string_copy(" a ", &d);
 		string_trim(&d);
 		char* e = NULL;
-		e = string_copy("\n\t Hello\n\tWorld ! \t\n");
+		string_copy("\n\t Hello\n\tWorld ! \t\n", &e);
 		string_trim(&e);
 		if (a == NULL && string_equals("", b) && string_equals("", c) &&
 		string_equals("a", d) && string_equals("Hello\n\tWorld !", e)) {
@@ -119,52 +118,6 @@ int main (int argc, char** argv) {
 		}
 		if (e != NULL) {
 			free(e);
-		}
-	}
-	
-	{
-		printf("string_assign: ");
-		char* a = NULL;
-		a = string_copy(NULL);
-		string_assign(NULL, &a);
-		char* b = NULL;
-		b = string_copy("");
-		string_assign("", &b);
-		char* c = NULL;
-		c = string_copy("a");
-		string_assign("a", &c);
-		char* d = NULL;
-		d = string_copy("Hello");
-		string_assign("World", &d);
-		char* e = NULL;
-		e = string_copy("Hello");
-		string_assign("", &e);
-		char* f = NULL;
-		f = string_copy("World");
-		string_assign(NULL, &f);
-		if (a == NULL && string_equals("", b) && string_equals("a", c) &&
-		string_equals("World", d) && string_equals("", e) && f == NULL) {
-			printf("pass\n");
-		} else {
-			printf("FAILURE\n");
-		}
-		if (a != NULL) {
-			free(a);
-		}
-		if (b != NULL) {
-			free(b);
-		}
-		if (c != NULL) {
-			free(c);
-		}
-		if (d != NULL) {
-			free(d);
-		}
-		if (e != NULL) {
-			free(e);
-		}
-		if (f != NULL) {
-			free(f);
 		}
 	}
 	
