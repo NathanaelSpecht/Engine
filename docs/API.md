@@ -33,31 +33,31 @@ written as `change_string(&my_string)`. This is more readable and less verbose.
 
 # tis_string.h
 
-- [x] `int string_length (char* s)`
-Finds the length of a string `s`, not including the null-terminator. NULL 
+[x] `int string_length (char* s)`
+	- Finds the length of a string `s`, not including the null-terminator. NULL 
 strings have length 0.
 
 - [x] `void string_delete (char** s)`
-Frees `s` and sets it to NULL, if not already NULL.
+	- Frees `s` and sets it to NULL, if not already NULL.
 
 - [x] `bool string_equals (char* a, char* b)`
-Checks if two strings are equal.
+	- Checks if two strings are equal.
 
 - [x] `void string_copy (char* a, char** s)`
-Copies `a` into `s`.
+	- Copies `a` into `s`.
 
 - [x] `void substring (char* a, int start, int length, char** s)`
-Takes a substring of `a` and stores it in `s`. `start` and `length`
+	- Takes a substring of `a` and stores it in `s`. `start` and `length`
 describe the substring.
 
 - [x] `void string_trim (char** s)`
-Trims all whitespace off both ends of `s`.
+	- Trims all whitespace off both ends of `s`.
 
 - [ ] `void string_append_char (char ch, int length, char** s)`
-Quickly appends char `ch` to `s`. `length` is the length of `s`.
+	- Quickly appends char `ch` to `s`. `length` is the length of `s`.
 
 - [ ] `void string_append (char* a, char** s)`
-Appends `a` to `s`.
+	- Appends `a` to `s`.
 
 - [ ] `void string_prepend (char* a, char** s)`
 Prepends `a` to `s`.
