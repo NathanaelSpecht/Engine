@@ -53,7 +53,7 @@ Compile with `make test` then run with `./test`.
 
 Test will conduct unit tests on every function in TIS.
 Passing tests will print "pass" to stdout.
-Failing tests will print "FAILURE" to stdout.
+Failing tests will print "FAIL" to stdout.
 
 If TIS passes all unit tests, then it is ready for use in your projects.
 
