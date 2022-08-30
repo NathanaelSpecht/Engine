@@ -31,7 +31,7 @@ Doing so allows functions to realloc pointers passed to them without needing to
 return. For example, `my_string = change_string(my_string)` can instead be 
 written as `change_string(&my_string)`. This is more readable and less verbose.
 
-# tis_string.h
+## tis_string.h
 
 - [x] `int string_length (char* s)`
 	- Finds the length of a string `s`, not including the null-terminator. NULL 
@@ -88,7 +88,7 @@ NULL lists have length 0.
 - [ ] `void string_join (char** list, char ch, char** s)`
 	- Joins `list` on `ch` into a string `s`.
 
-# tis_convert.h
+## tis_convert.h
 
 - [ ] `bool string_is_bool (char* s)`
 	- Checks string `s` can be evaluated as bool.
@@ -128,7 +128,7 @@ unrepresentable codes. Valid options are listed below:
 	- "stringX" -> replace with string "X"
 	- else -> replace with `option` string, followed by 2-digit hex code
 
-# tis_file.h
+## tis_file.h
 
 - [ ] `void read_text (char* file, char** ascii)`
 	- Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
@@ -153,16 +153,16 @@ as `write_text`, else appends to end.
 	- Appends `hex` codes as bytes to end of `file`. If file does not exist, 
 works the same as `write_data`, else appends to end.
 
-# tis_state.h
+## tis_state.h
 
-# tis_transform.h
+## tis_transform.h
 
-# tis_render.h
+## tis_render.h
 
-# tis_music.h
+## tis_music.h
 
-# tis_world.h
+## tis_world.h
 
-# tis_network.h
+## tis_network.h
 
 
