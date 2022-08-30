@@ -1,4 +1,4 @@
-# Trees in Space game engine API
+# TIS game engine API
 
 This is the API provided for your code to interface with TIS.
 **TIS is still in early development, so this API is subject to change.**
