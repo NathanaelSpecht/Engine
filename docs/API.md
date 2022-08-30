@@ -33,7 +33,7 @@ written as `change_string(&my_string)`. This is more readable and less verbose.
 
 # tis_string.h
 
-[x] `int string_length (char* s)`
+- [x] `int string_length (char* s)`
 	- Finds the length of a string `s`, not including the null-terminator. NULL 
 strings have length 0.
 
@@ -60,68 +60,68 @@ describe the substring.
 	- Appends `a` to `s`.
 
 - [ ] `void string_prepend (char* a, char** s)`
-Prepends `a` to `s`.
+	- Prepends `a` to `s`.
 
 - [ ] `int string_find (char* a, int start, char* s)`
-Finds the first index in `s` of a string `a`, starting at `start`.
+	- Finds the first index in `s` of a string `a`, starting at `start`.
 
 - [ ] `void string_replace (char* a, int start, int length, char** s)`
-Replaces a region in `s` with `a`. `start` and `length` describe the 
+	- Replaces a region in `s` with `a`. `start` and `length` describe the 
 region to replace.
 
 - [ ] `void string_find_replace (char* a, char* b, char** s)`
-Replaces all regions matching `a` in `s` with `b`.
+	- Replaces all regions matching `a` in `s` with `b`.
 
 - [x] `int stringlist_length (char** list)`
-Finds the number of strings in `list`, not including the null-terminator. 
+	- Finds the number of strings in `list`, not including the null-terminator. 
 NULL lists have length 0.
 
 - [x] `void stringlist_delete (char*** list)`
-Frees `list` and sets it to NULL, if not already NULL.
+	- Frees `list` and sets it to NULL, if not already NULL.
 
 - [x] `void stringlist_add (char* s, char*** list)`
-Appends a string `s` to the end of `list`.
+	- Appends a string `s` to the end of `list`.
 
 - [ ] `void string_split (char* s, char ch, char*** list)`
-Splits `s` on separator `ch` into a list of strings `list`.
+	- Splits `s` on separator `ch` into a list of strings `list`.
 
 - [ ] `void string_join (char** list, char ch, char** s)`
-Joins `list` on `ch` into a string `s`.
+	- Joins `list` on `ch` into a string `s`.
 
 # tis_convert.h
 
 - [ ] `bool string_is_bool (char* s)`
-Checks string `s` can be evaluated as bool.
+	- Checks string `s` can be evaluated as bool.
 
 - [ ] `bool string_is_int (char* s)`
-Checks if `s` can be evaluated as int.
+	- Checks if `s` can be evaluated as int.
 
 - [ ] `bool string_is_float (char* s)`
-Checks if `s` can be evaluated as float.
+	- Checks if `s` can be evaluated as float.
 
 - [ ] `bool string_to_bool (char* s)`
-Evaluates `s` as bool.
+	- Evaluates `s` as bool.
 
 - [ ] `int string_to_int (char* s)`
-Evaluates `s` as int.
+	- Evaluates `s` as int.
 
 - [ ] `float string_to_float (char* s)`
-Evaluates `s` as float.
+	- Evaluates `s` as float.
 
 - [ ] `void bool_to_string (bool b, char** s)`
-Evaluates bool `b` as a string, storing it in `s`.
+	- Evaluates bool `b` as a string, storing it in `s`.
 
 - [ ] `void int_to_string (int i, char** s)`
-Evaluates int `i` as a string `s`.
+	- Evaluates int `i` as a string `s`.
 
 - [ ] `void float_to_string (float f, char** s)`
-Evaluates float `f` as a string `s`.
+	- Evaluates float `f` as a string `s`.
 
 - [ ] `void ascii_to_hex (char* ascii, char** hex)`
-Converts an `ascii` string to `hex`.
+	- Converts an `ascii` string to `hex`.
 
 - [ ] `void hex_to_ascii (char* hex, char* option, char** ascii)`
-Converts a `hex` string to `ascii`. Ascii cannot contain null or 8-bit 
+	- Converts a `hex` string to `ascii`. Ascii cannot contain null or 8-bit 
 codes, but hex can, so an `option` string is provided to choose the response to 
 unrepresentable codes. Valid options are listed below:
 	- "" or NULL -> skip
@@ -131,26 +131,26 @@ unrepresentable codes. Valid options are listed below:
 # tis_file.h
 
 - [ ] `void read_text (char* file, char** ascii)`
-Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
+	- Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
 bytes, and closes the file.
 
 - [ ] `void read_data (char* file, char** hex)`
-Opens `file`, reads all of its bytes as `hex`, and closes the file.
+	- Opens `file`, reads all of its bytes as `hex`, and closes the file.
 
 - [ ] `void write_text (char* ascii, char* file)`
-Writes `ascii` into `file`. If file does not exist, creates it, otherwise 
+	- Writes `ascii` into `file`. If file does not exist, creates it, otherwise 
 overwrites it.
 
 - [ ] `void write_data (char* hex, char* file)`
-Writes `hex` codes as bytes into `file`. If file does not exist, creates 
+	- Writes `hex` codes as bytes into `file`. If file does not exist, creates 
 it, otherwise overwrites it.
 
 - [ ] `void append_text (char* ascii, char* file)`
-Appends `ascii` to end of `file`. If file does not exist, works the same 
+	- Appends `ascii` to end of `file`. If file does not exist, works the same 
 as `write_text`, else appends to end.
 
 - [ ] `void append_data (char* hex, char* file)`
-Appends `hex` codes as bytes to end of `file`. If file does not exist, 
+	- Appends `hex` codes as bytes to end of `file`. If file does not exist, 
 works the same as `write_data`, else appends to end.
 
 # tis_state.h
