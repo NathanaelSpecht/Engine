@@ -125,8 +125,8 @@ NULL lists have length 0.
 codes, but hex can, so an `option` string is provided to choose the response to 
 unrepresentable codes. Valid options are listed below:
 	- "" or NULL -> skip
-	- "stringX"    -> replace with string "X"
-	- else       -> replace with `option` string, followed by 2-digit hex code
+	- "stringX" -> replace with string "X"
+	- else -> replace with `option` string, followed by 2-digit hex code
 
 # tis_file.h
 
