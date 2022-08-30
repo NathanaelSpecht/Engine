@@ -28,7 +28,7 @@ explicitly stated in the changelog.
 # Links
 
 Included files:
-- TIS uses the zlib license, which can be found in the LICENSE file.
+- The license for TIS can be found in the LICENSE file.
 - TIS links to the SDL library. The license for it can be found in the `sdl` 
 folder.
 - All graphics included with this project are made by me and are free to use. 
