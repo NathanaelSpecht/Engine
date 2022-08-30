@@ -1,5 +1,8 @@
 # Game Engine
 
+This is my personal TODO list.
+See `API.md` for API documentation for the TIS game engine.
+
 Don't re-invent the wheel:
 - [x] Write in C for easy compatibility with SDL2.
 TIS is not meant to be a wrapper for SDL, but is meant to be used alongside it.
@@ -13,6 +16,4 @@ Detect bugs before release with:
 - [x] Compiler flags
 - [x] Tests
 - [ ] Log files
-
-See `API.md` for the checklist of behaviors and functions.
 

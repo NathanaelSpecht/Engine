@@ -1,4 +1,7 @@
 
+# Makefile -- Compiles the 'TIS' game engine library
+# version 0.1, 2022 August 30
+
 ifeq ($(OS),Windows_NT)
 COMPILE = gcc -O0 -Wall -Wno-unused-variable -Wl,-subsystem,windows
 SOURCE = src\tis_string.c \
@@ -28,15 +31,17 @@ hello:
 	$(COMPILE) hello.c -o hello $(LIBRARY)
 
 help:
-	@echo "Trees In Space Engine (TIS) game engine functions."
+	@echo "'TIS' game engine library"
+	@echo "version 0.1, 2022 August 30"
 	@echo ""
 	@echo "  Command       App Name  Description"
-	@echo "  'make'        'app'     Example app implemented with TIS."
+	@echo "  'make'        'app'     Old app. Probably doesn't compile."
 	@echo "  'make test'   'test'    Unit tests."
 	@echo "  'make hello'  'hello'   Compilation environment test."
 	@echo "  'make help'             Display this message."
 	@echo ""
 	@echo "  On Windows, use 'mingw32-make' instead of 'make'."
 	@echo ""
-	@echo "Copyright (C) 2022  Nathanael Specht"
+	@echo "Copyright (C) 2022 Nathanael Specht"
+	@echo "Refer to LICENSE for licensing."
 

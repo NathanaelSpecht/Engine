@@ -1,6 +1,6 @@
 
-/*  tis_string.h  String API for TIS.
-    Copyright (C) 2022  Trees in Space
+/*  tis_string.h -- interface of the 'TIS' game engine library.
+    version 0.1, 2022 August 30
 */
 
 #ifndef TIS_STRING_H
@@ -28,20 +28,4 @@ void string_split (const char* s, char ch, char*** list);
 void string_join (char** list, char ch, char** s);
 
 #endif
-
-/*  This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    Trees in Space  treesinspacecompany@gmail.com
-*/
 
