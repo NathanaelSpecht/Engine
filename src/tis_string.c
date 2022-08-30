@@ -8,11 +8,8 @@
 #include <stdlib.h>
 
 int string_length (const char* s) {
-/* Finds the length of a string s, not including the null-terminator. Strings 
-   with only null chars have a length of 0. Null pointers have a length of -1.
-*/
 	if (s == NULL) {
-		return -1;
+		return 0;
 	} else {
 		int i = 0;
 		for (; s[i] != '\0'; i++) {}
@@ -20,9 +17,17 @@ int string_length (const char* s) {
 	}
 }
 
+void string_delete (char** s) {
+	char* t = *s;
+	if (t != NULL) {
+		free(t);
+		t = NULL;
+		*s = t;
+	}
+}
+
 bool string_equals (const char* a, const char* b) {
-/* Checks if two strings are equal. */
-	if (a == NULL && b == NULL) {
+	if (a == b) { // both null, or both point to same memory.
 		return true;
 	} else if (a == NULL || b == NULL) {
 		return false;
@@ -42,9 +47,8 @@ bool string_equals (const char* a, const char* b) {
 }
 
 void string_copy (const char* a, char** s) {
-/* Reallocates an existing string s and copies another string a into it. */
 	char* t = *s;
-	if (a == NULL && t == NULL) {
+	if (a == t) { // both null, or both point to same memory.
 		return;
 	} else if (a == NULL && t != NULL) {
 		free(t);
@@ -59,8 +63,34 @@ void string_copy (const char* a, char** s) {
 	*s = t;
 }
 
+void substring (const char* a, int start, int length, char** s) {
+	char* t = *s;
+	int len = string_length(a);
+	if (len > 0 && start >= 0 && start < len && length >= 0 && 
+	start + length <= len) {
+		if (a == t) { // both point to same memory.
+			// substring in-place.
+			int j = start;
+			for (int i = 0; i < length; i++) {
+				t[i] = a[j];
+				j++;
+			}
+			t[length] = '\0';
+			t = realloc(t, length + 1);
+		} else { // different memories.
+			t = realloc(t, length + 1);
+			int j = start;
+			for (int i = 0; i < length; i++) {
+				t[i] = a[j];
+				j++;
+			}
+			t[length] = '\0';
+		}
+		*s = t;
+	}
+}
+
 void string_trim (char** s) {
-/* Reallocates an existing string s and trims all whitespace off both ends. */
 	char* t = *s;
 	int len = string_length(t);
 	if (len > 0) {
@@ -69,152 +99,103 @@ void string_trim (char** s) {
 		for (; j != i && (t[j] <= 32 || t[j] == 127); j--) {}
 		int n = (j + 1) - i;
 		
-		// vvv substring(i, n, &t) in-place
-		if (n == 0) {
-			free(t);
-			t = NULL;
-		} else {
-			for (int k = 0; k < n; k++) {
-				t[k] = t[i + k];
-			}
-			t[n] = '\0';
-			t = realloc(t, n + 1);
-		}
-		// ^^^
+		substring(t, i, n, &t);
+		*s = t;
 	}
-	*s = t;
+}
+
+void string_append_char (char ch, int length, char** s) {
+
 }
 
 void string_append (const char* a, char** s) {
-/* Reallocates an existing string s and appends another string a to it. */
-
+	int len = string_length(a);
+	if (len > 0) {
+		char* t = *s;
+		int n = string_length(t);
+		int m = n + len;
+		t = realloc(t, m + 1);
+		for (int i = n; i < m; i++) {
+			t[i] = a[i - n];
+		}
+		t[m] = '\0';
+		*s = t;
+	}
 }
 
 void string_prepend (const char* a, char** s) {
-/* Reallocates an existing string s and prepends another string a to it. */
-
-}
-
-void substring (int start, int length, char** s) {
-/* Reallocates an existing string s, keeping part of it. start and 
-   length describe the part to keep.
-*/
-	char* t = *s;
-	int len = string_length(t);
-	if (len > 0 && (start != 0 || length != len)) {
-		if (start < len) {
-			length += start;
+	int len = string_length(a);
+	if (len > 0) {
+		char* t = *s;
+		int n = string_length(t);
+		int m = len + n;
+		t = realloc(t, m + 1);
+		for (int i = len; i < m; i++) {
+			t[i] = t[i - len];
 		}
-		if (start < 0) {
-			start = 0;
+		t[m] = '\0';
+		if (a != t) { // different memories.
+			for (int i = 0; i < len; i++) {
+				t[i] = a[i];
+			}
 		}
-		
-		int count = 0;
-		for (int i = start; count < length && i < len; i++) {
-			t[count] = t[i];
-			count++;
-		}
-		t[count] = '\0';
-		t = realloc(t, count + 1);
+		*s = t;
 	}
-	*s = t;
 }
 
-int string_find (const char* find, int start, const char* s) {
-/* Finds the index of the first occurrance of a string in another string s, 
-   starting at a given index.
-*/
+int string_find (const char* a, int start, const char* s) {
 	return 0;
 }
 
-void string_replace (const char* find, const char* replace, int start, 
-char** s) {
-/* Replaces the first occurrance of a string in another string s, starting at 
-   a given index.
-*/
+void string_replace (const char* a, int start, int length, char** s) {
 
 }
 
-void string_replace_all (const char* find, const char* replace, char** s) {
-/* Replaces all occurrances of a string in another string s. */
+void string_find_replace (const char* a, const char* b, char** s) {
 
+}
+
+int stringlist_length (char** list) {
+	if (list == NULL) {
+		return 0;
+	} else {
+		int i = 0;
+		for (; list[i] != NULL; i++) {}
+		return i;
+	}
+}
+
+void stringlist_delete (char*** list) {
+	char** t = *list;
+	if (t != NULL) {
+		for (int i = 0; t[i] != NULL; i++) {
+			free(t[i]);
+			t[i] = NULL;
+		}
+		free(t);
+		t = NULL;
+		*list = t;
+	}
+}
+
+void stringlist_add (const char* s, char*** list) {
+	if (s != NULL) {
+		char** t = *list;
+		int len = stringlist_length(t);
+		t = realloc(t, sizeof(char*) * (len + 2));
+		char* u = NULL;
+		string_copy(s, &u);
+		t[len] = u;
+		t[len + 1] = NULL;
+		*list = t;
+	}
 }
 
 void string_split (const char* s, char ch, char*** list) {
-/* Splits an existing string s on a given separator ch into a 
-   reallocated list of strings. Just like strings, the list of strings is 
-   null-terminated.
-*/
 
 }
 
-void string_join (const char** list, char ch, char** s) {
-/* Joins an existing list of strings together with the given separator ch 
-   into one reallocated string s. Just like strings, the list of strings should 
-   be null-terminated.
-*/
-
-}
-
-bool string_is_bool (const char* s) {
-/* Checks if an existing string can be evaluated as a bool. */
-	return false;
-}
-
-bool string_is_int (const char* s) {
-/* Checks if an existing string can be evaluated as an int. */
-	return false;
-}
-
-bool string_is_float (const char* s) {
-/* Checks if an existing string can be evaluated as a float. */
-	return false;
-}
-
-bool string_to_bool (const char* s) {
-/* Evaluates an existing string as a bool. */
-	return false;
-}
-
-int string_to_int (const char* s) {
-/* Evaluates an existing string as an int. */
-	return 0;
-}
-
-float string_to_float (const char* s) {
-/* Evaluates an existing string as a float. */
-	return 0.0;
-}
-
-void bool_to_string (bool b, char** s) {
-/* Evaluates a bool as a string. */
-
-}
-
-void int_to_string (int i, char** s) {
-/* Evaluates an int as a string. */
-
-}
-
-void float_to_string (float f, char** s) {
-/* Evaluates a float as a string. */
-
-}
-
-void ascii_to_hex (const char* ascii, char** hex) {
-/* Converts a us-ascii string to hexadecimal. */
-
-}
-
-void hex_to_ascii (const char* hex, const char* option, char** ascii) {
-/* Converts a hexadecimal string to us-ascii. US-ascii strings are 
-   null-terminated and 7 bits, so you must give an option for this function's 
-   response to offending hexadecimal codes:
-	- If "" or null-pointer, then output "".
-	- Else if "charX", then output the char X.
-	- Else output the option string, followed by "XX" where XX is the 
-	offending hexadecimal code.
-*/
+void string_join (char** list, char ch, char** s) {
 
 }
 

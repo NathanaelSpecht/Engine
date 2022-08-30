@@ -5,14 +5,12 @@ This is the API provided for your code to interface with TIS.
 
 Behaviors:
 - [ ] String functions with better boundary condition checking than the c 
-standard library. Is meant to replace the c standard library's `string.h`, 
-should not be used alongside it because possible name collisions. Includes 
-string-to-type and type-to-string conversion functions, as well as is-type
-functions to check if a string-to-type conversion will succeed.
+standard library. Is meant to replace the c standard library's `string.h`, but 
+can be used alongside it, because there are no name collisions.
+- [ ] Conversion functions for string-to-type and type-to-string conversion, as 
+well as is-type functions to check if a string-to-type conversion will succeed.
 - [ ] File function wrappers around the c standard library's `stdio.h`.
 Is meant as quality of life improvement.
-- [ ] Network function wrappers around the network sockets. Is meant as quality 
-of life improvement.
 - [ ] State machines meant for dialogue, animation, event chains, gui, network 
 connections, and ai. Anything with more than two states that needs simple logic 
 for switching between them.
@@ -24,128 +22,136 @@ of life improvement.
 - [ ] World, scene, object, hitbox, entity, and vehicle modeling. 3D model of 
 the game world, disparate from the process used to render it. Compatible with
 state machines.
+- [ ] Network function wrappers around the network sockets. Is meant as quality 
+of life improvement.
 
-TIS functions return a value if they do not allocate memory. If a function does 
-allocate memory, then you must give the address of the pointer to that memory.
+TIS functions return a value if they do not allocate memory. If a function 
+allocates memory, then you must give the address of the pointer to that memory.
+Doing so allows functions to realloc pointers passed to them without needing to 
+return. For example, `my_string = change_string(my_string)` can instead be 
+written as `change_string(&my_string)`. This is more readable and less verbose.
 
 # tis_string.h
 
 `int string_length (char* s)`
-- [ ] Finds the length of a string `s`, not including the null-terminator. 
-Strings with only null chars have a length of 0. Null pointers have a length of 
--1.
+- [x] Finds the length of a string `s`, not including the null-terminator. NULL 
+strings have length 0.
+
+`void string_delete (char** s)`
+- [x] Frees `s` and sets it to NULL, if not already NULL.
 
 `bool string_equals (char* a, char* b)`
-- [ ] Checks if two strings are equal.
+- [x] Checks if two strings are equal.
 
 `void string_copy (char* a, char** s)`
-- [ ] Reallocates an existing string `s` and copies another string `a` into it.
+- [x] Copies `a` into `s`.
+
+`void substring (char* a, int start, int length, char** s)`
+- [x] Takes a substring of `a` and stores it in `s`. `start` and `length`
+describe the substring.
 
 `void string_trim (char** s)`
-- [ ] Reallocates an existing string `s` and trims all whitespace off both ends.
+- [x] Trims all whitespace off both ends of `s`.
+
+`void string_append_char (char ch, int length, char** s)`
+- [ ] Quickly appends char `ch` to `s`. `length` is the length of `s`.
 
 `void string_append (char* a, char** s)`
-- [ ] Reallocates an existing string `s` and appends another string `a` to it.
+- [ ] Appends `a` to `s`.
 
 `void string_prepend (char* a, char** s)`
-- [ ] Reallocates an existing string `s` and prepends another string `a` to it.
+- [ ] Prepends `a` to `s`.
 
-`void substring (int start, int length, char** s)`
-- [ ] Reallocates an existing string `s`, keeping part of it. `start` and 
-`length` describe the part to keep.
+`int string_find (char* a, int start, char* s)`
+- [ ] Finds the first index in `s` of a string `a`, starting at `start`.
 
-`int string_find (char* find, int start, char* s)`
-- [ ] Finds the index of the first occurrance of a string in another string 
-`s`, starting at a given index.
+`void string_replace (char* a, int start, int length, char** s)`
+- [ ] Replaces a region in `s` with `a`. `start` and `length` describe the 
+region to replace.
 
-`void string_replace (char* find, char* replace, int start, char** s)`
-- [ ] Replaces the first occurrance of a string in another string `s`, starting 
-at a given index.
+`void string_find_replace (char* a, char* b, char** s)`
+- [ ] Replaces all regions matching `a` in `s` with `b`.
 
-`void string_replace_all (char* find, char* replace, char** s)`
-- [ ] Replaces all occurrances of a string in another string `s`.
+`int stringlist_length (char** list)`
+- [x] Finds the number of strings in `list`, not including the null-terminator. 
+NULL lists have length 0.
+
+`void stringlist_delete (char*** list)`
+- [x] Frees `list` and sets it to NULL, if not already NULL.
+
+`void stringlist_add (char* s, char*** list)`
+- [x] Appends a string `s` to the end of `list`.
 
 `void string_split (char* s, char ch, char*** list)`
-- [ ] Splits an existing string `s` on a given separator `ch` into a 
-reallocated list of strings. Just like strings, the list of strings is 
-null-terminated.
+- [ ] Splits `s` on separator `ch` into a list of strings `list`.
 
 `void string_join (char** list, char ch, char** s)`
-- [ ] Joins an existing list of strings together with the given separator `ch` 
-into one reallocated string `s`. Just like strings, the list of strings should 
-be null-terminated.
+- [ ] Joins `list` on `ch` into a string `s`.
 
-`bool isbool string_is_bool (char* s)`
-- [ ] Checks if an existing string can be evaluated as a bool.
+# tis_convert.h
 
-`bool isint string_is_int (char* s)`
-- [ ] Checks if an existing string can be evaluated as an int.
+`bool string_is_bool (char* s)`
+- [ ] Checks string `s` can be evaluated as bool.
 
-`bool isfloat string_is_float (char* s)`
-- [ ] Checks if an existing string can be evaluated as a float.
+`bool string_is_int (char* s)`
+- [ ] Checks if `s` can be evaluated as int.
+
+`bool string_is_float (char* s)`
+- [ ] Checks if `s` can be evaluated as float.
 
 `bool string_to_bool (char* s)`
-- [ ] Evaluates an existing string as a bool.
+- [ ] Evaluates `s` as bool.
 
 `int string_to_int (char* s)`
-- [ ] Evaluates an existing string as an int.
+- [ ] Evaluates `s` as int.
 
 `float string_to_float (char* s)`
-- [ ] Evaluates an existing string as a float.
+- [ ] Evaluates `s` as float.
 
 `void bool_to_string (bool b, char** s)`
-- [ ] Evaluates a bool as a string.
+- [ ] Evaluates bool `b` as a string, storing it in `s`.
 
 `void int_to_string (int i, char** s)`
-- [ ] Evaluates an int as a string.
+- [ ] Evaluates int `i` as a string `s`.
 
 `void float_to_string (float f, char** s)`
-- [ ] Evaluates a float as a string.
+- [ ] Evaluates float `f` as a string `s`.
 
 `void ascii_to_hex (char* ascii, char** hex)`
-- [ ] Converts a us-ascii string to hexadecimal.
+- [ ] Converts an `ascii` string to `hex`.
 
 `void hex_to_ascii (char* hex, char* option, char** ascii)`
-- [ ] Converts a hexadecimal string to us-ascii. US-ascii strings are 
-null-terminated and 7 bits, so you must give an `option` for this function's 
-response to offending hexadecimal codes:
-	- If "" or null-pointer, then output "".
-	- Else if "charX", then output the char X.
-	- Else output the `option` string, followed by "XX" where XX is the 
-	offending hexadecimal code.
+- [ ] Converts a `hex` string to `ascii`. Ascii cannot contain null or 8-bit 
+codes, but hex can, so an `option` string is provided to choose the response to 
+unrepresentable codes. Valid options are listed below:
+	- "" or NULL -> skip
+	- "stringX"    -> replace with string "X"
+	- else       -> replace with `option` string, followed by 2-digit hex code
 
 # tis_file.h
 
-`void file_log (char* ascii)`
-- [ ] Appends a timestamp to `log` file, followed by us-ascii data.
+`void read_text (char* file, char** ascii)`
+- [ ] Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
+bytes, and closes the file.
 
-`void file_read_ascii (char* file, char** ascii)`
-- [ ] Opens a file, reads all of its data into a us-ascii string, and closes 
-the file.
+`void read_data (char* file, char** hex)`
+- [ ] Opens `file`, reads all of its bytes as `hex`, and closes the file.
 
-`void file_read_hex (char* file, char** hex)`
-- [ ] Opens a file, reads all of its data into a hexadecimal string, and closes 
-the file.
+`void write_text (char* ascii, char* file)`
+- [ ] Writes `ascii` into `file`. If file does not exist, creates it, otherwise 
+overwrites it.
 
-`void file_write_ascii (char* ascii, char* file)`
-- [ ] If file does not exist: creates a new file, writes us-ascii data into 
-it, and closes the file. If file exists: overwrites the file with us-ascii 
-data, and closes the file.
+`void write_data (char* hex, char* file)`
+- [ ] Writes `hex` codes as bytes into `file`. If file does not exist, creates 
+it, otherwise overwrites it.
 
-`void file_write_hex (char* hex, char* file)`
-- [ ] If file does not exist: creates a new file, writes hexadecimal data into 
-it, and closes the file. If file exists: overwrites the file with hexadecimal 
-data, and closes the file.
+`void append_text (char* ascii, char* file)`
+- [ ] Appends `ascii` to end of `file`. If file does not exist, works the same 
+as `write_text`, else appends to end.
 
-`void file_append_ascii (char* ascii, char* file)`
-- [ ] If file does not exist: works the same as `file_write_ascii`. If file 
-exists: appends us-ascii data to the end, and closes the file.
-
-`void file_append_hex (char* hex, char* file)`
-- [ ] If file does not exist: works the same as `file_write_hex`. If file 
-exists: appends hexadecimal data to the end, and closes the file.
-
-# tis_network.h
+`void append_data (char* hex, char* file)`
+- [ ] Appends `hex` codes as bytes to end of `file`. If file does not exist, 
+works the same as `write_data`, else appends to end.
 
 # tis_state.h
 
@@ -156,5 +162,7 @@ exists: appends hexadecimal data to the end, and closes the file.
 # tis_music.h
 
 # tis_world.h
+
+# tis_network.h
 
 

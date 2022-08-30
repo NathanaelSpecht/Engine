@@ -9,95 +9,23 @@
 #include <stdbool.h>
 
 int string_length (const char* s);
-/* Finds the length of a string s, not including the null-terminator. Strings 
-   with only null chars have a length of 0. Null pointers have a length of -1.
-*/
-
+void string_delete (char** s);
 bool string_equals (const char* a, const char* b);
-/* Checks if two strings are equal. */
-
 void string_copy (const char* a, char** s);
-/* Reallocates an existing string s and copies another string a into it. */
-
+void substring (const char* a, int start, int length, char** s);
 void string_trim (char** s);
-/* Reallocates an existing string s and trims all whitespace off both ends. */
-
+void string_append_char (char ch, int length, char** s);
 void string_append (const char* a, char** s);
-/* Reallocates an existing string s and appends another string a to it. */
-
 void string_prepend (const char* a, char** s);
-/* Reallocates an existing string s and prepends another string a to it. */
+int string_find (const char* a, int start, const char* s);
+void string_replace (const char* a, int start, int length, char** s);
+void string_find_replace (const char* a, const char* b, char** s);
 
-void substring (int start, int length, char** s);
-/* Reallocates an existing string s, keeping part of it. start and 
-   length describe the part to keep.
-*/
-
-int string_find (const char* find, int start, const char* s);
-/* Finds the index of the first occurrance of a string in another string s, 
-   starting at a given index.
-*/
-
-void string_replace (const char* find, const char* replace, int start, 
-char** s);
-/* Replaces the first occurrance of a string in another string s, starting at 
-   a given index.
-*/
-
-void string_replace_all (const char* find, const char* replace, char** s);
-/* Replaces all occurrances of a string in another string s. */
-
+int stringlist_length (char** list);
+void stringlist_delete (char*** list);
+void stringlist_add (const char* s, char*** list);
 void string_split (const char* s, char ch, char*** list);
-/* Splits an existing string s on a given separator ch into a 
-   reallocated list of strings. Just like strings, the list of strings is 
-   null-terminated.
-*/
-
-void string_join (const char** list, char ch, char** s);
-/* Joins an existing list of strings together with the given separator ch 
-   into one reallocated string s. Just like strings, the list of strings should 
-   be null-terminated.
-*/
-
-bool string_is_bool (const char* s);
-/* Checks if an existing string can be evaluated as a bool. */
-
-bool string_is_int (const char* s);
-/* Checks if an existing string can be evaluated as an int. */
-
-bool string_is_float (const char* s);
-/* Checks if an existing string can be evaluated as a float. */
-
-bool string_to_bool (const char* s);
-/* Evaluates an existing string as a bool. */
-
-int string_to_int (const char* s);
-/* Evaluates an existing string as an int. */
-
-float string_to_float (const char* s);
-/* Evaluates an existing string as a float. */
-
-void bool_to_string (bool b, char** s);
-/* Evaluates a bool as a string. */
-
-void int_to_string (int i, char** s);
-/* Evaluates an int as a string. */
-
-void float_to_string (float f, char** s);
-/* Evaluates a float as a string. */
-
-void ascii_to_hex (const char* ascii, char** hex);
-/* Converts a us-ascii string to hexadecimal. */
-
-void hex_to_ascii (const char* hex, const char* option, char** ascii);
-/* Converts a hexadecimal string to us-ascii. US-ascii strings are 
-   null-terminated and 7 bits, so you must give an option for this function's 
-   response to offending hexadecimal codes:
-	- If "" or null-pointer, then output "".
-	- Else if "charX", then output the char X.
-	- Else output the option string, followed by "XX" where XX is the 
-	offending hexadecimal code.
-*/
+void string_join (char** list, char ch, char** s);
 
 #endif
 
