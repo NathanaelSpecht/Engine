@@ -1,4 +1,4 @@
-# Trees In Space Engine (TIS)
+# Trees In Space (TIS) Game Engine
 
 TIS can be cloned from GitHub using:
 `git clone https://github.com/NathanaelSpecht/TreesInSpaceEngine`
@@ -10,7 +10,7 @@ Alternatively, download TIS as a zip file from GitHub:
 2. Click the green "Code" button and select "Download ZIP".
 3. Unzip the file wherever you want.
 
-# Dependencies
+## Dependencies
 
 TIS is a set of functions, and not a complete program.
 You'll need to install some software before you can compile TIS with your own 
@@ -34,7 +34,7 @@ TIS depends on the following software libraries to compile:
 You may need to edit the `INCLUDE` variable in TIS's `Makefile` so the compiler 
 looks in the correct location for each library.
 
-# Test Your Environment
+## Test Your Environment
 
 To test your development environment, use the included `hello.c` test program:
 
@@ -45,7 +45,7 @@ If you want, you can run hello to print "hello" to stdout.
 
 If hello compiles, then your environment is ready for TIS.
 
-# Test TIS
+## Test TIS
 
 To test TIS, use the included `test.c` test program:
 
@@ -57,7 +57,7 @@ Failing tests will print "FAIL" to stdout.
 
 If TIS passes all unit tests, then it is ready for use in your projects.
 
-# Using TIS in Your Project
+## Using TIS in Your Project
 
 To use TIS in your own projects, copy TIS's `LICENSE` file and `src/` files into 
 your project folder, and compile TIS's source code along with your own code.
@@ -66,7 +66,7 @@ Use the included `Makefile` as a reference for compiling on multiple platforms.
 Refer to `docs/API.md` for an overview of the functions in TIS.
 I try to keep the API descriptions up-to-date with `src/`.
 
-# Compile TIS on Linux and Windows
+## Compile TIS on Linux and Windows
 
 TIS is a collection of functions, **not** a complete program.
 The included `main.c` program is an example meant to showcase some of the 
@@ -74,7 +74,7 @@ functionality in TIS.
 **main.c is not yet complete and probably won't compile.**
 To compile TIS along with this example, type `make` then run with `./app`.
 
-# Compile TIS on Other Platforms
+## Compile TIS on Other Platforms
 
 I intend to support TIS only for Linux and Windows.
 
