@@ -4,7 +4,7 @@ This is the API provided for your code to interface with TIS.
 **TIS is still in early development, so this API is subject to change.**
 
 Behaviors:
-- [ ] String functions with better boundary condition checking than the c 
+- [x] String functions with better boundary condition checking than the c 
 standard library. Is meant to replace the c standard library's `string.h`, but 
 can be used alongside it, because there are no name collisions.
 - [ ] Conversion functions for string-to-type and type-to-string conversion, as 
@@ -53,23 +53,23 @@ describe the substring.
 - [x] `void string_trim (char** s)`
 	- Trims all whitespace off both ends of `s`.
 
-- [ ] `void string_append_char (char ch, int length, char** s)`
+- [x] `void string_append_char (char ch, int length, char** s)`
 	- Quickly appends char `ch` to `s`. `length` is the length of `s`.
 
-- [ ] `void string_append (char* a, char** s)`
+- [x] `void string_append (char* a, char** s)`
 	- Appends `a` to `s`.
 
-- [ ] `void string_prepend (char* a, char** s)`
+- [x] `void string_prepend (char* a, char** s)`
 	- Prepends `a` to `s`.
 
-- [ ] `int string_find (char* a, int start, char* s)`
+- [x] `int string_find (char* a, int start, char* s)`
 	- Finds the first index in `s` of a string `a`, starting at `start`.
 
-- [ ] `void string_replace (char* a, int start, int length, char** s)`
+- [x] `void string_replace (char* a, int start, int length, char** s)`
 	- Replaces a region in `s` with `a`. `start` and `length` describe the 
 region to replace.
 
-- [ ] `void string_find_replace (char* a, char* b, char** s)`
+- [x] `void string_find_replace (char* a, char* b, char** s)`
 	- Replaces all regions matching `a` in `s` with `b`.
 
 - [x] `int stringlist_length (char** list)`
@@ -82,10 +82,10 @@ NULL lists have length 0.
 - [x] `void stringlist_add (char* s, char*** list)`
 	- Appends a string `s` to the end of `list`.
 
-- [ ] `void string_split (char* s, char ch, char*** list)`
+- [x] `void string_split (char* s, char ch, char*** list)`
 	- Splits `s` on separator `ch` into a list of strings `list`.
 
-- [ ] `void string_join (char** list, char ch, char** s)`
+- [x] `void string_join (char** list, char ch, char** s)`
 	- Joins `list` on `ch` into a string `s`.
 
 ## tis_convert.h
