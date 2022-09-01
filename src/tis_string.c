@@ -112,8 +112,8 @@ void string_append_char (char ch, int length, char** s) {
 
 void string_append (const char* a, char** s) {
 	int len = string_length(a);
+	char* t = *s;
 	if (len > 0) {
-		char* t = *s;
 		int n = string_length(t);
 		int m = n + len;
 		t = realloc(t, m + 1);
@@ -122,13 +122,17 @@ void string_append (const char* a, char** s) {
 		}
 		t[m] = '\0';
 		*s = t;
+	} else if (a != NULL && t == NULL) {
+		t = malloc(1);
+		t[0] = '\0';
+		*s = t;
 	}
 }
 
 void string_prepend (const char* a, char** s) {
 	int len = string_length(a);
+	char* t = *s;
 	if (len > 0) {
-		char* t = *s;
 		int n = string_length(t);
 		int m = len + n;
 		t = realloc(t, m + 1);
@@ -141,6 +145,10 @@ void string_prepend (const char* a, char** s) {
 				t[i] = a[i];
 			}
 		}
+		*s = t;
+	} else if (a != NULL && t == NULL) {
+		t = malloc(1);
+		t[0] = '\0';
 		*s = t;
 	}
 }

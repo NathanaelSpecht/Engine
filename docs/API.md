@@ -130,17 +130,17 @@ unrepresentable codes. Valid options are listed below:
 
 ## tis_file.h
 
-- [ ] `bool file_exists (char* file)`
+- [x] `bool file_exists (char* file)`
 	- Checks if `file` exists.
 
 - [ ] `void file_delete (char* file)`
 	- Deletes `file`.
 
-- [ ] `void read_text (char* file, char** ascii)`
+- [x] `void read_text (char* file, char** ascii)`
 	- Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
 bytes, and closes the file.
 
-- [ ] `void read_data (char* file, char** hex)`
+- [x] `void read_data (char* file, char** hex)`
 	- Opens `file`, reads all of its bytes as `hex`, and closes the file.
 
 - [ ] `void write_text (char* ascii, char* file)`

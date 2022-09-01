@@ -213,6 +213,8 @@ int main (int argc, char** argv) {
 		
 		string_append(NULL, &a);
 		test(a == NULL);
+		string_append("", &a);
+		test(string_equals("", a));
 		
 		string_append("Hello", &b);
 		test(string_equals("Hello", b));
@@ -241,6 +243,8 @@ int main (int argc, char** argv) {
 		
 		string_prepend(NULL, &a);
 		test(a == NULL);
+		string_prepend("", &a);
+		test(string_equals("", a));
 		
 		string_prepend("Hello", &b);
 		test(string_equals("Hello", b));
@@ -531,10 +535,10 @@ int main (int argc, char** argv) {
 		test(string_equals("", b));
 		
 		read_text("in.txt", &c);
-		test(string_equals("Hello", c));
+		test(string_equals("Hello\n", c));
 		
 		read_text("save/test/in.txt", &d);
-		test(string_equals("World", d));
+		test(string_equals("World\n", d));
 		
 		read_text(NULL, &z);
 		test(z == NULL);
@@ -564,10 +568,10 @@ int main (int argc, char** argv) {
 		test(string_equals("", b));
 		
 		read_data("in.txt", &c);
-		test(string_equals("48656c6c6f", c));
+		test(string_equals("48656c6c6f0a", c));
 		
 		read_data("save/test/in.txt", &d);
-		test(string_equals("576f726c64", d));
+		test(string_equals("576f726c640a", d));
 		
 		read_data(NULL, &z);
 		test(z == NULL);
@@ -730,7 +734,7 @@ int main (int argc, char** argv) {
 		printf("\n");
 	}
 	
-	{
+	/* {
 		printf("file_delete:");
 		char* x = NULL;
 		
@@ -747,7 +751,7 @@ int main (int argc, char** argv) {
 		test(x == NULL);
 		
 		printf("\n");
-	}
+	} */
 	
 	printf("\nClosing test\n");
 	
