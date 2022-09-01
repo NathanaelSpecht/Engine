@@ -1,6 +1,15 @@
 
 #include "tis_file.h"
 #include <stddef.h>
+#include <stdbool.h>
+
+bool file_exists (const char* file) {
+	return false;
+}
+
+void file_delete (const char* file) {
+
+}
 
 void read_text (const char* file, char** ascii) {
 

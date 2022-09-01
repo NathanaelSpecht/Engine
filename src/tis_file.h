@@ -6,6 +6,10 @@
 #ifndef TIS_FILE_H
 #define TIS_FILE_H
 
+#include <stdbool.h>
+
+bool file_exists (const char* file);
+void file_delete (const char* file);
 void read_text (const char* file, char** ascii);
 void read_data (const char* file, char** hex);
 void write_text (const char* ascii, const char* file);
