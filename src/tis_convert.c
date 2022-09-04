@@ -39,11 +39,3 @@ void float_to_string (float f, char** s) {
 
 }
 
-void ascii_to_hex (const char* ascii, char** hex) {
-
-}
-
-void hex_to_ascii (const char* hex, const char* option, char** ascii) {
-
-}
-

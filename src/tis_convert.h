@@ -17,8 +17,6 @@ float string_to_float (const char* s);
 void bool_to_string (bool b, char** s);
 void int_to_string (int i, char** s);
 void float_to_string (float f, char** s);
-void ascii_to_hex (const char* ascii, char** hex);
-void hex_to_ascii (const char* hex, const char* option, char** ascii);
 
 #endif
 

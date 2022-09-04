@@ -14,16 +14,20 @@ Is meant as quality of life improvement.
 - [ ] State machines meant for dialogue, animation, event chains, gui, network 
 connections, and ai. Anything with more than two states that needs simple logic 
 for switching between them.
-- [ ] Transform functions between 3D and 2D space. Translate, scale, rotate, 
-and project.
-- [ ] Rendering functions for text and sprite animations.
+- [ ] Transform functions for linear algebra. Translate, scale, rotate, and 
+project between coordinate spaces.
 - [ ] Music function wrappers around SDL's audio functions. Is meant as quality 
 of life improvement.
-- [ ] World, scene, object, hitbox, entity, and vehicle modeling. 3D model of 
-the game world, disparate from the process used to render it. Compatible with
-state machines.
+- [ ] 2D Rendering functions for text and sprite animations.
+- [ ] 2D world, scene, object, hitbox, entity, and vehicle modeling. 2D model 
+of the game world, disparate from the process used to render it.
+
+Future Behaviors:
 - [ ] Network function wrappers around the network sockets. Is meant as quality 
 of life improvement.
+- [ ] 3D rendering functions for textured polygon meshes and 3D animations.
+- [ ] 3D world, scene, object, hitbox, entity, and vehicle modeling. 3D model 
+of the game world, disparate from the process used to render it.
 
 TIS functions return a value if they do not allocate memory. If a function 
 allocates memory, then you must give the address of the pointer to that memory.
@@ -117,17 +121,6 @@ NULL lists have length 0.
 - [ ] `void float_to_string (float f, char** s)`
 	- Evaluates float `f` as a string `s`.
 
-- [ ] `void ascii_to_hex (char* ascii, char** hex)`
-	- Converts an `ascii` string to `hex`.
-
-- [ ] `void hex_to_ascii (char* hex, char* option, char** ascii)`
-	- Converts a `hex` string to `ascii`. Ascii cannot contain null or 8-bit 
-codes, but hex can, so an `option` string is provided to choose the response to 
-unrepresentable codes. Valid options are listed below:
-	- "" or NULL -> skip
-	- "stringX" -> replace with string "X"
-	- else -> replace with `option` string, followed by 2-digit hex code
-
 ## tis_file.h
 
 - [x] `bool file_exists (char* file)`
@@ -136,28 +129,17 @@ unrepresentable codes. Valid options are listed below:
 - [ ] `void file_delete (char* file)`
 	- Deletes `file`.
 
-- [x] `void read_text (char* file, char** ascii)`
+- [x] `void file_read (char* file, char** ascii)`
 	- Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
 bytes, and closes the file.
 
-- [x] `void read_data (char* file, char** hex)`
-	- Opens `file`, reads all of its bytes as `hex`, and closes the file.
-
-- [ ] `void write_text (char* ascii, char* file)`
+- [ ] `void file_write (char* ascii, char* file)`
 	- Writes `ascii` into `file`. If file does not exist, creates it, otherwise 
 overwrites it.
 
-- [ ] `void write_data (char* hex, char* file)`
-	- Writes `hex` codes as bytes into `file`. If file does not exist, creates 
-it, otherwise overwrites it.
-
-- [ ] `void append_text (char* ascii, char* file)`
+- [ ] `void file_append (char* ascii, char* file)`
 	- Appends `ascii` to end of `file`. If file does not exist, works the same 
-as `write_text`, else appends to end.
-
-- [ ] `void append_data (char* hex, char* file)`
-	- Appends `hex` codes as bytes to end of `file`. If file does not exist, 
-works the same as `write_data`, else appends to end.
+as `file_write`, else appends to end.
 
 ## tis_state.h
 

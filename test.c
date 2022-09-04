@@ -521,61 +521,28 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		printf("read_text:");
+		printf("file_read:");
 		char* a = NULL;
 		char* b = NULL;
 		char* c = NULL;
 		char* d = NULL;
 		char* z = NULL;
 		
-		read_text("dne.txt", &a);
+		file_read("dne.txt", &a);
 		test(a == NULL);
 		
-		read_text("empty.txt", &b);
+		file_read("empty.txt", &b);
 		test(string_equals("", b));
 		
-		read_text("in.txt", &c);
+		file_read("in.txt", &c);
 		test(string_equals("Hello\n", c));
 		
-		read_text("save/test/in.txt", &d);
+		file_read("save/test/in.txt", &d);
 		test(string_equals("World\n", d));
 		
-		read_text(NULL, &z);
+		file_read(NULL, &z);
 		test(z == NULL);
-		read_text("", &z);
-		test(z == NULL);
-		
-		string_delete(&a);
-		string_delete(&b);
-		string_delete(&c);
-		string_delete(&d);
-		string_delete(&z);
-		printf("\n");
-	}
-	
-	{
-		printf("read_data:");
-		char* a = NULL;
-		char* b = NULL;
-		char* c = NULL;
-		char* d = NULL;
-		char* z = NULL;
-		
-		read_data("dne.txt", &a);
-		test(a == NULL);
-		
-		read_data("empty.txt", &b);
-		test(string_equals("", b));
-		
-		read_data("in.txt", &c);
-		test(string_equals("48656c6c6f0a", c));
-		
-		read_data("save/test/in.txt", &d);
-		test(string_equals("576f726c640a", d));
-		
-		read_data(NULL, &z);
-		test(z == NULL);
-		read_data("", &z);
+		file_read("", &z);
 		test(z == NULL);
 		
 		string_delete(&a);
@@ -587,33 +554,33 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		printf("write_text:");
+		printf("file_write:");
 		char* a = NULL;
 		char* b = NULL;
 		char* c = NULL;
 		char* z = NULL;
 		
-		write_text("save/test/a.txt", NULL);
-		read_text("save/test/a.txt", &a);
+		file_write("save/test/a.txt", NULL);
+		file_read("save/test/a.txt", &a);
 		test(a == NULL);
 		
-		write_text("save/test/b.txt", "");
-		read_text("save/test/b.txt", &b);
+		file_write("save/test/b.txt", "");
+		file_read("save/test/b.txt", &b);
 		test(string_equals("", b));
 		
-		write_text("save/test/c.txt", "Hello");
-		read_text("save/test/c.txt", &c);
+		file_write("save/test/c.txt", "Hello");
+		file_read("save/test/c.txt", &c);
 		test(string_equals("Hello", c));
 		string_delete(&c);
-		write_text("save/test/c.txt", "World");
-		read_text("save/test/c.txt", &c);
+		file_write("save/test/c.txt", "World");
+		file_read("save/test/c.txt", &c);
 		test(string_equals("World", c));
 		
-		write_text(NULL, "nothing");
-		read_text(NULL, &z);
+		file_write(NULL, "nothing");
+		file_read(NULL, &z);
 		test(z == NULL);
-		write_text("", "nothing");
-		read_text("", &z);
+		file_write("", "nothing");
+		file_read("", &z);
 		test(z == NULL);
 		
 		string_delete(&a);
@@ -624,112 +591,38 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		printf("write_data:");
-		char* d = NULL;
-		char* e = NULL;
-		char* f = NULL;
-		char* z = NULL;
-		
-		write_data("save/test/d.txt", NULL);
-		read_text("save/test/d.txt", &d);
-		test(d == NULL);
-		
-		write_data("save/test/e.txt", "");
-		read_text("save/test/e.txt", &e);
-		test(string_equals("", e));
-		
-		write_data("save/test/f.txt", "48656c6c6f");
-		read_text("save/test/f.txt", &f);
-		test(string_equals("Hello", f));
-		string_delete(&f);
-		write_data("save/test/f.txt", "576f726c64");
-		read_text("save/test/f.txt", &f);
-		test(string_equals("World", f));
-		
-		write_data(NULL, "nothing");
-		read_data(NULL, &z);
-		test(z == NULL);
-		write_data("", "nothing");
-		read_data("", &z);
-		test(z == NULL);
-		
-		string_delete(&d);
-		string_delete(&e);
-		string_delete(&f);
-		string_delete(&z);
-		printf("\n");
-	}
-	
-	{
-		printf("append_text:");
+		printf("file_append:");
 		char* g = NULL;
 		char* h = NULL;
 		char* i = NULL;
 		char* z = NULL;
 		
-		append_text("save/test/g.txt", NULL);
-		read_text("save/test/g.txt", &g);
+		file_append("save/test/g.txt", NULL);
+		file_read("save/test/g.txt", &g);
 		test(g == NULL);
 		
-		append_text("save/test/h.txt", "");
-		read_text("save/test/h.txt", &h);
+		file_append("save/test/h.txt", "");
+		file_read("save/test/h.txt", &h);
 		test(string_equals("", h));
 		
-		append_text("save/test/i.txt", "Hello");
-		read_text("save/test/i.txt", &i);
+		file_append("save/test/i.txt", "Hello");
+		file_read("save/test/i.txt", &i);
 		test(string_equals("Hello", i));
 		string_delete(&i);
-		append_text("save/test/i.txt", "World");
-		read_text("save/test/i.txt", &i);
+		file_append("save/test/i.txt", "World");
+		file_read("save/test/i.txt", &i);
 		test(string_equals("HelloWorld", i));
 		
-		append_text(NULL, "nothing");
-		read_text(NULL, &z);
+		file_append(NULL, "nothing");
+		file_read(NULL, &z);
 		test(z == NULL);
-		append_text("", "nothing");
-		read_text("", &z);
+		file_append("", "nothing");
+		file_read("", &z);
 		test(z == NULL);
 		
 		string_delete(&g);
 		string_delete(&h);
 		string_delete(&i);
-		string_delete(&z);
-		printf("\n");
-	}
-	
-	{
-		printf("append_data:");
-		char* j = NULL;
-		char* k = NULL;
-		char* l = NULL;
-		char* z = NULL;
-		
-		append_data("save/test/j.txt", NULL);
-		read_text("save/test/j.txt", &j);
-		test(j == NULL);
-		
-		append_data("save/test/k.txt", "");
-		read_text("save/test/k.txt", &k);
-		test(string_equals("", k));
-		
-		append_data("save/test/l.txt", "48656c6c6f");
-		read_text("save/test/l.txt", &l);
-		test(string_equals("Hello", l));
-		string_delete(&l);
-		append_data("save/test/l.txt", "576f726c64");
-		read_text("save/test/l.txt", &l);
-		test(string_equals("HelloWorld", l));
-		
-		append_data(NULL, "nothing");
-		read_data(NULL, &z);
-		test(z == NULL);
-		append_data("", "nothing");
-		read_data("", &z);
-		test(z == NULL);
-		
-		string_delete(&j);
-		string_delete(&k);
-		string_delete(&l);
 		string_delete(&z);
 		printf("\n");
 	}
@@ -742,12 +635,12 @@ int main (int argc, char** argv) {
 		file_delete("");
 		file_delete("dne.txt");
 		
-		write_text("save/test/x.txt", "delete this");
-		read_text("save/test/x.txt", &x);
+		file_write("save/test/x.txt", "delete this");
+		file_read("save/test/x.txt", &x);
 		test(string_equals("delete this", x));
 		string_delete(&x);
 		file_delete("save/test/x.txt");
-		read_text("save/test/x.txt", &x);
+		file_read("save/test/x.txt", &x);
 		test(x == NULL);
 		
 		printf("\n");
