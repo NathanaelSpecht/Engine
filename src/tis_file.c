@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 bool file_access (const char* file) {
+	// checks if app should have access to file, based on filepath.
 	if (file == NULL || string_equals("", file)) {
 		return false;
 	} else if (string_find("/", 0, file) == 0 || 
@@ -33,7 +34,7 @@ bool file_exists (const char* file) {
 
 void file_delete (const char* file) {
 	if (file_access(file)) {
-		int i = remove(file);
+		remove(file);
 	}
 }
 
@@ -44,12 +45,12 @@ void file_read (const char* file, char** ascii) {
 		if (fp == NULL) {
 			return;
 		}
-		string_append("", ascii);
+		string_append(ascii, "");
 		int ch = 0;
 		int n = string_length(*ascii);
 		while ((ch = fgetc(fp)) != EOF) {
 			if (ch > 0 && ch < 127) {
-				string_append_char(ch, n, ascii);
+				string_append_char(ascii, ch, n);
 				n++;
 			}
 		}
@@ -57,15 +58,39 @@ void file_read (const char* file, char** ascii) {
 	}
 }
 
-void file_write (const char* ascii, const char* file) {
-	if (file_access(file)) {
-		
+void file_write (const char* file, const char* ascii) {
+	if (file_access(file) && ascii != NULL && ascii[0] != '\0') {
+		FILE* fp = NULL;
+		fp = fopen(file, "w");
+		if (fp == NULL) {
+			return;
+		}
+		for (int i = 0; ascii[i] != '\0'; i++) {
+			if (ascii[i] > 0 && ascii[i] < 127) {
+				if (fputc(ascii[i], fp) == EOF) {
+					break;
+				}
+			}
+		}
+		fclose(fp);
 	}
 }
 
-void file_append (const char* ascii, const char* file) {
-	if (file_access(file)) {
-		
+void file_append (const char* file, const char* ascii) {
+	if (file_access(file) && ascii != NULL && ascii[0] != '\0') {
+		FILE* fp = NULL;
+		fp = fopen(file, "a");
+		if (fp == NULL) {
+			return;
+		}
+		for (int i = 0; ascii[i] != '\0'; i++) {
+			if (ascii[i] > 0 && ascii[i] < 127) {
+				if (fputc(ascii[i], fp) == EOF) {
+					break;
+				}
+			}
+		}
+		fclose(fp);
 	}
 }
 

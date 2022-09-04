@@ -42,7 +42,7 @@ bool string_equals (const char* a, const char* b) {
 	}
 }
 
-void string_copy (const char* a, char** s) {
+void string_copy (char** s, const char* a) {
 	char* t = *s;
 	if (a == t) { // both null, or both point to same memory.
 		return;
@@ -59,7 +59,7 @@ void string_copy (const char* a, char** s) {
 	*s = t;
 }
 
-void substring (const char* a, int start, int length, char** s) {
+void substring (char** s, const char* a, int start, int length) {
 	char* t = *s;
 	int len = string_length(a);
 	if (len > 0 && start >= 0 && start < len && length >= 0 && 
@@ -95,12 +95,12 @@ void string_trim (char** s) {
 		for (; j != i && (t[j] <= 32 || t[j] == 127); j--) {}
 		int n = (j + 1) - i;
 		
-		substring(t, i, n, &t);
+		substring(&t, t, i, n);
 		*s = t;
 	}
 }
 
-void string_append_char (char ch, int length, char** s) {
+void string_append_char (char** s, char ch, int length) {
 	if (ch > 0 && ch < 127 && length >= 0) {
 		char* t = *s;
 		t = realloc(t, length + 2);
@@ -110,7 +110,7 @@ void string_append_char (char ch, int length, char** s) {
 	}
 }
 
-void string_append (const char* a, char** s) {
+void string_append (char** s, const char* a) {
 	int len = string_length(a);
 	char* t = *s;
 	if (len > 0) {
@@ -129,7 +129,7 @@ void string_append (const char* a, char** s) {
 	}
 }
 
-void string_prepend (const char* a, char** s) {
+void string_prepend (char** s, const char* a) {
 	int len = string_length(a);
 	char* t = *s;
 	if (len > 0) {
@@ -186,7 +186,7 @@ int string_find (const char* a, int start, const char* s) {
 	}
 }
 
-void string_replace (const char* a, int start, int length, char** s) {
+void string_replace (char** s, const char* a, int start, int length) {
 	char* t = *s;
 	if (a == NULL && t == NULL) {
 		return;
@@ -197,7 +197,7 @@ void string_replace (const char* a, int start, int length, char** s) {
 		}
 	} else if (a != NULL && t == NULL) {
 		if (start == 0 && length == 0) {
-			string_copy(a, &t);
+			string_copy(&t, a);
 			*s = t;
 		}
 	} else {
@@ -235,16 +235,16 @@ void string_replace (const char* a, int start, int length, char** s) {
 	}
 }
 
-void string_find_replace (const char* a, const char* b, char** s) {
+void string_find_replace (char** s, const char* a, const char* b) {
 	char* t = *s;
 	if (t == NULL) {
 		if (a == NULL) {
-			string_copy(b, &t);
+			string_copy(&t, b);
 			*s = t;
 		}
 	} else if (t[0] == '\0') {
 		if (a != NULL && a[0] == '\0') {
-			string_copy(b, &t);
+			string_copy(&t, b);
 			*s = t;
 		}
 	} else {
@@ -255,12 +255,16 @@ void string_find_replace (const char* a, const char* b, char** s) {
 			if (i == -1) {
 				break;
 			} else {
-				string_replace(b, i, length, &t);
+				string_replace(&t, b, i, length);
 				i += len;
 			}
 		}
 		*s = t;
 	}
+}
+
+bool string_starts_with (const char* s, const char* a) {
+	return (string_find(a, 0, s) == 0);
 }
 
 int stringlist_length (char** list) {
@@ -286,32 +290,32 @@ void stringlist_delete (char*** list) {
 	}
 }
 
-void stringlist_add (const char* s, char*** list) {
+void stringlist_add (char*** list, const char* s) {
 	if (s != NULL) {
 		char** t = *list;
 		int len = stringlist_length(t);
 		t = realloc(t, sizeof(char*) * (len + 2));
 		char* u = NULL;
-		string_copy(s, &u);
+		string_copy(&u, s);
 		t[len] = u;
 		t[len + 1] = NULL;
 		*list = t;
 	}
 }
 
-void string_split (const char* s, char ch, char*** list) {
+void string_split (char*** list, const char* s, char ch) {
 	if (ch > 0 && ch < 127 && s != NULL) {
 		char** t = *list;
-		stringlist_add("", &t);
+		stringlist_add(&t, "");
 		int n = 0;
 		int m = stringlist_length(t);
 		for (int i = 0; s[i] != '\0'; i++) {
 			if (s[i] == ch) {
-				stringlist_add("", &t);
+				stringlist_add(&t, "");
 				n = 0;
 				m++;
 			} else {
-				string_append_char(s[i], n, &(t[m - 1]));
+				string_append_char(&(t[m - 1]), s[i], n);
 				n++;
 			}
 		}
@@ -319,14 +323,14 @@ void string_split (const char* s, char ch, char*** list) {
 	}
 }
 
-void string_join (char** list, char ch, char** s) {
+void string_join (char** s, char** list, char ch) {
 	if (ch > 0 && ch < 127 && list != NULL) {
 		int n = string_length(*s);
 		for (int i = 0; list[i] != NULL; i++) {
-			string_append(list[i], s);
+			string_append(s, list[i]);
 			n += string_length(list[i]);
 			if (list[i + 1] != NULL) {
-				string_append_char(ch, n, s);
+				string_append_char(s, ch, n);
 				n++;
 			}
 		}

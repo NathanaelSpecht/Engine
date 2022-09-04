@@ -9,7 +9,7 @@ standard library. Is meant to replace the c standard library's `string.h`, but
 can be used alongside it, because there are no name collisions.
 - [ ] Conversion functions for string-to-type and type-to-string conversion, as 
 well as is-type functions to check if a string-to-type conversion will succeed.
-- [ ] File function wrappers around the c standard library's `stdio.h`.
+- [x] File function wrappers around the c standard library's `stdio.h`.
 Is meant as quality of life improvement.
 - [ ] State machines meant for dialogue, animation, event chains, gui, network 
 connections, and ai. Anything with more than two states that needs simple logic 
@@ -30,10 +30,11 @@ of life improvement.
 of the game world, disparate from the process used to render it.
 
 TIS functions return a value if they do not allocate memory. If a function 
-allocates memory, then you must give the address of the pointer to that memory.
-Doing so allows functions to realloc pointers passed to them without needing to 
-return. For example, `my_string = change_string(my_string)` can instead be 
+allocates memory, then you must give the address of the pointer to that memory. 
+- Doing so allows functions to realloc pointers passed to them without needing 
+to return. For example, `my_string = change_string(my_string)` can instead be 
 written as `change_string(&my_string)`. This is more readable and less verbose.
+- These addresses get passed in first.
 
 ## tis_string.h
 
@@ -47,34 +48,37 @@ strings have length 0.
 - [x] `bool string_equals (char* a, char* b)`
 	- Checks if two strings are equal.
 
-- [x] `void string_copy (char* a, char** s)`
+- [x] `void string_copy (char** s, char* a)`
 	- Copies `a` into `s`.
 
-- [x] `void substring (char* a, int start, int length, char** s)`
+- [x] `void substring (char** s, char* a, int start, int length)`
 	- Takes a substring of `a` and stores it in `s`. `start` and `length`
 describe the substring.
 
 - [x] `void string_trim (char** s)`
 	- Trims all whitespace off both ends of `s`.
 
-- [x] `void string_append_char (char ch, int length, char** s)`
+- [x] `void string_append_char (char** s, char ch, int length)`
 	- Quickly appends char `ch` to `s`. `length` is the length of `s`.
 
-- [x] `void string_append (char* a, char** s)`
+- [x] `void string_append (char** s, char* a)`
 	- Appends `a` to `s`.
 
-- [x] `void string_prepend (char* a, char** s)`
+- [x] `void string_prepend (char** s, char* a)`
 	- Prepends `a` to `s`.
 
 - [x] `int string_find (char* a, int start, char* s)`
 	- Finds the first index in `s` of a string `a`, starting at `start`.
 
-- [x] `void string_replace (char* a, int start, int length, char** s)`
+- [x] `void string_replace (char** s, char* a, int start, int length)`
 	- Replaces a region in `s` with `a`. `start` and `length` describe the 
 region to replace.
 
-- [x] `void string_find_replace (char* a, char* b, char** s)`
+- [x] `void string_find_replace (char** s, char* a, char* b)`
 	- Replaces all regions matching `a` in `s` with `b`.
+
+- [x] `bool string_starts_with (char* s, char* a)`
+	- Checks if string `s` starts with string `a`.
 
 - [x] `int stringlist_length (char** list)`
 	- Finds the number of strings in `list`, not including the null-terminator. 
@@ -83,13 +87,13 @@ NULL lists have length 0.
 - [x] `void stringlist_delete (char*** list)`
 	- Frees `list` and sets it to NULL, if not already NULL.
 
-- [x] `void stringlist_add (char* s, char*** list)`
+- [x] `void stringlist_add (char*** list, char* s)`
 	- Appends a string `s` to the end of `list`.
 
-- [x] `void string_split (char* s, char ch, char*** list)`
+- [x] `void string_split (char*** list, char* s, char ch)`
 	- Splits `s` on separator `ch` into a list of strings `list`.
 
-- [x] `void string_join (char** list, char ch, char** s)`
+- [x] `void string_join (char** s, char** list, char ch)`
 	- Joins `list` on `ch` into a string `s`.
 
 ## tis_convert.h
@@ -112,13 +116,13 @@ NULL lists have length 0.
 - [ ] `float string_to_float (char* s)`
 	- Evaluates `s` as float.
 
-- [ ] `void bool_to_string (bool b, char** s)`
+- [ ] `void bool_to_string (char** s bool b)`
 	- Evaluates bool `b` as a string, storing it in `s`.
 
-- [ ] `void int_to_string (int i, char** s)`
+- [ ] `void int_to_string (char** s, int i)`
 	- Evaluates int `i` as a string `s`.
 
-- [ ] `void float_to_string (float f, char** s)`
+- [ ] `void float_to_string (char** s, float f)`
 	- Evaluates float `f` as a string `s`.
 
 ## tis_file.h
@@ -126,18 +130,18 @@ NULL lists have length 0.
 - [x] `bool file_exists (char* file)`
 	- Checks if `file` exists.
 
-- [ ] `void file_delete (char* file)`
+- [x] `void file_delete (char* file)`
 	- Deletes `file`.
 
 - [x] `void file_read (char* file, char** ascii)`
 	- Opens `file`, reads all of its bytes as `ascii`, skips unrepresentable 
 bytes, and closes the file.
 
-- [ ] `void file_write (char* ascii, char* file)`
+- [x] `void file_write (char* file, char* ascii)`
 	- Writes `ascii` into `file`. If file does not exist, creates it, otherwise 
 overwrites it.
 
-- [ ] `void file_append (char* ascii, char* file)`
+- [x] `void file_append (char* file, char* ascii)`
 	- Appends `ascii` to end of `file`. If file does not exist, works the same 
 as `file_write`, else appends to end.
 

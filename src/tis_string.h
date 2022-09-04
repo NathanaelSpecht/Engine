@@ -11,21 +11,22 @@
 int string_length (const char* s);
 void string_delete (char** s);
 bool string_equals (const char* a, const char* b);
-void string_copy (const char* a, char** s);
-void substring (const char* a, int start, int length, char** s);
+void string_copy (char** s, const char* a);
+void substring (char** s, const char* a, int start, int length);
 void string_trim (char** s);
-void string_append_char (char ch, int length, char** s);
-void string_append (const char* a, char** s);
-void string_prepend (const char* a, char** s);
+void string_append_char (char** s, char ch, int length);
+void string_append (char** s, const char* a);
+void string_prepend (char** s, const char* a);
 int string_find (const char* a, int start, const char* s);
-void string_replace (const char* a, int start, int length, char** s);
-void string_find_replace (const char* a, const char* b, char** s);
+void string_replace (char** s, const char* a, int start, int length);
+void string_find_replace (char** s, const char* a, const char* b);
+bool string_starts_with (const char* s, const char* a);
 
 int stringlist_length (char** list);
 void stringlist_delete (char*** list);
-void stringlist_add (const char* s, char*** list);
-void string_split (const char* s, char ch, char*** list);
-void string_join (char** list, char ch, char** s);
+void stringlist_add (char*** list, const char* s);
+void string_split (char*** list, const char* s, char ch);
+void string_join (char** s, char** list, char ch);
 
 #endif
 
