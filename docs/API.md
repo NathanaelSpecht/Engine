@@ -98,7 +98,7 @@ NULL lists have length 0.
 
 ## tis_convert.h
 
-- [ ] `bool string_is_bool (char* s)`
+- [x] `bool string_is_bool (char* s)`
 	- Checks string `s` can be evaluated as bool.
 
 - [ ] `bool string_is_int (char* s)`
@@ -107,7 +107,7 @@ NULL lists have length 0.
 - [ ] `bool string_is_float (char* s)`
 	- Checks if `s` can be evaluated as float.
 
-- [ ] `bool string_to_bool (char* s)`
+- [x] `bool string_to_bool (char* s)`
 	- Evaluates `s` as bool.
 
 - [ ] `int string_to_int (char* s)`
@@ -116,7 +116,7 @@ NULL lists have length 0.
 - [ ] `float string_to_float (char* s)`
 	- Evaluates `s` as float.
 
-- [ ] `void bool_to_string (char** s bool b)`
+- [x] `void bool_to_string (char** s bool b)`
 	- Evaluates bool `b` as a string, storing it in `s`.
 
 - [ ] `void int_to_string (char** s, int i)`
@@ -149,11 +149,11 @@ as `file_write`, else appends to end.
 
 ## tis_transform.h
 
-## tis_render.h
+## tis_2d_render.h
 
 ## tis_music.h
 
-## tis_world.h
+## tis_2d_world.h
 
 ## tis_network.h
 

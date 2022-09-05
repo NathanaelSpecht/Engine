@@ -4,6 +4,7 @@
 */
 
 #include "tis_string.h"
+#include "tis_convert.h"
 #include "tis_file.h"
 #include <stdio.h>
 #include <stdbool.h>
@@ -515,6 +516,49 @@ int main (int argc, char** argv) {
 		string_delete(&v);
 		string_delete(&w);
 		string_delete(&x);
+		printf("\n");
+	}
+	
+	printf("\n[tis_convert]:\n");
+	
+	{
+		printf("bool:");
+		char* a = NULL;
+		char* b = NULL;
+		
+		test(string_is_bool(NULL) == false);
+		test(string_to_bool(NULL) == false);
+		
+		test(string_is_bool("") == false);
+		test(string_to_bool("") == false);
+		
+		test(string_is_bool("true") == true);
+		test(string_to_bool("true") == true);
+		bool_to_string(&a, true);
+		test(string_equals(a, "true"));
+		
+		test(string_is_bool("false") == true);
+		test(string_to_bool("false") == false);
+		bool_to_string(&b, false);
+		test(string_equals(b, "false"));
+		
+		test(string_is_bool("Hello") == false);
+		test(string_to_bool("Hello") == false);
+		
+		string_delete(&a);
+		string_delete(&b);
+		printf("\n");
+	}
+	
+	{
+		printf("int:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("float:");
+		test(false);
 		printf("\n");
 	}
 	
