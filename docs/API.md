@@ -101,10 +101,10 @@ NULL lists have length 0.
 - [x] `bool string_is_bool (char* s)`
 	- Checks string `s` can be evaluated as bool.
 
-- [ ] `bool string_is_int (char* s)`
+- [x] `bool string_is_int (char* s)`
 	- Checks if `s` can be evaluated as int.
 
-- [ ] `bool string_is_float (char* s)`
+- [x] `bool string_is_float (char* s)`
 	- Checks if `s` can be evaluated as float.
 
 - [x] `bool string_to_bool (char* s)`
@@ -122,8 +122,10 @@ NULL lists have length 0.
 - [ ] `void int_to_string (char** s, int i)`
 	- Evaluates int `i` as a string `s`.
 
-- [ ] `void float_to_string (char** s, float f)`
-	- Evaluates float `f` as a string `s`.
+- [ ] `void float_to_string (char** s, float f, char* mode)`
+	- Evaluates float `f` as a string `s`. Mode may be either "d" for decimal 
+or "e" for exponent. For example, f 23000.0 produces s "23000.0" for mode "d" 
+and s "2.3e4" for mode "e".
 
 ## tis_file.h
 

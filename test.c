@@ -570,16 +570,18 @@ int main (int argc, char** argv) {
 		
 		test(string_is_int("-0") == true);
 		test(string_to_int("-0") == 0);
+		int_to_string(&b, -0);
+		test(string_equals(b, "0"));
 		
 		test(string_is_int("2147483647") == true);
 		test(string_to_int("2147483647") == 2147483647);
-		int_to_string(&a, 2147483647);
-		test(string_equals(a, "2147483647"));
+		int_to_string(&c, 2147483647);
+		test(string_equals(c, "2147483647"));
 		
 		test(string_is_int("-2147483648") == true);
 		test(string_to_int("-2147483648") == -2147483648);
-		int_to_string(&a, -2147483648);
-		test(string_equals(a, "-2147483648"));
+		int_to_string(&d, -2147483648);
+		test(string_equals(d, "-2147483648"));
 		
 		test(string_is_int("Hello") == false);
 		test(string_to_int("Hello") == 0);
@@ -593,7 +595,7 @@ int main (int argc, char** argv) {
 	
 	{
 		// Test for a precision of 6 decimal digits, ranged: 1e-37 to 1e37
-		printf("float:");
+		printf("float decimal:");
 		float f = 0.0;
 		char* a = NULL;
 		char* b = NULL;
@@ -613,42 +615,114 @@ int main (int argc, char** argv) {
 		test(string_is_float("0.0") == true);
 		f = string_to_float("0.0");
 		test(f > -0.000001 && f < 0.000001);
-		float_to_string(&a, 0.0);
+		float_to_string(&a, 0.0, "d");
 		test(string_equals(a, "0.0"));
 		
 		test(string_is_float("-0.0") == true);
 		f = string_to_float("-0.0");
 		test(f > -0.000001 && f < 0.000001);
-		float_to_string(&b, -0.0);
+		float_to_string(&b, -0.0, "d");
 		test(string_equals(b, "-0.0"));
 		
 		test(string_is_float("0.000000000000000000000000000000100000") == true);
 		f = string_to_float("0.000000000000000000000000000000100000");
 		test(f > 0.000000000000000000000000000000099999 && 
 		f < 0.000000000000000000000000000000100001);
-		float_to_string(&c, 0.000000000000000000000000000000100000);
+		float_to_string(&c, 0.000000000000000000000000000000100000, "d");
 		test(string_equals(c, "0.000000000000000000000000000000100000"));
 		
 		test(string_is_float("-0.000000000000000000000000000000100000") == true);
 		f = string_to_float("-0.000000000000000000000000000000100000");
 		test(f > -0.000000000000000000000000000000100001 && 
 		f < -0.000000000000000000000000000000099999);
-		float_to_string(&d, -0.000000000000000000000000000000100000);
+		float_to_string(&d, -0.000000000000000000000000000000100000, "d");
 		test(string_equals(d, "-0.000000000000000000000000000000100000"));
 		
 		test(string_is_float("1000000000000000000000000000000000000.0") == true);
 		f = string_to_float("1000000000000000000000000000000000000.0");
 		test(f > 999990000000000000000000000000000000.0 && 
 		f < 1000010000000000000000000000000000000.0);
-		float_to_string(&e, 1000000000000000000000000000000000000.0);
+		float_to_string(&e, 1000000000000000000000000000000000000.0, "d");
 		test(string_equals(e, "1000000000000000000000000000000000000.0"));
 		
 		test(string_is_float("-1000000000000000000000000000000000000.0") == true);
 		f = string_to_float("-1000000000000000000000000000000000000.0");
 		test(f > -1000010000000000000000000000000000000.0 && 
 		f < -999990000000000000000000000000000000.0);
-		float_to_string(&g, -1000000000000000000000000000000000000.0);
+		float_to_string(&g, -1000000000000000000000000000000000000.0, "d");
 		test(string_equals(g, "-1000000000000000000000000000000000000.0"));
+		
+		test(string_is_float("Hello") == false);
+		f = string_to_float("Hello");
+		test(f > -0.000001 && f < 0.000001);
+		
+		string_delete(&a);
+		string_delete(&b);
+		string_delete(&c);
+		string_delete(&d);
+		string_delete(&e);
+		string_delete(&g);
+		printf("\n");
+	}
+	
+	{
+		// Test for a precision of 6 decimal digits, ranged: 1e-37 to 1e37
+		printf("float exponent:");
+		float f = 0.0;
+		char* a = NULL;
+		char* b = NULL;
+		char* c = NULL;
+		char* d = NULL;
+		char* e = NULL;
+		char* g = NULL;
+		
+		test(string_is_float(NULL) == false);
+		f = string_to_float(NULL);
+		test(f > -0.000001 && f < 0.000001);
+		
+		test(string_is_float("") == false);
+		f = string_to_float("");
+		test(f > -0.000001 && f < 0.000001);
+		
+		test(string_is_float("0.0e0") == true);
+		f = string_to_float("0.0e0");
+		test(f > -0.000001 && f < 0.000001);
+		float_to_string(&a, 0.0, "e");
+		test(string_equals(a, "0.0e0"));
+		
+		test(string_is_float("-0.0e-0") == true);
+		f = string_to_float("-0.0e-0");
+		test(f > -0.000001 && f < 0.000001);
+		float_to_string(&b, -0.0, "e");
+		test(string_equals(b, "-0.0e-0"));
+		
+		test(string_is_float("1.0e-30") == true);
+		f = string_to_float("1.0e-30");
+		test(f > 0.000000000000000000000000000000099999 && 
+		f < 0.000000000000000000000000000000100001);
+		float_to_string(&c, 0.000000000000000000000000000000100000, "e");
+		test(string_equals(c, "1.0e-30"));
+		
+		test(string_is_float("-1.0e-30") == true);
+		f = string_to_float("-1.0e-30");
+		test(f > -0.000000000000000000000000000000100001 && 
+		f < -0.000000000000000000000000000000099999);
+		float_to_string(&d, -0.000000000000000000000000000000100000, "e");
+		test(string_equals(d, "-1.0e-30"));
+		
+		test(string_is_float("1.0e36") == true);
+		f = string_to_float("1.0e36");
+		test(f > 999990000000000000000000000000000000.0 && 
+		f < 1000010000000000000000000000000000000.0);
+		float_to_string(&e, 1000000000000000000000000000000000000.0, "e");
+		test(string_equals(e, "1.0e36"));
+		
+		test(string_is_float("-1.0e36") == true);
+		f = string_to_float("-1.0e36");
+		test(f > -1000010000000000000000000000000000000.0 && 
+		f < -999990000000000000000000000000000000.0);
+		float_to_string(&g, -1000000000000000000000000000000000000.0, "e");
+		test(string_equals(g, "-1.0e36"));
 		
 		test(string_is_float("Hello") == false);
 		f = string_to_float("Hello");
