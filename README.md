@@ -1,45 +1,51 @@
-# TreesInSpaceEngine (TIS)
+# TIS Game Engine
 
-Hello and welcome to Trees in Space!
-This is my game engine.
-Well, the functions needed to get one working at least.
+TIS is not your typical game engine, and is not a standalone program.
+Rather, TIS is a collection of functions you can use to create a game.
 
-If you're looking for API documentation, check the `docs` folder.
+Documentation can be found in the `tis/docs/` folder:
+- `INSTALL.md`: Installation instructions.
+- `API.md`: Descriptions and API for modules and their functions.
+- `CHANGELOG.md`: The current version and dates of changes.
 
-Installation instructions are in `docs/INSTALL.md`.
-
-The current version and its major changes can be found in 
-`docs/CHANGELOG.md`.
 Check the git log for a detailed list of changes.
 
-# Road To 1.0 and Beyond
+## What Can I Expect From TIS?
 
-My progress towards version 1.0 is in `docs/TODO.md`. 
-***Until version 1.0, expect breaking changes to the API from time to time.***
+I plan to add the following modules to TIS.
+Checked items are complete, in the sense that all tests are passing.
+"Upcoming modules" will be added. "Future modules" may or may not be added.
 
-My plan is for TIS to be a set of functions anyone can include in their C 
-program to turn it into a functioning game.
+Upcoming Modules:
+- [x] String functions that are easier to use than the ones in `string.h`. Is 
+meant to replace the c standard library's `string.h`, but can be used alongside 
+it, because there are no name collisions.
+- [ ] Conversion functions for string-to-type and type-to-string conversion, 
+and is-type functions to check if a string-to-type conversion will succeed.
+- [x] File function wrappers around the c standard library's `stdio.h`.
+- [ ] Vector and matrix operations in 2d and 3d.
+- [ ] 2D Rendering functions for text and sprite animations.
+- [ ] Music function wrappers around SDL's audio functions, and math operations 
+needed for music processing.
+- [ ] 2D world, scene, object, hitbox, entity, and vehicle modeling. 2D model 
+of the game world, disparate from the process used to render it.
 
-Updates after version 1.0 will continue to provide bug fixes, features, and 
-performance improvements. 
-API changes will be backwards compatible from 1.0 onward, unless 
-explicitly stated in the changelog.
+Future Modules:
+- [ ] Network function wrappers around the network sockets.
+- [ ] 3D rendering functions for textured polygon meshes and 3D animations.
+- [ ] 3D world, scene, object, hitbox, entity, and vehicle modeling. 3D model 
+of the game world, disparate from the process used to render it.
 
-# Links
+## Licensing
 
-Included files:
-- The license for TIS can be found in the LICENSE file.
-- TIS links to the SDL library. The license for it can be found in the `sdl` 
-folder.
-- All graphics included with this project are made by me and are free to use. 
-Please give credit where you use them.
+TIS's files and license are in the `tis/` folder.
 
-This project and its documentation will always be free and open source.
-If you're feeling generous, donate on 
-[Patreon](https://www.patreon.com/treesinspace).
-Every little bit helps!
+SDL2's files and license are in the `sdl2/` folder.
 
-Happy gaming,
+Graphics and audio files and licenses are in the `data/` folder.
+
+TIS will always be free and open source.
 
 Nathanael Specht
+Trees in Space
 
