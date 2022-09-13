@@ -136,14 +136,12 @@ void string_prepend (char** s, const char* a) {
 		int n = string_length(t);
 		int m = len + n;
 		t = realloc(t, m + 1);
-		for (int i = len; i < m; i++) {
+		for (int i = m - 1; i >= len; i--) {
 			t[i] = t[i - len];
 		}
 		t[m] = '\0';
-		if (a != t) { // different memories.
-			for (int i = 0; i < len; i++) {
-				t[i] = a[i];
-			}
+		for (int i = 0; i < len; i++) {
+			t[i] = a[i];
 		}
 		*s = t;
 	} else if (a != NULL && t == NULL) {

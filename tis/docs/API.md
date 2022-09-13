@@ -97,10 +97,10 @@ NULL lists have length 0.
 - [x] `bool string_to_bool (char* s)`
 	- Evaluates `s` as bool.
 
-- [ ] `int string_to_int (char* s)`
+- [x] `int string_to_int (char* s)`
 	- Evaluates `s` as int.
 
-- [ ] `float string_to_float (char* s)`
+- [x] `float string_to_float (char* s)`
 	- Evaluates `s` as float.
 
 - [x] `void bool_to_string (char** s bool b)`
