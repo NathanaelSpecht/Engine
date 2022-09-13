@@ -106,13 +106,11 @@ NULL lists have length 0.
 - [x] `void bool_to_string (char** s bool b)`
 	- Evaluates bool `b` as a string, storing it in `s`.
 
-- [ ] `void int_to_string (char** s, int i, char* mode)`
-	- Evaluates int `i` as a string `s`. Mode may be either "d" for decimal 
-representation or "x" for hexadecimal representation.
+- [x] `void int_to_string (char** s, int i)`
+	- Evaluates int `i` as a string `s`.
 
-- [ ] `void float_to_string (char** s, float f, char* mode)`
-	- Evaluates float `f` as a string `s`. Mode may be either "f" for decimal 
-notation or "e" for decimal exponent notation (aka. scientific notation).
+- [ ] `void float_to_string (char** s, float f)`
+	- Evaluates float `f` as a string `s`.
 
 ## tis_file.h
 

@@ -551,7 +551,7 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		printf("int decimal:");
+		printf("int:");
 		int i = 0;
 		char* a = NULL;
 		char* b = NULL;
@@ -571,21 +571,21 @@ int main (int argc, char** argv) {
 		test(string_is_int("0") == true);
 		i = string_to_int("0");
 		test(i == 0);
-		int_to_string(&a, 0, "d");
+		int_to_string(&a, 0);
 		test(string_equals(a, "0"));
 		printf(" %s %d\n", a, i);
 		
 		test(string_is_int("2147483647") == true);
 		i = string_to_int("2147483647");
 		test(i == 2147483647);
-		int_to_string(&c, 2147483647, "d");
+		int_to_string(&c, 2147483647);
 		test(string_equals(c, "2147483647"));
 		printf(" %s %d\n", c, i);
 		
 		test(string_is_int("-2147483647") == true);
 		i = string_to_int("-2147483647");
 		test(i == -2147483647);
-		int_to_string(&d, -2147483647, "d");
+		int_to_string(&d, -2147483647);
 		test(string_equals(d, "-2147483647"));
 		printf(" %s %d\n", d, i);
 		
@@ -602,59 +602,8 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		printf("int hexadecimal:");
-		int i = 0;
-		char* a = NULL;
-		char* b = NULL;
-		char* c = NULL;
-		char* d = NULL;
-		
-		test(string_is_int(NULL) == false);
-		i = string_to_int(NULL);
-		test(i == 0);
-		printf(" %d\n", i);
-		
-		test(string_is_int("") == false);
-		i = string_to_int("");
-		test(i == 0);
-		printf(" %d\n", i);
-		
-		test(string_is_int("0x0") == true);
-		i = string_to_int("0x0");
-		test(i == (int)0x0);
-		int_to_string(&a, (int)0x0, "x");
-		test(string_equals(a, "0x0"));
-		printf(" %s %d\n", a, i);
-		
-		test(string_is_int("0x7fffffff") == true);
-		i = string_to_int("0x7fffffff");
-		test(i == (int)0x7fffffff);
-		int_to_string(&c, 0x7fffffff, "x");
-		test(string_equals(c, "0x7fffffff"));
-		printf(" %s %d\n", c, i);
-		
-		test(string_is_int("0x80000001") == true);
-		i = string_to_int("0x80000001");
-		test(i == (int)0x80000001);
-		int_to_string(&d, (int)0x80000001, "x");
-		test(string_equals(d, "0x80000001"));
-		printf(" %s %d\n", d, i);
-		
-		test(string_is_int("Hello") == false);
-		i = string_to_int("Hello");
-		test(i == 0);
-		printf(" %d\n", i);
-		
-		string_delete(&a);
-		string_delete(&b);
-		string_delete(&c);
-		string_delete(&d);
-		printf("\n");
-	}
-	
-	{
 		// Test for a precision of 6 decimal digits, ranged: 1e-37 to 1e37
-		printf("float decimal:");
+		printf("float:");
 		float f = 0.0;
 		char* a = NULL;
 		char* b = NULL;
@@ -676,106 +625,36 @@ int main (int argc, char** argv) {
 		test(string_is_float("0.0") == true);
 		f = string_to_float("0.0");
 		test(f > -0.000001 && f < 0.000001);
-		float_to_string(&a, 0.0, "d");
+		float_to_string(&a, 0.0);
 		test(string_equals(a, "0.0"));
 		printf(" %s %f\n", a, f);
 		
 		test(string_is_float("0.2147483647") == true);
 		f = string_to_float("0.2147483647");
 		test(f > 0.214747 && f < 0.214749);
-		float_to_string(&c, 0.2147483647, "f");
+		float_to_string(&c, 0.2147483647);
 		test(string_equals(c, "0.2147483647"));
 		printf(" %s %f\n", c, f);
 		
 		test(string_is_float("-0.2147483647") == true);
 		f = string_to_float("-0.2147483647");
 		test(f > -0.214749 && f < -0.214747);
-		float_to_string(&d, -0.2147483647, "f");
+		float_to_string(&d, -0.2147483647);
 		test(string_equals(d, "-0.2147483647"));
 		printf(" %s %f\n", d, f);
 		
 		test(string_is_float("2147483647.0") == true);
 		f = string_to_float("2147483647.0");
 		test(f > 2147460000.0 && f < 2147500000.0);
-		float_to_string(&e, 2147483647.0, "f");
+		float_to_string(&e, 2147483647.0);
 		test(string_equals(e, "2147483647.0"));
 		printf(" %s %f\n", e, f);
 		
 		test(string_is_float("-2147483647.0") == true);
 		f = string_to_float("-2147483647.0");
 		test(f > -2147500000.0 && f < -2147460000.0);
-		float_to_string(&g, -2147483647.0, "f");
+		float_to_string(&g, -2147483647.0);
 		test(string_equals(g, "-2147483647.0"));
-		printf(" %s %f\n", g, f);
-		
-		test(string_is_float("Hello") == false);
-		f = string_to_float("Hello");
-		test(f > -0.000001 && f < 0.000001);
-		printf(" %f\n", f);
-		
-		string_delete(&a);
-		string_delete(&b);
-		string_delete(&c);
-		string_delete(&d);
-		string_delete(&e);
-		string_delete(&g);
-		printf("\n");
-	}
-	
-	{
-		// Test for a precision of 6 decimal digits, ranged: 1e-37 to 1e37
-		printf("float decimal exponent:");
-		float f = 0.0;
-		char* a = NULL;
-		char* b = NULL;
-		char* c = NULL;
-		char* d = NULL;
-		char* e = NULL;
-		char* g = NULL;
-		//2.147483647
-		test(string_is_float(NULL) == false);
-		f = string_to_float(NULL);
-		test(f > -0.000001 && f < 0.000001);
-		printf(" %f\n", f);
-		
-		test(string_is_float("") == false);
-		f = string_to_float("");
-		test(f > -0.000001 && f < 0.000001);
-		printf(" %f\n", f);
-		
-		test(string_is_float("0.0e0") == true);
-		f = string_to_float("0.0e0");
-		test(f > -0.000001 && f < 0.000001);
-		float_to_string(&a, 0.0, "e");
-		test(string_equals(a, "0.0e0"));
-		printf(" %s %f\n", a, f);
-		
-		test(string_is_float("2.147483647e-1") == true);
-		f = string_to_float("2.147483647e-1");
-		test(f > 0.214747 && f < 0.214749);
-		float_to_string(&c, 0.2147483647, "e");
-		test(string_equals(c, "2.147483647e-1"));
-		printf(" %s %f\n", c, f);
-		
-		test(string_is_float("-2.147483647e-1") == true);
-		f = string_to_float("-2.147483647e-1");
-		test(f > -0.214749 && f < -0.214747);
-		float_to_string(&d, -0.2147483647, "e");
-		test(string_equals(d, "-2.147483647e-1"));
-		printf(" %s %f\n", d, f);
-		
-		test(string_is_float("2.147483647e9") == true);
-		f = string_to_float("2.147483647e9");
-		test(f > 2147470000.0 && f < 2147490000.0);
-		float_to_string(&e, 2147483647.0, "e");
-		test(string_equals(e, "2.147483647e9"));
-		printf(" %s %f\n", e, f);
-		
-		test(string_is_float("-2.147483647e9") == true);
-		f = string_to_float("-2.147483647e9");
-		test(f > -2147490000.0 && f < -2147470000.0);
-		float_to_string(&g, -2147483647.0, "e");
-		test(string_equals(g, "-2.147483647e9"));
 		printf(" %s %f\n", g, f);
 		
 		test(string_is_float("Hello") == false);
