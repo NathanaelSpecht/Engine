@@ -137,31 +137,90 @@ void bool_to_string (char** s, bool b) {
 void int_to_string (char** s, int i) {
 	int n = i;
 	int sign = 1;
-	char* c = NULL;
-	string_copy(&c, "0");
-	char* t = *s;
-	string_copy(s, "");
 	if (n == 0) {
-		string_copy(&t, "0");
-		string_delete(&c);
-		*s = t;
+		string_copy(s, "0");
 		return;
 	} else if (n < 0) {
 		n = -n;
 		sign = -1;
 	}
+	char* c = NULL;
+	string_copy(&c, "0");
+	string_copy(s, "");
 	for (; n > 0; n /= 10) {
-		c[0] = (char)(n % 10) + '0';
-		string_prepend(&t, c);
+		c[0] = (n % 10) + '0';
+		string_prepend(s, c);
 	}
 	if (sign < 0) {
-		string_prepend(&t, "-");
+		string_prepend(s, "-");
 	}
 	string_delete(&c);
-	*s = t;
 }
 
-void float_to_string (char** s, float f) {
-	int n = f;
+void float_to_string (char** s, float f, int d) {
+	// Up to 19-digit number with 6 digits of precision.
+	if (d > 19) {
+		d = 19;
+	}
+	int precision = 6;
+	int p = 0;
+	double n = f;
+	double sign = 1.0;
+	if (n < 0.0) {
+		n = -n;
+		sign = -1.0;
+	}
+	char* c = NULL;
+	string_copy(&c, "0");
+	string_copy(s, "");
+	// integer part
+	double a;
+	if (n < 1e19) {
+		a = n;
+	} else {
+		a = 1e19;
+	}
+	unsigned long long aa;
+	for (; a >= 1.0; a /= 10.0) {
+		aa = (unsigned long long)a;
+		c[0] = (aa % 10) + '0';
+		p++;
+		string_prepend(s, c);
+		d--;
+	}
+	if (p >= precision) {
+		char* t = *s;
+		for (int i = 0; t[i] != '\0'; i++) {
+			if (i >= precision) {
+				t[i] = '0';
+			}
+		}
+	} else if (n < 1.0) {
+		string_prepend(s, "0");
+	}
+	if (p >= precision || d <= 0) {
+		string_append(s, ".0");
+	} else {
+		string_append(s, ".");
+		// decimal part
+		double b = n * 10.0;
+		unsigned long long bb;
+		for (int digits = 0; digits < d; digits++) {
+			bb = (unsigned long long)b;
+			c[0] = (bb % 10) + '0';
+			if (p >= precision) {
+				break;
+			} else if (p > 0 || c[0] != '0') {
+				p++;
+			}
+			string_append(s, c);
+			b *= 10.0;
+		}
+	}
+	// sign part
+	if (sign < 0.0) {
+		string_prepend(s, "-");
+	}
+	string_delete(&c);
 }
 

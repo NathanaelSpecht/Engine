@@ -1,8 +1,8 @@
 # TIS Changelog
 
 Date: 2022 September 12
-Completed version: 0.1
-In development: Version 0.2
+Completed version: 0.2
+In development: Version 0.3
 
 Version 0.1:
 - [x] Build system that works on Linux and Windows, is easy to understand, and 
@@ -14,7 +14,7 @@ Version 0.2:
 - [x] String functions that are easier to use than the ones in `string.h`. Is 
 meant to replace the c standard library's `string.h`, but can be used alongside 
 it, because there are no name collisions.
-- [ ] Conversion functions for string-to-type and type-to-string conversion, 
+- [x] Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around some of the c standard library's `stdio.h`.
 
@@ -43,9 +43,12 @@ of the game world, disparate from the process used to render it.
 
 ## Version 0.2
 
+2022 September 14:
+- Float conversion code
+
 2022 September 12:
 - File code
-- Type conversion code
+- Bool and int conversion code
 
 2022 August 30:
 - String code

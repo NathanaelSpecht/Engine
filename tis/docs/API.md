@@ -7,7 +7,7 @@ Upcoming Modules:
 - [x] String functions that are easier to use than the ones in `string.h`. Is 
 meant to replace the c standard library's `string.h`, but can be used alongside 
 it, because there are no name collisions.
-- [ ] Conversion functions for string-to-type and type-to-string conversion, 
+- [x] Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around the c standard library's `stdio.h`.
 - [ ] Vector and matrix operations in 2d and 3d.
@@ -109,8 +109,9 @@ NULL lists have length 0.
 - [x] `void int_to_string (char** s, int i)`
 	- Evaluates int `i` as a string `s`.
 
-- [ ] `void float_to_string (char** s, float f)`
-	- Evaluates float `f` as a string `s`.
+- [x] `void float_to_string (char** s, float f, int d)`
+	- Evaluates float `f` as decimal number with up to `d` digits, and stores 
+it in string `s`.
 
 ## tis_file.h
 

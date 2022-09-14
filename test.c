@@ -573,21 +573,21 @@ int main (int argc, char** argv) {
 		test(i == 0);
 		int_to_string(&a, 0);
 		test(string_equals(a, "0"));
-		printf(" %s %d\n", a, i);
+		printf(" 0 %s %d\n", a, i);
 		
-		test(string_is_int("2147483647") == true);
-		i = string_to_int("2147483647");
-		test(i == 2147483647);
-		int_to_string(&c, 2147483647);
-		test(string_equals(c, "2147483647"));
-		printf(" %s %d\n", c, i);
+		test(string_is_int("1337") == true);
+		i = string_to_int("1337");
+		test(i == 1337);
+		int_to_string(&c, 1337);
+		test(string_equals(c, "1337"));
+		printf(" 1337 %s %d\n", c, i);
 		
 		test(string_is_int("-2147483647") == true);
 		i = string_to_int("-2147483647");
 		test(i == -2147483647);
 		int_to_string(&d, -2147483647);
 		test(string_equals(d, "-2147483647"));
-		printf(" %s %d\n", d, i);
+		printf(" -2147483647 %s %d\n", d, i);
 		
 		test(string_is_int("Hello") == false);
 		i = string_to_int("Hello");
@@ -602,7 +602,7 @@ int main (int argc, char** argv) {
 	}
 	
 	{
-		// Test for a precision of 6 decimal digits, ranged: 1e-37 to 1e37
+		// Test for a precision of 6 decimal digits
 		printf("float:");
 		float f = 0.0;
 		char* a = NULL;
@@ -625,37 +625,23 @@ int main (int argc, char** argv) {
 		test(string_is_float("0.0") == true);
 		f = string_to_float("0.0");
 		test(f > -0.000001 && f < 0.000001);
-		float_to_string(&a, 0.0);
-		test(string_equals(a, "0.0"));
-		printf(" %s %f\n", a, f);
-		
-		test(string_is_float("0.2147483647") == true);
-		f = string_to_float("0.2147483647");
-		test(f > 0.214747 && f < 0.214749);
-		float_to_string(&c, 0.2147483647);
-		test(string_equals(c, "0.2147483647"));
-		printf(" %s %f\n", c, f);
+		float_to_string(&a, 0.0, 6);
+		test(string_equals(a, "0.000000"));
+		printf(" 0.000000 %s %f\n", a, f);
 		
 		test(string_is_float("-0.2147483647") == true);
 		f = string_to_float("-0.2147483647");
 		test(f > -0.214749 && f < -0.214747);
-		float_to_string(&d, -0.2147483647);
-		test(string_equals(d, "-0.2147483647"));
-		printf(" %s %f\n", d, f);
+		float_to_string(&d, -0.2147483647, 10);
+		test(string_equals(d, "-0.214748"));
+		printf(" -0.214748 %s %f\n", d, f);
 		
-		test(string_is_float("2147483647.0") == true);
-		f = string_to_float("2147483647.0");
-		test(f > 2147460000.0 && f < 2147500000.0);
-		float_to_string(&e, 2147483647.0);
-		test(string_equals(e, "2147483647.0"));
-		printf(" %s %f\n", e, f);
-		
-		test(string_is_float("-2147483647.0") == true);
-		f = string_to_float("-2147483647.0");
-		test(f > -2147500000.0 && f < -2147460000.0);
-		float_to_string(&g, -2147483647.0);
-		test(string_equals(g, "-2147483647.0"));
-		printf(" %s %f\n", g, f);
+		test(string_is_float("-2147480000.0") == true);
+		f = string_to_float("-2147480000.0");
+		test(f > -2147490000.0 && f < -2147470000.0);
+		float_to_string(&g, -2147480000.0, -6);
+		test(string_equals(g, "-2147480000.0"));
+		printf(" -2147480000.0 %s %f\n", g, f);
 		
 		test(string_is_float("Hello") == false);
 		f = string_to_float("Hello");
