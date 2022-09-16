@@ -615,38 +615,38 @@ int main (int argc, char** argv) {
 		
 		test(string_is_float(NULL) == false);
 		f = string_to_float(NULL);
-		test(f > -0.000001 && f < 0.000001);
+		test(d_equals(f, 0.0, 1e-6));
 		printf(" %f\n", f);
 		
 		test(string_is_float("") == false);
 		f = string_to_float("");
-		test(f > -0.000001 && f < 0.000001);
+		test(d_equals(f, 0.0, 1e-6));
 		printf(" %f\n", f);
 		
 		test(string_is_float("0.0") == true);
 		f = string_to_float("0.0");
-		test(f > -0.000001 && f < 0.000001);
+		test(d_equals(f, 0.0, 1e-6));
 		float_to_string(&a, 0.0, 6);
 		test(string_equals(a, "0.000000"));
 		printf(" 0.000000 %s %f\n", a, f);
 		
 		test(string_is_float("-0.2147483647") == true);
 		f = string_to_float("-0.2147483647");
-		test(f > -0.214749 && f < -0.214747);
+		test(d_equals(f, -0.2147483647, 1e-6));
 		float_to_string(&d, -0.2147483647, 10);
 		test(string_equals(d, "-0.214748"));
 		printf(" -0.214748 %s %f\n", d, f);
 		
 		test(string_is_float("-2147480000.0") == true);
 		f = string_to_float("-2147480000.0");
-		test(f > -2147490000.0 && f < -2147470000.0);
+		test(d_equals(f, -2147480000.0, 1e5));
 		float_to_string(&g, -2147480000.0, -6);
 		test(string_equals(g, "-2147480000.0"));
 		printf(" -2147480000.0 %s %f\n", g, f);
 		
 		test(string_is_float("Hello") == false);
 		f = string_to_float("Hello");
-		test(f > -0.000001 && f < 0.000001);
+		test(d_equals(f, 0.0, 1e-6));
 		printf(" %f\n", f);
 		
 		string_delete(&a);
@@ -793,13 +793,27 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("vector2d_length:");
-		test(false);
+		vector2d a = {0.0, 0.0};
+		vector2d b = {3.0, 4.0};
+		vector2d c = {123456.0, 789000.0};
+		vector2d d = {0.123456, 0.789000};
+		test(d_equals(vector2d_length(a), 0.0, 1e-1));
+		test(d_equals(vector2d_length(b), 5.0, 1e-1));
+		test(d_equals(vector2d_length(c), 798600.0, 1e0));
+		test(d_equals(vector2d_length(d), 0.798600, 1e-6));
 		printf("\n");
 	}
 	
 	{
 		printf("vector2d_unit:");
-		test(false);
+		vector2d a = {0.0, 0.0}; vector2d aa = {0.0, 0.0};
+		vector2d b = {3.0, 4.0}; vector2d bb = {0.6, 0.8};
+		vector2d c = {123456.0, 789000.0}; vector2d cc = {0.154590, 0.987978};
+		vector2d d = {0.123456, 0.789000}; vector2d dd = {0.154590, 0.987978};
+		test(vector2d_equals(vector2d_unit(a, 1e-1), aa, 1e-1));
+		test(vector2d_equals(vector2d_unit(b, 1e-1), bb, 1e-1));
+		test(vector2d_equals(vector2d_unit(c, 1e-6), cc, 1e-6));
+		test(vector2d_equals(vector2d_unit(d, 1e-6), dd, 1e-6));
 		printf("\n");
 	}
 	
@@ -828,6 +842,17 @@ int main (int argc, char** argv) {
 	}
 	
 	{
+		printf("d_equals:");
+		test(d_equals(0.0, 0.0, 1e-2));
+		test(d_equals(5.0, 5.0, 1e-2));
+		test(d_equals(123456.0, 123456.0, 1e0));
+		test(d_equals(0.123456, 0.123456, 1e-6));
+		test(d_equals(2.5e35, 2.5e35, 1e34));
+		test(d_equals(2.5e-35, 2.5e-35, 1e-36));
+		printf("\n");
+	}
+	
+	{
 		printf("vector2d_scale:");
 		test(false);
 		printf("\n");
@@ -841,7 +866,18 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("vector2d_equals:");
-		test(false);
+		vector2d a = {0.0, 0.0};
+		vector2d b = {5.0, 10.0};
+		vector2d c = {123456.0, 789000.0};
+		vector2d d = {0.123456, 0.789000};
+		vector2d e = {2.5e35, 3.6e35};
+		vector2d f = {2.5e-35, 3.6e-35};
+		test(vector2d_equals(a, a, 1e-2));
+		test(vector2d_equals(b, b, 1e-2));
+		test(vector2d_equals(c, c, 1e0));
+		test(vector2d_equals(d, d, 1e-6));
+		test(vector2d_equals(e, e, 1e34));
+		test(vector2d_equals(f, f, 1e-36));
 		printf("\n");
 	}
 	
@@ -877,7 +913,18 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("matrix2d_equals:");
-		test(false);
+		matrix2d A = {0.0, 0.0, 0.0, 0.0};
+		matrix2d B = {2.0, 3.0, 4.0, 5.0};
+		matrix2d C = {121212.0, 343434.0, 565656.0, 787878.0};
+		matrix2d D = {0.121212, 0.343434, 0.565656, 0.787878};
+		matrix2d E = {2.5e35, 3.6e35, 4.7e35, 5.8e35};
+		matrix2d F = {2.5e-35, 3.6e-35, 4.7e-35, 5.8e-35};
+		test(matrix2d_equals(A, A, 1e-2));
+		test(matrix2d_equals(B, B, 1e-2));
+		test(matrix2d_equals(C, C, 1e0));
+		test(matrix2d_equals(D, D, 1e-6));
+		test(matrix2d_equals(E, E, 1e34));
+		test(matrix2d_equals(F, F, 1e-36));
 		printf("\n");
 	}
 	

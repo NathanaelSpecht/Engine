@@ -138,74 +138,86 @@ as `file_write`, else appends to end.
 
 Data Structures:
 
-- [ ] `struct vector2d {double v1, double v2}`
-	- A vector v has n columns. Entry i in v is denoted vi.
+- [x] `struct vector2d {double x, double y}`
+	- A vector v has n columns.
+	Entry i in v is denoted vi.
 
-- [ ] `struct matrix2d {double a11, double a12, double a21, double a22}`
+- [x] `struct matrix2d {double xx, double xy, double yx, double yy}`
 	- An mxn matrix A has m rows and n columns.
-	Entry ij in A (row i column j), is denoted Aij.
+	Entry at row i column j in A, is denoted Aij.
 
-Unary Operations:
+Unary Vector and Matrix Operations:
 
-- [ ] `double vector2d_length (vector2d a)`
-	- length(a) := sqrt((a1 * a1) + (a2 * a2))
+- [x] `double vector2d_length (vector2d a)`
+	- sqrt((a1 * a1) + (a2 * a2))
 
-- [ ] `vector2d vector2d_unit (vector2d a)`
-	- unit(a) := vector(a1 / length(a), a2 / length(a))
+- [x] `vector2d vector2d_unit (vector2d a, double p)`
+	- vector(a1 / length(a), a2 / length(a)),
+	where length(a) != 0 at precision p,
+	otherwise unit = 0
 
 - [ ] `matrix2d matrix2d_transpose (matrix2d A)`
-	- transpose(A) := matrix(A11, A21, A12, A22)
+	- matrix(A11, A21, A12, A22)
 
 - [ ] `double matrix2d_determinant (matrix2d A)`
-	- determinant(A) := (A11 * A22) - (A12 * A21)
+	- (A11 * A22) - (A12 * A21)
 
 - [ ] `matrix2d matrix2d_adjoint (matrix2d A)`
-	- adjoint(A) := matrix(A22, -A12, -A21, A11)
+	- matrix(A22, -A12, -A21, A11)
 
-- [ ] `matrix2d matrix2d_inverse (matrix2d A)`
-	- inverse(A) := scale(1 / determinate(A), adjoint(A)).
-	inverse(A) does not exist if determinate(A) is 0
+- [ ] `matrix2d matrix2d_inverse (matrix2d A, double p)`
+	- scale(1 / determinate(A), adjoint(A)),
+	where determinate(A) != 0 at precision p,
+	otherwise inverse = 0
 
-Scalar-Vector and Scalar-Matrix Operations:
+Scalar, Scalar-Vector, and Scalar-Matrix Operations:
+
+- [x] `bool d_equals (double a, double b, double p)`
+	- a == b,
+	at precision p
 
 - [ ] `vector2d vector2d_scale (double r, vector2d a)`
-	- scale(r, a) := vector(r * a1, r * a2)
+	- vector(r * a1, r * a2)
 
 - [ ] `matrix2d matrix2d_scale (double r, matrix2d A)`
-	- scale(r, A) := matrix(r * A11, r * A12, r * A21, r * A22)
+	- matrix(r * A11, r * A12, r * A21, r * A22)
 
 Vector-Vector and Matrix-Vector Operations:
 
-- [ ] `bool vector2d_equals (vector2d a, vector2d b)`
-	- equals(a, b) := a1 == b1 && a2 == b2
+- [x] `bool vector2d_equals (vector2d a, vector2d b, double p)`
+	- a1 == b1 && a2 == b2,
+	at precision p
 
 - [ ] `vector2d vector2d_add (vector2d a, vector2d b)`
-	- add(a, b) := vector(a1 + b1, a2 + b2)
+	- vector(a1 + b1, a2 + b2)
 
 - [ ] `double vector2d_dot (vector2d a, vector2d b)`
-	- dot(a, b) := (a1 * b1) + (a2 * b2)
+	- (a1 * b1) + (a2 * b2)
 
-- [ ] `double vector2d_theta (vector2d a, vector2d b)`
-	- theta(a, b) := invcos(dot(a, b) / (length(a) * length(b)))
+- [ ] `double vector2d_theta (vector2d a, vector2d b, double p)`
+	- invcos(dot(a, b) / (length(a) * length(b))),
+	where (length(a) * length(b)) != 0 at precision p,
+	otherwise theta = 0
 
-- [ ] `double vector2d_cross (vector2d a, vector2d b)`
-	- cross(a, b) := length(a) * length(b) * sin(theta)
+- [ ] `double vector2d_cross (vector2d a, vector2d b, double theta)`
+	- length(a) * length(b) * sin(theta),
 	where theta is the angle from a to b
 
 - [ ] `vector2d matrixvector2d_dot (matrix2d A, vector2d b)`
-	- dot(A, b) := vector(dot(A1, b), dot(A2, b))
+	- vector(dot(A1, b), dot(A2, b))
 
 Matrix-Matrix Operations:
 
-- [ ] `bool matrix2d_equals (matrix2d A, matrix2d B)`
-	- equals(A, B) := A11 == B11 && A12 == B12 && A21 == B21 && A22 == B22
+- [x] `bool matrix2d_equals (matrix2d A, matrix2d B, double p)`
+	- A11 == B11 && A12 == B12 && A21 == B21 && A22 == B22,
+	at precision p
 
 - [ ] `matrix2d matrix2d_add (matrix2d A, matrix2d B)`
-	- add(A, B) := matrix(A11 + B11, A12 + B12, A21 + B21, A22 + B22)
+	- matrix(A11 + B11, A12 + B12, A21 + B21, A22 + B22)
 
 - [ ] `matrix2d matrix2d_dot (matrix2d A, matrix2d B)`
-	- dot(A, B) := matrix(dot(A1, T1), dot(A1, T2), dot(A2, T1), dot(A2, T2))
-	where T := transpose(B)
+	- matrix(dot(A1, T1), dot(A1, T2), dot(A2, T1), dot(A2, T2)),
+	where T = transpose(B)
 
 ## tis_render2d.h
 
