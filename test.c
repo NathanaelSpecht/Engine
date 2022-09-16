@@ -6,6 +6,7 @@
 #include "tis_string.h"
 #include "tis_convert.h"
 #include "tis_file.h"
+#include "tis_vector.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -785,6 +786,110 @@ int main (int argc, char** argv) {
 		}
 		
 		string_delete(&i);
+		printf("\n");
+	}
+	
+	printf("\n[tis_vector]:\n");
+	
+	{
+		printf("vector2d_length:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_unit:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_transpose:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_determinant:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_adjoint:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_inverse:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_scale:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_scale:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_equals:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_add:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_dot:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_theta:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("vector2d_cross:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrixvector2d_dot:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_equals:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_add:");
+		test(false);
+		printf("\n");
+	}
+	
+	{
+		printf("matrix2d_dot:");
+		test(false);
 		printf("\n");
 	}
 	
