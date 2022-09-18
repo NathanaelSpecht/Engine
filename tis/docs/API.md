@@ -10,7 +10,7 @@ it, because there are no name collisions.
 - [x] Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around the c standard library's `stdio.h`.
-- [ ] 2D Vector and matrix operations.
+- [x] 2D Vector and matrix operations.
 - [ ] 2D Rendering functions for text and sprite animations.
 - [ ] Music function wrappers around SDL's audio functions, and math operations 
 needed for music processing.
@@ -156,16 +156,16 @@ Unary Vector and Matrix Operations:
 	where length(a) != 0 at precision p,
 	otherwise unit = 0
 
-- [ ] `matrix2d matrix2d_transpose (matrix2d A)`
+- [x] `matrix2d matrix2d_transpose (matrix2d A)`
 	- matrix(A11, A21, A12, A22)
 
-- [ ] `double matrix2d_determinant (matrix2d A)`
+- [x] `double matrix2d_determinant (matrix2d A)`
 	- (A11 * A22) - (A12 * A21)
 
-- [ ] `matrix2d matrix2d_adjoint (matrix2d A)`
+- [x] `matrix2d matrix2d_adjoint (matrix2d A)`
 	- matrix(A22, -A12, -A21, A11)
 
-- [ ] `matrix2d matrix2d_inverse (matrix2d A, double p)`
+- [x] `matrix2d matrix2d_inverse (matrix2d A, double p)`
 	- scale(1 / determinate(A), adjoint(A)),
 	where determinate(A) != 0 at precision p,
 	otherwise inverse = 0
@@ -176,10 +176,10 @@ Scalar, Scalar-Vector, and Scalar-Matrix Operations:
 	- a == b,
 	at precision p
 
-- [ ] `vector2d vector2d_scale (double r, vector2d a)`
+- [x] `vector2d vector2d_scale (double r, vector2d a)`
 	- vector(r * a1, r * a2)
 
-- [ ] `matrix2d matrix2d_scale (double r, matrix2d A)`
+- [x] `matrix2d matrix2d_scale (double r, matrix2d A)`
 	- matrix(r * A11, r * A12, r * A21, r * A22)
 
 Vector-Vector and Matrix-Vector Operations:
@@ -188,22 +188,22 @@ Vector-Vector and Matrix-Vector Operations:
 	- a1 == b1 && a2 == b2,
 	at precision p
 
-- [ ] `vector2d vector2d_add (vector2d a, vector2d b)`
+- [x] `vector2d vector2d_add (vector2d a, vector2d b)`
 	- vector(a1 + b1, a2 + b2)
 
-- [ ] `double vector2d_dot (vector2d a, vector2d b)`
+- [x] `double vector2d_dot (vector2d a, vector2d b)`
 	- (a1 * b1) + (a2 * b2)
 
-- [ ] `double vector2d_theta (vector2d a, vector2d b, double p)`
+- [x] `double vector2d_theta (vector2d a, vector2d b, double p)`
 	- invcos(dot(a, b) / (length(a) * length(b))),
 	where (length(a) * length(b)) != 0 at precision p,
 	otherwise theta = 0
 
-- [ ] `double vector2d_cross (vector2d a, vector2d b, double theta)`
+- [x] `double vector2d_cross (vector2d a, vector2d b, double theta)`
 	- length(a) * length(b) * sin(theta),
 	where theta is the angle from a to b
 
-- [ ] `vector2d matrixvector2d_dot (matrix2d A, vector2d b)`
+- [x] `vector2d matrixvector2d_dot (matrix2d A, vector2d b)`
 	- vector(dot(A1, b), dot(A2, b))
 
 Matrix-Matrix Operations:
@@ -212,10 +212,10 @@ Matrix-Matrix Operations:
 	- A11 == B11 && A12 == B12 && A21 == B21 && A22 == B22,
 	at precision p
 
-- [ ] `matrix2d matrix2d_add (matrix2d A, matrix2d B)`
+- [x] `matrix2d matrix2d_add (matrix2d A, matrix2d B)`
 	- matrix(A11 + B11, A12 + B12, A21 + B21, A22 + B22)
 
-- [ ] `matrix2d matrix2d_dot (matrix2d A, matrix2d B)`
+- [x] `matrix2d matrix2d_dot (matrix2d A, matrix2d B)`
 	- matrix(dot(A1, T1), dot(A1, T2), dot(A2, T1), dot(A2, T2)),
 	where T = transpose(B)
 

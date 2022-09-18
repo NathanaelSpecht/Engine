@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <math.h>
 
 void test (bool b) {
 	if (b) { 
@@ -819,25 +820,41 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("matrix2d_transpose:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0}; matrix2d AA = {1.0, 0.0, 0.0, 1.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0}; matrix2d BB = {2.0, 12.0, 6.0, 3.0};
+		test(matrix2d_equals(matrix2d_transpose(A), AA, 1e-1));
+		test(matrix2d_equals(matrix2d_transpose(B), BB, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("matrix2d_determinant:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0}; double da = 1.0;
+		matrix2d B = {2.0, 6.0, 12.0, 3.0}; double db = -66.0;
+		test(d_equals(matrix2d_determinant(A), da, 1e-1));
+		test(d_equals(matrix2d_determinant(B), db, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("matrix2d_adjoint:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0}; 
+		matrix2d AA = {1.0, 0.0, 0.0, 1.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0}; 
+		matrix2d BB = {3.0, -6.0, -12.0, 2.0};
+		test(matrix2d_equals(matrix2d_adjoint(A), AA, 1e-1));
+		test(matrix2d_equals(matrix2d_adjoint(B), BB, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("matrix2d_inverse:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0};
+		matrix2d AA = {1.0, 0.0, 0.0, 1.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0};
+		matrix2d BB = {-1.0/33.0, 1.0/11.0, 2.0/11.0, -1.0/22.0};
+		test(matrix2d_equals(matrix2d_inverse(A, 1e-1), AA, 1e-1));
+		test(matrix2d_equals(matrix2d_inverse(B, 1e-1), BB, 1e-1));
 		printf("\n");
 	}
 	
@@ -854,13 +871,23 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("vector2d_scale:");
-		test(false);
+		vector2d a = {1.0, 0.0}; double da = 3.0;
+		vector2d aa = {3.0, 0.0};
+		vector2d b = {3.0, 4.0}; double db = 4.0;
+		vector2d bb = {12.0, 16.0};
+		test(vector2d_equals(vector2d_scale(da, a), aa, 1e-1));
+		test(vector2d_equals(vector2d_scale(db, b), bb, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("matrix2d_scale:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0}; double da = 3.0;
+		matrix2d AA = {3.0, 0.0, 0.0, 3.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0}; double db = 4.0;
+		matrix2d BB = {8.0, 24.0, 48.0, 12.0};
+		test(matrix2d_equals(matrix2d_scale(da, A), AA, 1e-1));
+		test(matrix2d_equals(matrix2d_scale(db, B), BB, 1e-1));
 		printf("\n");
 	}
 	
@@ -883,31 +910,62 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("vector2d_add:");
-		test(false);
+		vector2d a = {1.0, 0.0};
+		vector2d b = {3.0, 4.0};
+		vector2d ab = {4.0, 4.0};
+		vector2d c = {2.0, 2.0};
+		vector2d bc = {5.0, 6.0};
+		test(vector2d_equals(vector2d_add(a, b), ab, 1e-1));
+		test(vector2d_equals(vector2d_add(b, c), bc, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("vector2d_dot:");
-		test(false);
+		vector2d a = {1.0, 0.0};
+		vector2d b = {3.0, 4.0};
+		double ab = 3.0;
+		vector2d c = {2.0, 2.0};
+		double bc = 14.0;
+		test(d_equals(vector2d_dot(a, b), ab, 1e-1));
+		test(d_equals(vector2d_dot(b, c), bc, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("vector2d_theta:");
-		test(false);
+		vector2d a = {1.0, 0.0};
+		vector2d b = {3.0, 4.0};
+		double ab = acos(0.600);
+		vector2d c = {2.0, 2.0};
+		double bc = acos(0.990);
+		test(d_equals(vector2d_theta(a, b, 1e-3), ab, 1e-3));
+		test(d_equals(vector2d_theta(b, c, 1e-3), bc, 1e-3));
 		printf("\n");
 	}
 	
 	{
 		printf("vector2d_cross:");
-		test(false);
+		vector2d a = {1.0, 0.0};
+		vector2d b = {3.0, 4.0};
+		double ab = 5.0 * sin(acos(0.600));
+		vector2d c = {2.0, 2.0};
+		double bc = 14.14 * sin(acos(0.990));
+		test(d_equals(vector2d_cross(a, b, acos(0.600)), ab, 1e-3));
+		test(d_equals(vector2d_cross(b, c, acos(0.990)), bc, 1e-3));
 		printf("\n");
 	}
 	
 	{
 		printf("matrixvector2d_dot:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0};
+		vector2d a = {1.0, 0.0};
+		vector2d Aa = {1.0, 0.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0};
+		vector2d b = {3.0, 4.0};
+		vector2d Bb = {30.0, 48.0};
+		test(vector2d_equals(matrixvector2d_dot(A, a), Aa, 1e-1));
+		test(vector2d_equals(matrixvector2d_dot(B, b), Bb, 1e-1));
 		printf("\n");
 	}
 	
@@ -930,13 +988,25 @@ int main (int argc, char** argv) {
 	
 	{
 		printf("matrix2d_add:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0};
+		matrix2d AB = {3.0, 6.0, 12.0, 4.0};
+		matrix2d C = {4.0, 12.0, 24.0, 6.0};
+		matrix2d BC = {6.0, 18.0, 36.0, 9.0};
+		test(matrix2d_equals(matrix2d_add(A, B), AB, 1e-1));
+		test(matrix2d_equals(matrix2d_add(B, C), BC, 1e-1));
 		printf("\n");
 	}
 	
 	{
 		printf("matrix2d_dot:");
-		test(false);
+		matrix2d A = {1.0, 0.0, 0.0, 1.0};
+		matrix2d B = {2.0, 6.0, 12.0, 3.0};
+		matrix2d AB = {2.0, 6.0, 12.0, 3.0};
+		matrix2d C = {4.0, 12.0, 24.0, 6.0};
+		matrix2d BC = {152.0, 60.0, 120.0, 162.0};
+		test(matrix2d_equals(matrix2d_dot(A, B), AB, 1e-1));
+		test(matrix2d_equals(matrix2d_dot(B, C), BC, 1e-1));
 		printf("\n");
 	}
 	

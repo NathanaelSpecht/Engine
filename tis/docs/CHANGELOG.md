@@ -19,7 +19,7 @@ and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around some of the c standard library's `stdio.h`.
 
 Version 0.3:
-- [ ] Vector and matrix operations in 2d and 3d.
+- [x] 2D Vector and matrix operations.
 - [ ] 2D Rendering functions for text and sprite animations.
 
 Version 0.4:
@@ -32,11 +32,15 @@ of the game world, disparate from the process used to render it.
 
 Future Versions:
 - [ ] Network function wrappers around the network sockets.
+- [ ] 3D Vector and matrix operations.
 - [ ] 3D rendering functions for textured polygon meshes and 3D animations.
 - [ ] 3D world, scene, object, hitbox, entity, and vehicle modeling. 3D model 
 of the game world, disparate from the process used to render it.
 
 ## Version 0.3
+
+2022 September 
+- 2D vector and matrix code
 
 2022 August 30:
 - Test graphics for text

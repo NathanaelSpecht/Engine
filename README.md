@@ -23,15 +23,16 @@ it, because there are no name collisions.
 - [x] Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around the c standard library's `stdio.h`.
-- [ ] Vector and matrix operations in 2d and 3d.
+- [x] 2D Vector and matrix operations.
 - [ ] 2D Rendering functions for text and sprite animations.
-- [ ] Music function wrappers around SDL's audio functions, and math operations 
-needed for music processing.
 - [ ] 2D world, scene, object, hitbox, entity, and vehicle modeling. 2D model 
 of the game world, disparate from the process used to render it.
+- [ ] Music function wrappers around SDL's audio functions, and math operations 
+needed for music processing.
 
 Future Modules:
 - [ ] Network function wrappers around the network sockets.
+- [ ] 3D Vector and matrix operations.
 - [ ] 3D rendering functions for textured polygon meshes and 3D animations.
 - [ ] 3D world, scene, object, hitbox, entity, and vehicle modeling. 3D model 
 of the game world, disparate from the process used to render it.
