@@ -11,6 +11,8 @@ it, because there are no name collisions.
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around the c standard library's `stdio.h`.
 - [x] 2D Vector and matrix operations.
+- [ ] Fast math operations and fixed-point numbers. For when speed is more
+important than precision.
 - [ ] 2D Rendering functions for text and sprite animations.
 - [ ] Music function wrappers around SDL's audio functions, and math operations 
 needed for music processing.
@@ -84,6 +86,28 @@ NULL lists have length 0.
 - [x] `void string_join (char** s, char** list, char ch)`
 	- Joins `list` on `ch` into a string `s`.
 
+## tis_fast_math.h
+
+Data Structures:
+
+- [ ] `typedef long long fix`
+	- 64-bit fixed-point number. 32-bit integer and 11-bit fraction.
+22 bits of padding for lossless multiply and divide operations.
+
+Operations:
+
+- [ ] `long muliq (long a, fix b)`
+	- multiply integer `a` by fixed-point `b`.
+
+- [ ] `fix mulqq (fix a, fix b)`
+	- multiply fixed-point `a` by fixed-point `b`.
+
+- [ ] `long diviq (long a, fix b)`
+	- divide integer `a` by fixed-point `b`.
+
+- [ ] `fix divqq (fix a, fix b)`
+	- divide fixed-point `a` by fixed-point `b`.
+
 ## tis_convert.h
 
 - [x] `bool string_is_bool (char* s)`
@@ -134,7 +158,7 @@ overwrites it.
 	- Appends `ascii` to end of `file`. If file does not exist, works the same 
 as `file_write`, else appends to end.
 
-## tis_vector2d.h
+## tis_vector.h
 
 Data Structures:
 
