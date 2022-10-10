@@ -1,7 +1,5 @@
 
-/*  hello.c -- Tests compilation environment for the 'TIS' game engine library.
-    version 0.1, 2022 August 30
-*/
+/*  hello.c -- Tests compilation environment for my game engine. */
 
 #include "tis_string.h"
 #include "tis_convert.h"
