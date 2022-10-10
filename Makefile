@@ -6,7 +6,7 @@ COMPILE = gcc -O0 -Wall -Wno-unused-variable -Wl,-subsystem,windows
 YOUR_SOURCE = $(wildcard src/*.c)
 MY_SOURCE = $(wildcard engine/*.c)
 YOUR_INCLUDE = -Isrc
-MY_INCLUDE = -Itis -Isdl2/x86_64-w64-mingw32/include/SDL2 \
+MY_INCLUDE = -Iengine -Isdl2/x86_64-w64-mingw32/include/SDL2 \
 	-Lsdl2/x86_64-w64-mingw32/lib
 LIBRARY = -lmingw32 -lSDL2main -lSDL2 -lm
 
@@ -15,7 +15,7 @@ COMPILE = gcc -O0 -Wall -Wno-unused-variable
 YOUR_SOURCE = $(wildcard src/*.c)
 MY_SOURCE = $(wildcard engine/*.c)
 YOUR_INCLUDE = -Isrc
-MY_INCLUDE = -Itis -Isdl2/x86_64-w64-mingw32/include/SDL2 \
+MY_INCLUDE = -Iengine -Isdl2/x86_64-w64-mingw32/include/SDL2 \
 	-Lsdl2/x86_64-w64-mingw32/lib
 LIBRARY = -lSDL2 -lm
 
@@ -41,5 +41,5 @@ help:
 	@echo "  'make help'             Display this message."
 	@echo ""
 	@echo "Copyright (C) 2022 Nathanael Specht"
-	@echo "Refer to LICENSE for licensing."
+	@echo "Refer to README for more information."
 
