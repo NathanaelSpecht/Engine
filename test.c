@@ -1,7 +1,5 @@
 
-/*  test.c -- Unit tests for my game engine.
-    version 0.1, 2022 August 30
-*/
+/*  test.c -- Unit tests for my game engine. */
 
 #include "tis_string.h"
 #include "tis_convert.h"
