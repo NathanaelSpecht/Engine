@@ -9,7 +9,7 @@ Documentation can be found in the `engine/docs/` folder:
 
 Check the git log for a detailed list of changes.
 
-## What Can I Expect From Engine?
+## What Can I Expect From This Engine?
 
 I plan to add the following modules to my engine.
 Checked items are complete, in the sense that all tests are passing.
