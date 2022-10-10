@@ -1,5 +1,5 @@
 
-/*  main.c  Example app using the 'TIS' game engine library.
+/*  main.c  Example app using my game engine.
     Outdated code.
 */
 
