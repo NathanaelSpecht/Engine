@@ -1,14 +1,15 @@
 # TIS Changelog
 
-Date: 2022 October 09
+Date: 2022 October 10
 
 ## 2022 October
 
-October 09:
+October 10:
 - Rename project to 'engine'
 - 'Better' code file naming scheme:
 	- new files end in 'x' for experimental: stringx.h
 	- files included in released games end in 'p' for production: stringp.h
+- Utility code
 
 ## 2022 September
 

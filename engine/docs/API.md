@@ -9,9 +9,9 @@ Existing Modules:
 and is-type functions to check if a string-to-type conversion will succeed.
 - File functions.
 - 2D Vector and matrix operations.
+- Basic utility functions and macros.
 
 Modules To Be Added:
-- Basic utility functions and macro.
 - Music functions.
 - 2D Rendering functions for text and sprite animations.
 - 2D World, scene, object, hitbox, entity, and vehicle modeling. 2D model 
@@ -213,6 +213,26 @@ Matrix-Matrix Operations:
 	where T = transpose(B)
 
 ## utilx.h
+
+- [x] int types at least 8, 16, 32, or 64 bits.
+	may be signed `int#` or unsigned `uint#`, where `#` is the number of bits.
+	easier to write and more readable than the types in `stdint.h`
+
+- [x] `void here ()`
+	- prints the file name and line number in the same style as gcc errors.
+	easier to write and more readable than the equivalent code:
+	`printf("%s:%d\n", __FILE__, __LINE__);`
+
+- [x] `void* delete (void* ptr)`
+	- frees ptr if not null, else does nothing. returns null.
+	may be called many times, like c++'s delete.
+
+- [x] `void* alloc (void* ptr, int64 n)`
+	- reallocs ptr if n > 0, else deletes ptr. returns new address or null.
+	program exits if a memory error ocurrs, as expected in modern languages.
+
+- [x] `void* alloc_ignore_error (void* ptr, int64 n)`
+	- alloc without error-checking, as expected for the original realloc.
 
 ## renderx.h
 

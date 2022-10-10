@@ -5,6 +5,7 @@
 #include "convertx.h"
 #include "filex.h"
 #include "vectorx.h"
+#include "utilx.h"
 #include <stdio.h>
 
 int main (int argc, char** argv) {

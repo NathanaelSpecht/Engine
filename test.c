@@ -5,6 +5,7 @@
 #include "convertx.h"
 #include "filex.h"
 #include "vectorx.h"
+#include "utilx.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
