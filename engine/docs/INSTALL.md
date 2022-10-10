@@ -39,7 +39,7 @@ Tests will be conducted on every module in my game engine.
 Passing tests will print "pass" to stdout.
 Failing tests will print "FAIL" to stdout.
 
-Modules that pass all tests are ready for use.
+Modules that pass all tests are ready for experimental use.
 
 ## Using My Game Engine on Linux and Windows
 
