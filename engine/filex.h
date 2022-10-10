@@ -1,10 +1,8 @@
 
-/*  tis_file.h -- interface of the 'TIS' game engine library.
-    version 0.1, 2022 August 30
-*/
+/* Copyright (C) 2022 Nathanael Specht */
 
-#ifndef TIS_FILE_H
-#define TIS_FILE_H
+#ifndef FILEX_H
+#define FILEX_H
 
 #include <stdbool.h>
 

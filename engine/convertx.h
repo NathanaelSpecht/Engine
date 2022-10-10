@@ -1,10 +1,8 @@
 
-/*  tis_convert.h -- interface of the 'TIS' game engine library.
-    version 0.1, 2022 August 30
-*/
+/* Copyright (C) 2022 Nathanael Specht */
 
-#ifndef TIS_CONVERT_H
-#define TIS_CONVERT_H
+#ifndef CONVERTX_H
+#define CONVERTX_H
 
 #include <stdbool.h>
 

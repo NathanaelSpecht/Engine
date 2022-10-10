@@ -1,6 +1,8 @@
 
-#ifndef TIS_VECTOR_H
-#define TIS_VECTOR_H
+/* Copyright (C) 2022 Nathanael Specht */
+
+#ifndef VECTORX_H
+#define VECTORX_H
 
 #include <stdbool.h>
 

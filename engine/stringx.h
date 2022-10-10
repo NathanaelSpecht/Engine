@@ -1,10 +1,8 @@
 
-/*  tis_string.h -- interface of the 'TIS' game engine library.
-    version 0.1, 2022 August 30
-*/
+/* Copyright (C) 2022 Nathanael Specht */
 
-#ifndef TIS_STRING_H
-#define TIS_STRING_H
+#ifndef STRINGX_H
+#define STRINGX_H
 
 #include <stdbool.h>
 

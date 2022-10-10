@@ -1,6 +1,8 @@
 
-#include "tis_file.h"
-#include "tis_string.h"
+/* Copyright (C) 2022 Nathanael Specht */
+
+#include "filex.h"
+#include "stringx.h"
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdio.h>

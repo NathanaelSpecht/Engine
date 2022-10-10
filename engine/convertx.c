@@ -1,6 +1,8 @@
 
-#include "tis_convert.h"
-#include "tis_string.h"
+/* Copyright (C) 2022 Nathanael Specht */
+
+#include "convertx.h"
+#include "stringx.h"
 #include <stddef.h>
 #include <stdlib.h>
 

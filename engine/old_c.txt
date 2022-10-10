@@ -1,4 +1,6 @@
 
+/* Copyright (C) 2022 Nathanael Specht */
+
 #include "tis.h"
 
 void renderString (const char* s, const Box* box, Image* image, const Graphics* g) {

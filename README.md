@@ -16,9 +16,8 @@ Checked items are complete, in the sense that all tests are passing.
 "Upcoming modules" will be added. "Future modules" may or may not be added.
 
 Upcoming Modules:
-- [x] String functions that are easier to use than the ones in `string.h`. Is 
-meant to replace the c standard library's `string.h`, but can be used alongside 
-it, because there are no name collisions.
+- [x] String functions that are meant to replace the c standard library's 
+`string.h`, but can be used alongside it because there are no name collisions.
 - [x] Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
 - [x] File function wrappers around the c standard library's `stdio.h`.

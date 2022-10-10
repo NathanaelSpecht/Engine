@@ -1,9 +1,10 @@
 
-/*  hello.c -- Tests compilation environment for my game engine. */
+/* Copyright (C) 2022 Nathanael Specht */
 
-#include "tis_string.h"
-#include "tis_convert.h"
-#include "tis_file.h"
+#include "stringx.h"
+#include "convertx.h"
+#include "filex.h"
+#include "vectorx.h"
 #include <stdio.h>
 
 int main (int argc, char** argv) {

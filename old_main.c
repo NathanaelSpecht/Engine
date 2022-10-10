@@ -1,7 +1,7 @@
 
-/*  main.c  Example app using my game engine.
-    Outdated code.
-*/
+/* Copyright (C) 2022 Nathanael Specht */
+
+// This code is outdated. Do not use.
 
 #include "tis.h"
 

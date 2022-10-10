@@ -1,32 +1,23 @@
-# TIS game engine API
+# My Game Engine API
 
-This is the API provided for your code to interface with TIS.
-**TIS is still in early development, so this API is subject to change.**
+This is the API for my game engine.
+**This is still in early development and is subject to change.**
 
-Upcoming Modules:
-- [x] String functions that are easier to use than the ones in `string.h`. Is 
-meant to replace the c standard library's `string.h`, but can be used alongside 
-it, because there are no name collisions.
-- [x] Conversion functions for string-to-type and type-to-string conversion, 
+Existing Modules:
+- String functions
+- Conversion functions for string-to-type and type-to-string conversion, 
 and is-type functions to check if a string-to-type conversion will succeed.
-- [x] File function wrappers around the c standard library's `stdio.h`.
-- [x] 2D Vector and matrix operations.
-- [ ] Fast math operations and fixed-point numbers. For when speed is more
-important than precision.
-- [ ] 2D Rendering functions for text and sprite animations.
-- [ ] Music function wrappers around SDL's audio functions, and math operations 
-needed for music processing.
-- [ ] 2D World, scene, object, hitbox, entity, and vehicle modeling. 2D model 
+- File functions.
+- 2D Vector and matrix operations.
+
+Modules To Be Added:
+- Basic utility functions and macro.
+- Music functions.
+- 2D Rendering functions for text and sprite animations.
+- 2D World, scene, object, hitbox, entity, and vehicle modeling. 2D model 
 of the game world, disparate from the process used to render it.
 
-Future Modules:
-- [ ] Network function wrappers around the network sockets.
-- [ ] 3D Vector and matrix operations.
-- [ ] 3D Rendering functions for textured polygon meshes and 3D animations.
-- [ ] 3D World, scene, object, hitbox, entity, and vehicle modeling. 3D model 
-of the game world, disparate from the process used to render it.
-
-## tis_string.h
+## stringx.h
 
 - [x] `int string_length (char* s)`
 	- Finds the length of a string `s`, not including the null-terminator. NULL 
@@ -86,29 +77,7 @@ NULL lists have length 0.
 - [x] `void string_join (char** s, char** list, char ch)`
 	- Joins `list` on `ch` into a string `s`.
 
-## tis_fast_math.h
-
-Data Structures:
-
-- [ ] `typedef long long fix`
-	- 64-bit fixed-point number. 32-bit integer and 11-bit fraction.
-22 bits of padding for lossless multiply and divide operations.
-
-Operations:
-
-- [ ] `long muliq (long a, fix b)`
-	- multiply integer `a` by fixed-point `b`.
-
-- [ ] `fix mulqq (fix a, fix b)`
-	- multiply fixed-point `a` by fixed-point `b`.
-
-- [ ] `long diviq (long a, fix b)`
-	- divide integer `a` by fixed-point `b`.
-
-- [ ] `fix divqq (fix a, fix b)`
-	- divide fixed-point `a` by fixed-point `b`.
-
-## tis_convert.h
+## convertx.h
 
 - [x] `bool string_is_bool (char* s)`
 	- Checks string `s` can be evaluated as bool.
@@ -138,7 +107,7 @@ Operations:
 	- Evaluates float `f` as decimal number with up to `d` digits, and stores 
 it in string `s`.
 
-## tis_file.h
+## filex.h
 
 - [x] `bool file_exists (char* file)`
 	- Checks if `file` exists.
@@ -158,7 +127,7 @@ overwrites it.
 	- Appends `ascii` to end of `file`. If file does not exist, works the same 
 as `file_write`, else appends to end.
 
-## tis_vector.h
+## vectorx.h
 
 Data Structures:
 
@@ -243,10 +212,12 @@ Matrix-Matrix Operations:
 	- matrix(dot(A1, T1), dot(A1, T2), dot(A2, T1), dot(A2, T2)),
 	where T = transpose(B)
 
-## tis_render2d.h
+## utilx.h
 
-## tis_music.h
+## renderx.h
 
-## tis_world2d.h
+## musicx.h
+
+## worldx.h
 
 

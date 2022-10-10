@@ -1,5 +1,7 @@
 
-#include "tis_vector.h"
+/* Copyright (C) 2022 Nathanael Specht */
+
+#include "vectorx.h"
 #include <math.h>
 
 // Unary Operations:

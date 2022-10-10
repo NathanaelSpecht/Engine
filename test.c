@@ -1,10 +1,10 @@
 
-/*  test.c -- Unit tests for my game engine. */
+/* Copyright (C) 2022 Nathanael Specht */
 
-#include "tis_string.h"
-#include "tis_convert.h"
-#include "tis_file.h"
-#include "tis_vector.h"
+#include "stringx.h"
+#include "convertx.h"
+#include "filex.h"
+#include "vectorx.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
