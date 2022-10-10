@@ -1,18 +1,17 @@
-# TIS Game Engine
+# My Game Engine
 
-TIS is not your typical game engine, and is not a standalone program.
-Rather, TIS is a collection of functions you can use to create a game.
+This is a collection of functions I use to create my games.
 
-Documentation can be found in the `tis/docs/` folder:
+Documentation can be found in the `engine/docs/` folder:
 - `INSTALL.md`: Installation instructions.
 - `API.md`: Descriptions and API for modules and their functions.
 - `CHANGELOG.md`: The current version and dates of changes.
 
 Check the git log for a detailed list of changes.
 
-## What Can I Expect From TIS?
+## What Can I Expect From Engine?
 
-I plan to add the following modules to TIS.
+I plan to add the following modules to my engine.
 Checked items are complete, in the sense that all tests are passing.
 "Upcoming modules" will be added. "Future modules" may or may not be added.
 
@@ -39,14 +38,13 @@ of the game world, disparate from the process used to render it.
 
 ## Licensing
 
-TIS's files and license are in the `tis/` folder.
+Game engine files and license are in the `engine/` folder.
 
 SDL2's files and license are in the `sdl2/` folder.
 
 Graphics and audio files and licenses are in the `data/` folder.
 
-TIS will always be free and open source.
+My game engine will always be free and open source.
 
 Nathanael Specht
-Trees in Space
 
