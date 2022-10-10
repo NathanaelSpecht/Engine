@@ -1,5 +1,5 @@
 
-/*  test.c -- Unit tests for 'TIS' game engine library.
+/*  test.c -- Unit tests for my game engine.
     version 0.1, 2022 August 30
 */
 
