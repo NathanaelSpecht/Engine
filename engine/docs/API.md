@@ -231,8 +231,8 @@ Matrix-Matrix Operations:
 	- reallocs ptr if n > 0, else deletes ptr. returns new address or null.
 	program exits if a memory error ocurrs, as expected in modern languages.
 
-- [x] `void* alloc_ignore_error (void* ptr, int64 n)`
-	- alloc without error-checking, as expected for the original realloc.
+- [x] `void* alloc_no_exit (void* ptr, int64 n)`
+	- alloc without exit on memory error, as expected for the original realloc.
 
 ## renderx.h
 

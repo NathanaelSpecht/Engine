@@ -2,6 +2,7 @@
 /* Copyright (C) 2022 Nathanael Specht */
 
 #include "stringx.h"
+#include "utilx.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -16,12 +17,7 @@ int string_length (const char* s) {
 }
 
 void string_delete (char** s) {
-	char* t = *s;
-	if (t != NULL) {
-		free(t);
-		t = NULL;
-		*s = t;
-	}
+	*s = delete(*s);
 }
 
 bool string_equals (const char* a, const char* b) {
@@ -49,11 +45,10 @@ void string_copy (char** s, const char* a) {
 	if (a == t) { // both null, or both point to same memory.
 		return;
 	} else if (a == NULL && t != NULL) {
-		free(t);
-		t = NULL;
+		t = delete(t);
 	} else {
 		int n = string_length(a) + 1;
-		t = realloc(t, n);
+		t = alloc(t, n);
 		for (int i = 0; i < n; i++) {
 			t[i] = a[i];
 		}
@@ -74,9 +69,9 @@ void substring (char** s, const char* a, int start, int length) {
 				j++;
 			}
 			t[length] = '\0';
-			t = realloc(t, length + 1);
+			t = alloc(t, length + 1);
 		} else { // different memories.
-			t = realloc(t, length + 1);
+			t = alloc(t, length + 1);
 			int j = start;
 			for (int i = 0; i < length; i++) {
 				t[i] = a[j];
@@ -105,7 +100,7 @@ void string_trim (char** s) {
 void string_append_char (char** s, char ch, int length) {
 	if (ch > 0 && ch < 127 && length >= 0) {
 		char* t = *s;
-		t = realloc(t, length + 2);
+		t = alloc(t, length + 2);
 		t[length] = ch;
 		t[length + 1] = '\0';
 		*s = t;
@@ -118,14 +113,14 @@ void string_append (char** s, const char* a) {
 	if (len > 0) {
 		int n = string_length(t);
 		int m = n + len;
-		t = realloc(t, m + 1);
+		t = alloc(t, m + 1);
 		for (int i = n; i < m; i++) {
 			t[i] = a[i - n];
 		}
 		t[m] = '\0';
 		*s = t;
 	} else if (a != NULL && t == NULL) {
-		t = malloc(1);
+		t = alloc(t, 1);
 		t[0] = '\0';
 		*s = t;
 	}
@@ -137,7 +132,7 @@ void string_prepend (char** s, const char* a) {
 	if (len > 0) {
 		int n = string_length(t);
 		int m = len + n;
-		t = realloc(t, m + 1);
+		t = alloc(t, m + 1);
 		for (int i = m - 1; i >= len; i--) {
 			t[i] = t[i - len];
 		}
@@ -147,7 +142,7 @@ void string_prepend (char** s, const char* a) {
 		}
 		*s = t;
 	} else if (a != NULL && t == NULL) {
-		t = malloc(1);
+		t = alloc(t, 1);
 		t[0] = '\0';
 		*s = t;
 	}
@@ -216,9 +211,9 @@ void string_replace (char** s, const char* a, int start, int length) {
 					i++;
 				}
 				t[i] = '\0';
-				t = realloc(t, n + 1);
+				t = alloc(t, n + 1);
 			} else {
-				t = realloc(t, n + 1);
+				t = alloc(t, n + 1);
 				t[n] = '\0';
 				int i = n - 1;
 				for (int j = m - 1; j >= start + length; j--) {
@@ -281,11 +276,9 @@ void stringlist_delete (char*** list) {
 	char** t = *list;
 	if (t != NULL) {
 		for (int i = 0; t[i] != NULL; i++) {
-			free(t[i]);
-			t[i] = NULL;
+			t[i] = delete(t[i]);
 		}
-		free(t);
-		t = NULL;
+		t = delete(t);
 		*list = t;
 	}
 }
@@ -294,7 +287,7 @@ void stringlist_add (char*** list, const char* s) {
 	if (s != NULL) {
 		char** t = *list;
 		int len = stringlist_length(t);
-		t = realloc(t, sizeof(char*) * (len + 2));
+		t = alloc(t, sizeof(char*) * (len + 2));
 		char* u = NULL;
 		string_copy(&u, s);
 		t[len] = u;

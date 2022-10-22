@@ -24,7 +24,7 @@ void* alloc (void* ptr, int64 n) {
 	return ret;
 }
 
-void* alloc_ignore_error (void* ptr, int64 n) {
+void* alloc_no_exit (void* ptr, int64 n) {
 	void* ret;
 	if (n <= 0) {
 		ret = delete(ptr);

@@ -23,7 +23,7 @@ void test (bool b) {
 int main (int argc, char** argv) {
 	printf("Starting test\n");
 	
-	printf("\n[tis_string]:\n");
+	printf("\n[string]:\n");
 	
 	{
 		printf("string_length:");
@@ -38,8 +38,8 @@ int main (int argc, char** argv) {
 	{
 		printf("string_delete:");
 		char* a = NULL;
-		char* b = malloc(1);
-		char* c = malloc(3);
+		char* b = alloc(NULL, 1);
+		char* c = alloc(NULL, 3);
 		
 		string_delete(&a);
 		test(a == NULL);
@@ -520,7 +520,7 @@ int main (int argc, char** argv) {
 		printf("\n");
 	}
 	
-	printf("\n[tis_convert]:\n");
+	printf("\n[convert]:\n");
 	
 	{
 		printf("bool:");
@@ -658,7 +658,7 @@ int main (int argc, char** argv) {
 		printf("\n");
 	}
 	
-	printf("\n[tis_file]:\n");
+	printf("\n[file]:\n");
 	
 	{
 		printf("file_exists:");
@@ -789,7 +789,7 @@ int main (int argc, char** argv) {
 		printf("\n");
 	}
 	
-	printf("\n[tis_vector]:\n");
+	printf("\n[vector]:\n");
 	
 	{
 		printf("vector2d_length:");
