@@ -1,45 +1,33 @@
 
-# Copyright (C) 2022 Nathanael Specht
+# Copyright 2022-2023 Nathanael Specht
 
 ifeq ($(OS),Windows_NT)
 COMPILE = gcc -O0 -Wall -Wno-unused-variable -Wl,-subsystem,windows
 YOUR_SOURCE = $(wildcard src/*.c)
-MY_SOURCE = $(wildcard engine/*.c)
+NG_SOURCE = $(wildcard ng/*.c)
 YOUR_INCLUDE = -Isrc
-MY_INCLUDE = -Iengine -Isdl2/x86_64-w64-mingw32/include/SDL2 \
-	-Lsdl2/x86_64-w64-mingw32/lib
+NG_INCLUDE = -Ing -Isdl/windows/mingw/include/SDL2 -Lsdl/windows/mingw/lib
 LIBRARY = -lmingw32 -lSDL2main -lSDL2 -lm
 
 else
 COMPILE = gcc -O0 -Wall -Wno-unused-variable
 YOUR_SOURCE = $(wildcard src/*.c)
-MY_SOURCE = $(wildcard engine/*.c)
+NG_SOURCE = $(wildcard ng/*.c)
 YOUR_INCLUDE = -Isrc
-MY_INCLUDE = -Iengine -Isdl2/x86_64-w64-mingw32/include/SDL2 \
-	-Lsdl2/x86_64-w64-mingw32/lib
+NG_INCLUDE = -Ing -Isdl/ubuntu/include -Lsdl/ubuntu/lib
 LIBRARY = -lSDL2 -lm
 
 endif
 
 main:
-	$(COMPILE) main.c $(YOUR_SOURCE) $(MY_SOURCE) -o app \
-	$(YOUR_INCLUDE) $(MY_INCLUDE) $(LIBRARY)
-
-test:
-	$(COMPILE) test.c $(MY_SOURCE) -o test $(MY_INCLUDE) $(LIBRARY)
-
-hello:
-	$(COMPILE) hello.c -o hello $(MY_INCLUDE) $(LIBRARY)
+	$(COMPILE) main.c $(YOUR_SOURCE) $(NG_SOURCE) -o app $(YOUR_INCLUDE) $(NG_INCLUDE) $(LIBRARY)
 
 help:
-	@echo "My game engine"
+	@echo "engine (ng)"
 	@echo ""
-	@echo "  Command       App Name  Description"
-	@echo "  'make'        'app'     Compile my engine with your project."
-	@echo "  'make test'   'test'    Test my game engine."
-	@echo "  'make hello'  'hello'   Test your compilation environment."
-	@echo "  'make help'             Display this message."
+	@echo "  command:     description:"
+	@echo "  make         compile engine with your code. creates app."
+	@echo "  make help    display this message."
 	@echo ""
-	@echo "Copyright (C) 2022 Nathanael Specht"
-	@echo "Refer to README for more information."
+	@echo "Copyright 2022-2023 Nathanael Specht"
 
