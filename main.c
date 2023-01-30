@@ -16,6 +16,7 @@ int main (int argc, char** argv) {
 	ng_time_init(&t);
 	
 	// init audio
+	/*
 	ngAudio a;
 	ng_audio_init(&a);
 	ngChannel music, sound;
@@ -25,7 +26,7 @@ int main (int argc, char** argv) {
 	ngClip music_breath, sound_glass;
 	ng_clip_init(&a, &music_breath, "music/Breath.wav");
 	ng_clip_init(&a, &sound_glass, "music/smashing-glass.wav");
-	
+	*/
 	
 	// init graphics
 	ngGraphics g;
@@ -42,8 +43,8 @@ int main (int argc, char** argv) {
 	ng_image_init(&g, &title_image, "art/title-screen.bmp", 0, 0, 0, 0, 0);
 	
 	// start game
-	ng_channel_start_sound(&music, &music_breath, NG_LOOP);
-	ng_audio_play(&a);
+	//ng_channel_start_sound(&music, &music_breath, NG_LOOP);
+	//ng_audio_play(&a);
 	
 	SDL_Event event;
 	while (true) {
@@ -72,7 +73,7 @@ int main (int argc, char** argv) {
 						case SDL_SCANCODE_ESCAPE: {
 							break;
 						} case SDL_SCANCODE_RETURN: {
-							ng_channel_start_sound(&sound, &sound_glass, NG_PLAYONCE);
+							//ng_channel_start_sound(&sound, &sound_glass, NG_PLAYONCE);
 							break;
 						} case SDL_SCANCODE_SPACE: {
 							break;
@@ -127,22 +128,25 @@ int main (int argc, char** argv) {
 		}
 		
 		{ // audio
-			// ng_audio_update(&a);
+			/*
 			ng_audio_clear(&a);
 			ng_audio_mix_channel(&a, &music);
 			ng_audio_mix_channel(&a, &sound);
 			ng_audio_queue(&a);
+			*/
 		}
 		
 		ng_time_tick(&t);
 	}
 	
 quit:
+	/*
 	ng_clip_quit(&music_breath);
 	ng_clip_quit(&sound_glass);
 	ng_channel_quit(&music);
 	ng_channel_quit(&sound);
 	ng_audio_quit(&a);
+	*/
 	
 	ng_image_quit(&title_image);
 	ng_graphics_quit(&g);

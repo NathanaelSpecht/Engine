@@ -1,24 +1,27 @@
+
 # Engine
 
-(ng) lovingly referred to as "engie".
+Lovingly referred to as "engie" (ng).
 
-These are the functions I use as the starting point for my programs.
+This is the code I use as the starting point for my programs.
+The included Fire Days game demonstrates how to use engie.
 
 Documentation:
-- `ng/ng.h`: Engine API.
+- `ng/ng.h`: Engie's API.
 - `INSTALL.md`: Compile instructions and dependency list.
 - `CHANGELOG.md`: The current version and changelog.
 
 Licenses:
 - The `LICENSE` file applies to:
-	- `main.c`,
-	- Engine's source files in the `ng/` folder,
-	- The included game's source files in the `src/` folder.
-- SDL2's files and license are in the `sdl2/` folder.
-- Image files and their licenses are in the `art/` folder.
-- Audio files and their licenses are in the `music/` folder.
+	- The `Makefile`,
+	- Engie's source files in the `ng/` folder,
+	- Engie's documentation: `README.md`, `INSTALL.md`, and `CHANGELOG.md`.
+	- Fire Days's source files: `main.c`, and the `src/` folder,
+	- Fire Days's graphics files in the `art/` folder.
+- Fire Days's audio files and their licenses are in the `music/` folder.
+- SDL2's files and license are in the `sdl/` folder.
 
-Engine will always be free and open source.
+Engie will always be free and open source.
 
 Nathanael Specht
 

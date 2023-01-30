@@ -1,6 +1,11 @@
+
 # Engine Changelog
 
 ## 2023 January
+
+January 30:
+- Remove unused audio files.
+- Better install instructions.
 
 January 24:
 - Copy engine changes from private game repo to public engine repo.
@@ -82,4 +87,5 @@ August 02:
 - Readme
 - todo list
 - changelog
+
 
