@@ -3,6 +3,36 @@
 
 #include "ng.h"
 
+void ng_rect_init (ngRect* r, int x, int y, int w, int h) {
+	r->x = x;
+	r->y = y;
+	r->w = w;
+	r->h = h;
+}
+
+int ng_rect_contains (ngRect* r, int x, int y) {
+	if ((x < r->x || r->x + r->w < x) || (y < r->y || r->y + r->h < y)) {
+		return NG_FALSE;
+	} else if ((x == r->x || r->x + r->w == x) ||
+	(y == r->y || r->y + r->h == y)) {
+		return NG_EDGE;
+	} else {
+		return NG_TRUE;
+	}
+}
+
+int ng_rect_overlaps (ngRect* r1, ngRect* r2) {
+	if ((r2->x + r2->w < r1->x || r1->x + r1->w < r2->x) ||
+	(r2->y + r2->h < r1->y || r1->y + r1->h < r2->y)) {
+		return NG_FALSE;
+	} else if ((r2->x + r2->w == r1->x || r1->x + r1->w == r2->x) ||
+	(r2->y + r2->h == r1->y || r1->y + r1->h == r2->y)) {
+		return NG_EDGE;
+	} else {
+		return NG_TRUE;
+	}
+}
+
 void ng_frame_init (ngFrame* frame, int x, int y, int w, int h) {
 	frame->x = x;
 	frame->y = y;
@@ -77,14 +107,14 @@ void ng_frame_scale_grid (ngFrame* frame, int columns, int rows) {
 	frame->h = h;
 }
 
-void ng_frame_in (const ngFrame* frame, SDL_Rect* rect) {
+void ng_frame_in (const ngFrame* frame, ngRect* rect) {
 	rect->x = (int)((rect->x - frame->x) / frame->tile_w);
 	rect->y = (int)((rect->y - frame->y) / frame->tile_h);
 	rect->w = (int)(rect->w / frame->tile_w);
 	rect->h = (int)(rect->h / frame->tile_h);
 }
 
-void ng_frame_out (const ngFrame* frame, SDL_Rect* rect) {
+void ng_frame_out (const ngFrame* frame, ngRect* rect) {
 	rect->x = (int)((rect->x * frame->tile_w) + frame->x);
 	rect->y = (int)((rect->y * frame->tile_h) + frame->y);
 	rect->w = (int)(rect->w * frame->tile_w);
@@ -96,7 +126,7 @@ void ng_view_init (ngView* view, ngFrame* in, ngFrame* out) {
 	view->out = *out;
 }
 
-void ng_view_in (const ngView* view, SDL_Rect* rect) {
+void ng_view_in (const ngView* view, ngRect* rect) {
 	ng_frame_in(&(view->out), rect); // out: absolute to relative
 	// convert relative coord spaces: out to in
 	// in.columns / out.columns = rect.x' / rect.x
@@ -109,7 +139,7 @@ void ng_view_in (const ngView* view, SDL_Rect* rect) {
 	ng_frame_out(&(view->in), rect); // in: relative to absolute
 }
 
-void ng_view_out (const ngView* view, SDL_Rect* rect) {
+void ng_view_out (const ngView* view, ngRect* rect) {
 	ng_frame_in(&(view->in), rect); // in: absolute to relative
 	// convert relative coord spaces: in to out
 	// out.columns / in.columns = rect.x' / rect.x
@@ -282,8 +312,8 @@ void ng_graphics_draw (ngGraphics* g) {
 	SDL_RenderPresent(g->renderer);
 }
 
-int ng_draw_image (ngGraphics* g, ngImage* image, const SDL_Rect* s,
-const SDL_Rect* d, int flip, double angle) {
+int ng_draw_image (ngGraphics* g, ngImage* image, const ngRect* s,
+const ngRect* d, int flip, double angle) {
 	if (image == NULL || image->texture == NULL) {
 		return ng_draw_rect(g, d, true);
 	}
@@ -294,7 +324,10 @@ const SDL_Rect* d, int flip, double angle) {
 		src.w = image->w;
 		src.h = image->h;
 	} else {
-		src = *s;
+		src.x = s->x;
+		src.y = s->y;
+		src.w = s->w;
+		src.h = s->h;
 	}
 	if (image->grid) {
 		src.x = src.x * image->tile_w;
@@ -309,7 +342,10 @@ const SDL_Rect* d, int flip, double angle) {
 		dest.w = g->w;
 		dest.h = g->h;
 	} else {
-		dest = *d;
+		dest.x = d->x;
+		dest.y = d->y;
+		dest.w = d->w;
+		dest.h = d->h;
 	}
 	if (flip == SDL_FLIP_NONE && angle == 0.0) {
 		if (SDL_RenderCopy(g->renderer, image->texture, &src, &dest) != 0) {
@@ -324,7 +360,7 @@ const SDL_Rect* d, int flip, double angle) {
 	return NG_SUCCESS;
 }
 
-int ng_draw_rect (ngGraphics* g, const SDL_Rect* r, bool fill) {
+int ng_draw_rect (ngGraphics* g, const ngRect* r, bool fill) {
 	SDL_Rect dest;
 	if (r == NULL) {
 		dest.x = 0;
@@ -332,7 +368,10 @@ int ng_draw_rect (ngGraphics* g, const SDL_Rect* r, bool fill) {
 		dest.w = g->w;
 		dest.h = g->h;
 	} else {
-		dest = *r;
+		dest.x = r->x;
+		dest.y = r->y;
+		dest.w = r->w;
+		dest.h = r->h;
 	}
 	if (fill) {
 		if (SDL_RenderFillRect(g->renderer, &dest) != 0) {

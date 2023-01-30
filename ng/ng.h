@@ -15,7 +15,9 @@
 // Core
 #define ng_here(); printf("%s:%d\n",__FILE__,__LINE__);
 
-enum ngEnumReturnCode { NG_SUCCESS = 0, NG_ERROR = -1 };
+// These are compatible with bool
+enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
+enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
 // File
 bool ng_file_exists (const char* file);
@@ -39,6 +41,13 @@ void ng_time_init (ngTime*);
 void ng_time_tick (ngTime*);
 
 // Graphics
+typedef struct ngRect {
+	int x;
+	int y;
+	int w;
+	int h;
+} ngRect;
+
 typedef struct ngFrame {
 	int x;
 	int y;
@@ -81,6 +90,10 @@ typedef struct ngGraphics {
 	int a;
 } ngGraphics;
 
+void ng_rect_init (ngRect*, int x, int y, int w, int h);
+int ng_rect_contains (ngRect*, int x, int y);
+int ng_rect_overlaps (ngRect*, ngRect*);
+
 void ng_frame_init (ngFrame*, int x, int y, int w, int h);
 void ng_frame_grid (ngFrame*, int columns, int rows);
 // ^ change columns and recompute tile w, keeping w the same
@@ -97,17 +110,17 @@ void ng_frame_resize_grid (ngFrame*, int columns, int rows);
 void ng_frame_scale_grid (ngFrame*, int columns, int rows);
 // ^ change columns and recompute w, keeping tile w the same
 
-void ng_frame_in (const ngFrame*, SDL_Rect*);
+void ng_frame_in (const ngFrame*, ngRect*);
 // ^ change rect from absolute to relative, using grid if needed
-void ng_frame_out (const ngFrame*, SDL_Rect*);
+void ng_frame_out (const ngFrame*, ngRect*);
 // ^ change rect from relative (using grid if needed) to absolute
 // to shift a point in or out, use a rect with w=0 and h=0
 // to shift a line in or out, use 2 points
 
 void ng_view_init (ngView*, ngFrame* in, ngFrame* out);
-void ng_view_in (const ngView*, SDL_Rect*);
+void ng_view_in (const ngView*, ngRect*);
 // ^ change rect from inside coord space to outside coord space, both absolute
-void ng_view_out (const ngView*, SDL_Rect*);
+void ng_view_out (const ngView*, ngRect*);
 // ^ change rect from outside coord space to inside coord space, both absolute
 
 int ng_image_init (ngGraphics*, ngImage*, const char* file, int columns, int rows,
@@ -124,10 +137,10 @@ int ng_graphics_alpha (ngGraphics*, int a);
 int ng_graphics_clear (ngGraphics*);
 void ng_graphics_draw (ngGraphics*);
 
-int ng_draw_image (ngGraphics*, ngImage*, const SDL_Rect*, const SDL_Rect*,
+int ng_draw_image (ngGraphics*, ngImage*, const ngRect*, const ngRect*,
 	int flip, double angle);
 // ^ sdl flip, angle in degrees
-int ng_draw_rect (ngGraphics*, const SDL_Rect*, bool fill);
+int ng_draw_rect (ngGraphics*, const ngRect*, bool fill);
 int ng_draw_line (ngGraphics*, int x1, int y1, int x2, int y2);
 int ng_draw_point (ngGraphics*, int x, int y);
 

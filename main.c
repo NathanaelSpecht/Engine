@@ -30,7 +30,7 @@ int main (int argc, char** argv) {
 	
 	// init graphics
 	ngGraphics g;
-	if (ng_graphics_init(&g, "Engine", 640, 480) < 0) {
+	if (!ng_graphics_init(&g, "Engine", 640, 480)) {
 		// ^ 80x30 8x16 chars, 4:3
 		ng_here();
 		printf("can't init graphics\n");
@@ -45,6 +45,8 @@ int main (int argc, char** argv) {
 	// start game
 	//ng_channel_start_sound(&music, &music_breath, NG_LOOP);
 	//ng_audio_play(&a);
+	
+	ngRect dest;
 	
 	SDL_Event event;
 	while (true) {
@@ -118,11 +120,10 @@ int main (int argc, char** argv) {
 			ng_graphics_color(&g, 0, 0, 0);
 			ng_graphics_clear(&g);
 			
-			SDL_Rect dest = {screen.x, screen.y, screen.w, screen.h};
+			ng_graphics_color(&g, 127, 127, 127);
+			ng_rect_init(&dest, screen.x, screen.y, screen.w, screen.h);
 			//ng_frame_out(&screen, &dest);
 			ng_draw_image(&g, &title_image, NULL, &dest, SDL_FLIP_NONE, 0.0);
-			ng_graphics_color(&g, 255, 0, 0);
-			ng_draw_rect(&g, &dest, false);
 			
 			ng_graphics_draw(&g);
 		}
