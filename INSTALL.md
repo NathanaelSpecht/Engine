@@ -37,6 +37,6 @@ following structure: (or just change the `Makefile` to match your project)
 - `sdl/` SDL's folders.
 
 Include `ng.h` in your code.
-Refer to Fire Days's code to learn how to use engie.
+Refer to Fire Days Demo's code to learn how to use engie.
 
 

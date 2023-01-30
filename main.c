@@ -2,6 +2,7 @@
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
 #include "ng.h"
+#include "firedays.h"
 
 int main (int argc, char** argv) {
 	
@@ -30,23 +31,27 @@ int main (int argc, char** argv) {
 	
 	// init graphics
 	ngGraphics g;
-	if (!ng_graphics_init(&g, "Engine", 640, 480)) {
+	if (!ng_graphics_init(&g, "Fire Days Demo", 640, 480)) {
 		// ^ 80x30 8x16 chars, 4:3
 		ng_here();
 		printf("can't init graphics\n");
 		exit(EXIT_FAILURE);
 	}
+	fdScreen screen;
+	fd_screen_init(&screen, &g);
+	/*
 	ngFrame screen;
 	ng_frame_init(&screen, 8, 16, g.w-16, g.h-32);
 	
 	ngImage title_image;
 	ng_image_init(&g, &title_image, "art/title-screen.bmp", 0, 0, 0, 0, 0);
+	*/
 	
 	// start game
 	//ng_channel_start_sound(&music, &music_breath, NG_LOOP);
 	//ng_audio_play(&a);
 	
-	ngRect dest;
+	//ngRect dest;
 	
 	SDL_Event event;
 	while (true) {
@@ -120,10 +125,13 @@ int main (int argc, char** argv) {
 			ng_graphics_color(&g, 0, 0, 0);
 			ng_graphics_clear(&g);
 			
+			fd_screen_draw(&screen, &g);
+			/*
 			ng_graphics_color(&g, 127, 127, 127);
 			ng_rect_init(&dest, screen.x, screen.y, screen.w, screen.h);
 			//ng_frame_out(&screen, &dest);
 			ng_draw_image(&g, &title_image, NULL, &dest, SDL_FLIP_NONE, 0.0);
+			*/
 			
 			ng_graphics_draw(&g);
 		}
@@ -149,7 +157,7 @@ quit:
 	ng_audio_quit(&a);
 	*/
 	
-	ng_image_quit(&title_image);
+	//ng_image_quit(&title_image);
 	ng_graphics_quit(&g);
 	
 	SDL_Quit();

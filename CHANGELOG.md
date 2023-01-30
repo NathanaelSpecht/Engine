@@ -7,6 +7,7 @@ January 30:
 - Remove unused audio files.
 - Better install instructions.
 - Rect functions.
+- Screen code and start of the Fire Days Demo.
 
 January 24:
 - Copy engine changes from private game repo to public engine repo.
