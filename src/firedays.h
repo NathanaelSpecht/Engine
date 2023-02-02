@@ -9,11 +9,14 @@
 
 #include "ng.h"
 
-// Screen
-
 enum fdEnumNone { FD_NONE = 0 };
-enum fdEnumScreenMode { FD_TITLE = 1, FD_FILE = 2, FD_WORLD = 3, FD_LEVEL = 4,
-	FD_CREATIVE = 5 };
+enum fdEnumScreenMode {
+	FD_TITLESCREEN = 1,
+	FD_FILESCREEN = 2,
+	FD_WORLDSCREEN = 3,
+	FD_LEVELSCREEN = 4,
+	FD_CREATIVESCREEN = 5
+};
 
 typedef struct fdTitleScreen {
 	ngRect header_rect;
@@ -22,21 +25,26 @@ typedef struct fdTitleScreen {
 	ngRect quit_rect;
 } fdTitleScreen;
 
-/* TODO level completion, save/load progress
+void fd_title_screen_init (fdTitleScreen*);
+void fd_title_screen_draw (fdTitleScreen*, ngGraphics*, ngView*);
+
 typedef struct fdFileScreen {
 	ngRect header_rect;
 	ngFrame save_frame;
 	ngRect save1_rect;
 } fdFileScreen;
-*/
 
-/* TODO level select
+void fd_file_screen_init (fdFileScreen*);
+void fd_file_screen_draw (fdFileScreen*, ngGraphics*, ngView*);
+
 typedef struct fdWorldScreen {
 	ngRect header_rect;
 	ngFrame level_frame;
 	ngRect level1_rect;
 } fdWorldScreen;
-*/
+
+void fd_world_screen_init (fdWorldScreen*);
+void fd_world_screen_draw (fdWorldScreen*, ngGraphics*, ngView*);
 
 typedef struct fdLevelScreen {
 	ngRect header_rect;
@@ -46,42 +54,19 @@ typedef struct fdLevelScreen {
 	ngRect fuel_rect;
 } fdLevelScreen;
 
-/* TODO level creator
-typedef struct fdCreativeScreen {
-	ngRect header_rect;
-	ngFrame item_frame;
-	ngRect fire_rect;
-	ngRect water_rect;
-	ngRect box_rect;
-	ngRect flag_rect;
-} fdCreativeScreen;
-*/
+void fd_level_screen_init (fdLevelScreen*);
+void fd_level_screen_draw (fdLevelScreen*, ngGraphics*, ngView*);
 
-/* TODO debug overlay
-enum fdEnumDebugMode { FD_DEBUG = 1 };
+enum fdEnumDebugMode { FD_DEBUGSCREEN = 1 };
 
 typedef struct fdDebugScreen {
 	int mode;
 	ngRect version_rect;
 	ngRect fps_rect;
 } fdDebugScreen;
-*/
 
-typedef struct fdScreen {
-	ngView view; // portal from virtual screen to window pixels
-	// ^ fills the whole window
-	// ^ allows user to resize window while screen positions stay the same.
-	int mode;
-	fdTitleScreen title;
-	//fdFileScreen file;
-	//fdWorldScreen world;
-	fdLevelScreen level;
-	//fdCreativeScreen creative;
-	//fdDebugScreen debug;
-} fdScreen;
-
-void fd_screen_init (fdScreen*, ngGraphics*);
-void fd_screen_draw (fdScreen*, ngGraphics*);
+void fd_debug_screen_init (fdDebugScreen*);
+void fd_debug_screen_draw (fdDebugScreen*, ngGraphics*, ngView*);
 
 // Level
 

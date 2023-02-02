@@ -37,8 +37,27 @@ int main (int argc, char** argv) {
 		printf("can't init graphics\n");
 		exit(EXIT_FAILURE);
 	}
-	fdScreen screen;
-	fd_screen_init(&screen, &g);
+	ngView screen_view; // portal from virtual screen to window pixels
+	// ^ fills the whole window
+	// ^ allows user to resize window while screen positions stay the same.
+	
+	int screen_mode = FD_NONE;
+	
+	fdTitleScreen title_screen;
+	fd_title_screen_init(&title_screen);
+	
+	fdFileScreen file_screen;
+	fd_file_screen_init(&file_screen);
+	
+	fdWorldScreen world_screen;
+	fd_world_screen_init(&world_screen);
+	
+	fdLevelScreen level_screen;
+	fd_level_screen_init(&level_screen);
+	
+	fdDebugScreen debug_screen;
+	fd_debug_screen_init(&debug_screen);
+	
 	/*
 	ngFrame screen;
 	ng_frame_init(&screen, 8, 16, g.w-16, g.h-32);
@@ -125,7 +144,26 @@ int main (int argc, char** argv) {
 			ng_graphics_color(&g, 0, 0, 0);
 			ng_graphics_clear(&g);
 			
-			fd_screen_draw(&screen, &g);
+			switch (screen_mode) {
+				case FD_TITLESCREEN: {
+					fd_title_screen_draw(&title_screen, &g, &screen_view);
+					break;
+				} case FD_FILESCREEN: {
+					fd_file_screen_draw(&file_screen, &g, &screen_view);
+					break;
+				} case FD_WORLDSCREEN: {
+					fd_world_screen_draw(&world_screen, &g, &screen_view);
+					break;
+				} case FD_LEVELSCREEN: {
+					fd_level_screen_draw(&level_screen, &g, &screen_view);
+					break;
+				}
+			}
+			
+			if (FD_DEBUGSCREEN) {
+				fd_debug_screen_draw(&debug_screen, &g, &screen_view);
+			}
+			
 			/*
 			ng_graphics_color(&g, 127, 127, 127);
 			ng_rect_init(&dest, screen.x, screen.y, screen.w, screen.h);
