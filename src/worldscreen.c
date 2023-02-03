@@ -7,7 +7,7 @@ void fd_world_screen_init (fdWorldScreen* s) {
 	//TODO
 }
 
-void fd_world_screen_draw (fdWorldScreen* s, ngGraphics* g, ngView* v) {
+void fd_world_screen_draw (fdWorldScreen* s, ngGraphics* g) {
 	//TODO
 }
 

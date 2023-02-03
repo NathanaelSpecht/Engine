@@ -48,101 +48,76 @@ typedef struct ngRect {
 	int h;
 } ngRect;
 
-typedef struct ngFrame {
-	int x;
-	int y;
-	int w;
-	int h;
+typedef struct ngGrid {
 	int columns;
 	int rows;
 	float tile_w;
 	float tile_h;
-} ngFrame;
+} ngGrid;
 
-typedef struct ngView {
-	ngFrame in;
-	ngFrame out;
-} ngView;
-
-typedef struct ngImage {
-	SDL_Texture* texture;
-	int w;
-	int h;
-	bool grid;
-	int columns;
-	int rows;
-	int tile_w;
-	int tile_h;
+typedef struct ngColor {
 	int r;
 	int g;
 	int b;
 	int a;
+} ngColor;
+
+// This is compatible with bool
+enum ngEnumImageFlip {
+	NG_FLIP_NONE = 0,
+	NG_FLIP_X = 1,
+	NG_FLIP_Y = 2
+}; // both = x | y
+
+typedef struct ngImage {
+	SDL_Texture* texture;
+	ngRect rect;
+	ngColor color;
+	int flip;
+	double angle;
 } ngImage;
 
 typedef struct ngGraphics {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	int w;
-	int h;
-	int r;
-	int g;
-	int b;
-	int a;
+	ngRect rect;
+	ngColor color;
 } ngGraphics;
 
 void ng_rect_init (ngRect*, int x, int y, int w, int h);
+void ng_rect_to_sdl (SDL_Rect*, const ngRect*);
 int ng_rect_contains (ngRect*, int x, int y);
 int ng_rect_overlaps (ngRect*, ngRect*);
 
-void ng_frame_init (ngFrame*, int x, int y, int w, int h);
-void ng_frame_grid (ngFrame*, int columns, int rows);
-// ^ change columns and recompute tile w, keeping w the same
+void ng_grid_init (ngGrid*, const ngRect*, int columns, int rows);
 
-// resize functions keep x the same
-// scale functions change x to keep center the same
-void ng_frame_resize_absolute (ngFrame*, int w, int h);
-void ng_frame_scale_absolute (ngFrame*, int w, int h);
-// ^ change w and recompute tile w, keeping columns the same
-void ng_frame_resize_percent (ngFrame*, float sw, float sh);
-void ng_frame_scale_percent (ngFrame*, float sw, float sh);
-// ^ change w by percent and recompute tile w, keeping columns the same
-void ng_frame_resize_grid (ngFrame*, int columns, int rows);
-void ng_frame_scale_grid (ngFrame*, int columns, int rows);
-// ^ change columns and recompute w, keeping tile w the same
+void ng_absolute_to_relative (ngRect*, const ngRect*, const ngGrid*);
+void ng_relative_to_absolute (ngRect*, const ngRect*, const ngGrid*);
+void ng_rect_portal (ngRect*, const ngRect* src, const ngRect* dest);
+void ng_grid_portal (ngGrid*, const ngRect* src, const ngRect* dest);
 
-void ng_frame_in (const ngFrame*, ngRect*);
-// ^ change rect from absolute to relative, using grid if needed
-void ng_frame_out (const ngFrame*, ngRect*);
-// ^ change rect from relative (using grid if needed) to absolute
-// to shift a point in or out, use a rect with w=0 and h=0
-// to shift a line in or out, use 2 points
+void ng_color_init (ngColor*, int r, int g, int b);
 
-void ng_view_init (ngView*, ngFrame* in, ngFrame* out);
-void ng_view_in (const ngView*, ngRect*);
-// ^ change rect from inside coord space to outside coord space, both absolute
-void ng_view_out (const ngView*, ngRect*);
-// ^ change rect from outside coord space to inside coord space, both absolute
-
-int ng_image_init (ngGraphics*, ngImage*, const char* file, int columns, int rows,
-	int key_r, int key_g, int key_b);
+int ng_image_init (ngGraphics*, ngImage*, const char* file, const ngColor* key);
 void ng_image_quit (ngImage*);
-void ng_image_grid (ngImage*, int columns, int rows);
-int ng_image_color (ngImage*, int r, int g, int b);
-int ng_image_alpha (ngImage*, int a);
+int ng_image_color (ngImage*, const ngColor*);
+int ng_image_alpha (ngImage*, const ngColor*);
+void ng_image_flip (ngImage*, int flip);
+void ng_image_angle (ngImage*, double angle);
 
 int ng_graphics_init (ngGraphics*, const char* title, int w, int h);
 void ng_graphics_quit (ngGraphics*);
-int ng_graphics_color (ngGraphics*, int r, int g, int b);
-int ng_graphics_alpha (ngGraphics*, int a);
+int ng_graphics_color (ngGraphics*, const ngColor*);
+int ng_graphics_alpha (ngGraphics*, const ngColor*);
 int ng_graphics_clear (ngGraphics*);
 void ng_graphics_draw (ngGraphics*);
 
-int ng_draw_image (ngGraphics*, ngImage*, const ngRect*, const ngRect*,
-	int flip, double angle);
-// ^ sdl flip, angle in degrees
+int ng_draw_image (ngGraphics*, ngImage*, const ngRect*, const ngRect*);
 int ng_draw_rect (ngGraphics*, const ngRect*, bool fill);
 int ng_draw_line (ngGraphics*, int x1, int y1, int x2, int y2);
 int ng_draw_point (ngGraphics*, int x, int y);
+
+void ng_window_event (ngGraphics*, SDL_Event*);
 
 /*
 void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames,

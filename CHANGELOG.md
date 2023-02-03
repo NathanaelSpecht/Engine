@@ -5,6 +5,10 @@
 
 ## 2023 February
 
+February 03:
+- Refactor frames and views into rects and grids.
+Less code for more functionality.
+
 February 01:
 - 1 file per screen.
 

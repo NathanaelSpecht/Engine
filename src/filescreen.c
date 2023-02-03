@@ -7,7 +7,7 @@ void fd_file_screen_init (fdFileScreen* s) {
 	//TODO
 }
 
-void fd_file_screen_draw (fdFileScreen* s, ngGraphics* g, ngView* v) {
+void fd_file_screen_draw (fdFileScreen* s, ngGraphics* g) {
 	//TODO
 }
 

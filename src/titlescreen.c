@@ -7,7 +7,7 @@ void fd_title_screen_init (fdTitleScreen* s) {
 	//TODO
 }
 
-void fd_title_screen_draw (fdTitleScreen* s, ngGraphics* g, ngView* v) {
+void fd_title_screen_draw (fdTitleScreen* s, ngGraphics* g) {
 	//TODO
 }
 

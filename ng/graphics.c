@@ -10,6 +10,13 @@ void ng_rect_init (ngRect* r, int x, int y, int w, int h) {
 	r->h = h;
 }
 
+void ng_rect_to_sdl (SDL_Rect* r, const ngRect* copy) {
+	r->x = copy->x;
+	r->y = copy->y;
+	r->w = copy->w;
+	r->h = copy->h;
+}
+
 int ng_rect_contains (ngRect* r, int x, int y) {
 	if ((x < r->x || r->x + r->w < x) || (y < r->y || r->y + r->h < y)) {
 		return NG_FALSE;
@@ -33,143 +40,87 @@ int ng_rect_overlaps (ngRect* r1, ngRect* r2) {
 	}
 }
 
-void ng_frame_init (ngFrame* frame, int x, int y, int w, int h) {
-	frame->x = x;
-	frame->y = y;
-	frame->w = w;
-	frame->h = h;
-	// tile is 1x1 by default, so even when grid is not being used,
-	// tile can be used in computations. this simplifies the code.
-	frame->columns = w;
-	frame->rows = h;
-	frame->tile_w = 1.0;
-	frame->tile_h = 1.0;
+void ng_grid_init (ngGrid* g, const ngRect* r, int columns, int rows) {
+	g->columns = columns;
+	g->rows = rows;
+	g->tile_w = (float)r->w / columns;
+	g->tile_h = (float)r->h / rows;
 }
 
-void ng_frame_grid (ngFrame* frame, int columns, int rows) {
-	// ^ change columns and recompute tile w, keeping w the same
-	frame->columns = columns;
-	frame->rows = rows;
-	frame->tile_w = (float)frame->w / columns;
-	frame->tile_h = (float)frame->h / rows;
+void ng_absolute_to_relative (ngRect* r, const ngRect* rel_rect,
+const ngGrid* rel_grid) {
+	if (rel_rect != NULL) {
+		r->x = r->x - rel_rect->x;
+		r->y = r->y - rel_rect->y;
+	}
+	if (rel_grid != NULL) {
+		r->x = (int)(r->x / rel_grid->tile_w);
+		r->y = (int)(r->y / rel_grid->tile_h);
+		r->w = (int)(r->w / rel_grid->tile_w);
+		r->h = (int)(r->h / rel_grid->tile_h);
+	}
 }
 
-void ng_frame_resize_absolute (ngFrame* frame, int w, int h) {
-	frame->w = w;
-	frame->h = h;
-	frame->tile_w = (float)w / frame->columns;
-	frame->tile_h = (float)h / frame->rows;
+void ng_relative_to_absolute (ngRect* r, const ngRect* rel_rect,
+const ngGrid* rel_grid) {
+	if (rel_grid != NULL) {
+		r->x = (int)(r->x * rel_grid->tile_w);
+		r->y = (int)(r->y * rel_grid->tile_h);
+		r->w = (int)(r->w * rel_grid->tile_w);
+		r->h = (int)(r->h * rel_grid->tile_h);
+	}
+	if (rel_rect != NULL) {
+		r->x = r->x + rel_rect->x;
+		r->y = r->y + rel_rect->y;
+	}
 }
 
-void ng_frame_scale_absolute (ngFrame* frame, int w, int h) {
-	// ^ change w and recompute tile w, keeping columns the same
-	int dx = (frame->w - w) / 2;
-	int dy = (frame->h - h) / 2;
-	frame->x = frame->x + dx;
-	frame->y = frame->y + dy;
-	frame->w = w;
-	frame->h = h;
-	frame->tile_w = (float)w / frame->columns;
-	frame->tile_h = (float)h / frame->rows;
+void ng_rect_portal (ngRect* r, const ngRect* src, const ngRect* dest) {
+	ng_absolute_to_relative(r, src, NULL);
+	// convert relative coord spaces: src to dest
+	// r.x' / r.x = dest.w / src.w --> r.x' = (dest.w / src.w) * r.x
+	float scale_x = (float)dest->w / src->w;
+	float scale_y = (float)dest->h / src->h;
+	r->x = (int)(scale_x * r->x);
+	r->y = (int)(scale_y * r->y);
+	r->w = (int)(scale_x * r->w);
+	r->h = (int)(scale_y * r->h);
+	ng_relative_to_absolute(r, dest, NULL);
 }
 
-void ng_frame_resize_percent (ngFrame* frame, float sw, float sh) {
-	float w = frame->w * sw;
-	float h = frame->h * sh;
-	ng_frame_resize_absolute(frame, (int)w, (int)h);
+void ng_grid_portal (ngGrid* g, const ngRect* src, const ngRect* dest) {
+	// convert relative coord spaces: src to dest
+	// g.tile_w' / g.tile_w = dest.w / src.w
+	// --> g.tile_w' = (dest.w / src.w) * g.tile_w
+	float scale_x = (float)dest->w / src->w;
+	float scale_y = (float)dest->h / src->h;
+	g->tile_w = scale_x * g->tile_w;
+	g->tile_h = scale_y * g->tile_h;
 }
 
-void ng_frame_scale_percent (ngFrame* frame, float sw, float sh) {
-	// ^ change w by percent and recompute tile w, keeping columns the same
-	float w = frame->w * sw;
-	float h = frame->h * sh;
-	ng_frame_scale_absolute(frame, (int)w, (int)h);
-}
-
-void ng_frame_resize_grid (ngFrame* frame, int columns, int rows) {
-	frame->columns = columns;
-	frame->rows = rows;
-	frame->w = (int)(columns * frame->tile_w);
-	frame->h = (int)(rows * frame->tile_h);
-}
-
-void ng_frame_scale_grid (ngFrame* frame, int columns, int rows) {
-	// ^ change columns and recompute w, keeping tile w the same
-	frame->columns = columns;
-	frame->rows = rows;
-	int w = (int)(columns * frame->tile_w);
-	int h = (int)(rows * frame->tile_h);
-	int dx = (frame->w - w) / 2;
-	int dy = (frame->h - h) / 2;
-	frame->x = frame->x + dx;
-	frame->y = frame->y + dy;
-	frame->w = w;
-	frame->h = h;
-}
-
-void ng_frame_in (const ngFrame* frame, ngRect* rect) {
-	rect->x = (int)((rect->x - frame->x) / frame->tile_w);
-	rect->y = (int)((rect->y - frame->y) / frame->tile_h);
-	rect->w = (int)(rect->w / frame->tile_w);
-	rect->h = (int)(rect->h / frame->tile_h);
-}
-
-void ng_frame_out (const ngFrame* frame, ngRect* rect) {
-	rect->x = (int)((rect->x * frame->tile_w) + frame->x);
-	rect->y = (int)((rect->y * frame->tile_h) + frame->y);
-	rect->w = (int)(rect->w * frame->tile_w);
-	rect->h = (int)(rect->h * frame->tile_h);
-}
-
-void ng_view_init (ngView* view, ngFrame* in, ngFrame* out) {
-	view->in = *in;
-	view->out = *out;
-}
-
-void ng_view_in (const ngView* view, ngRect* rect) {
-	ng_frame_in(&(view->out), rect); // out: absolute to relative
-	// convert relative coord spaces: out to in
-	// in.columns / out.columns = rect.x' / rect.x
-	float scale_x = (float)view->in.columns / view->out.columns;
-	float scale_y = (float)view->in.rows / view->out.rows;
-	rect->x = (int)(scale_x * rect->x);
-	rect->y = (int)(scale_y * rect->y);
-	rect->w = (int)(scale_x * rect->w);
-	rect->h = (int)(scale_x * rect->h);
-	ng_frame_out(&(view->in), rect); // in: relative to absolute
-}
-
-void ng_view_out (const ngView* view, ngRect* rect) {
-	ng_frame_in(&(view->in), rect); // in: absolute to relative
-	// convert relative coord spaces: in to out
-	// out.columns / in.columns = rect.x' / rect.x
-	float scale_x = (float)view->out.columns / view->in.columns;
-	float scale_y = (float)view->out.rows / view->in.rows;
-	rect->x = (int)(scale_x * rect->x);
-	rect->y = (int)(scale_y * rect->y);
-	rect->w = (int)(scale_x * rect->w);
-	rect->h = (int)(scale_x * rect->h);
-	ng_frame_out(&(view->out), rect); // out: relative to absolute
+void ng_color_init (ngColor* color, int r, int g, int b) {
+	color->r = r;
+	color->g = g;
+	color->b = b;
+	color->a = 255;
 }
 
 int ng_image_init (ngGraphics* g, ngImage* image, const char* file,
-int columns, int rows, int key_r, int key_g, int key_b) {
+const ngColor* key) {
 	image->texture = NULL;
-	image->w = 0;
-	image->h = 0;
-	ng_image_grid(image, columns, rows);
-	image->r = 255;
-	image->g = 255;
-	image->b = 255;
-	image->a = 255;
+	ng_rect_init(&image->rect, 0, 0, 0, 0);
+	ng_color_init(&image->color, 255, 255, 255);
+	image->flip = NG_FLIP_NONE;
+	image->angle = 0.0;
 	
 	SDL_Surface* surface = NULL;
 	surface = SDL_LoadBMP(file);
 	if (surface == NULL) {
 		return NG_ERROR;
 	}
+	
 	if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 
-	key_r, key_g, key_b)) != 0) {
+	key->r, key->g, key->b)) != 0) {
 		SDL_FreeSurface(surface);
 		return NG_ERROR;
 	}
@@ -181,8 +132,8 @@ int columns, int rows, int key_r, int key_g, int key_b) {
 	}
 	
 	image->texture = texture;
-	image->w = surface->w;
-	image->h = surface->h;
+	image->rect.w = surface->w;
+	image->rect.h = surface->h;
 	
 	return NG_SUCCESS;
 }
@@ -191,62 +142,43 @@ void ng_image_quit (ngImage* image) {
 	if (image->texture != NULL) {
 		SDL_DestroyTexture(image->texture);
 		image->texture = NULL;
-		image->w = 0;
-		image->h = 0;
-		image->grid = false;
-		image->r = 0;
-		image->g = 0;
-		image->b = 0;
-		image->a = 0;
 	}
 }
 
-void ng_image_grid (ngImage* image, int columns, int rows) {
-	if (columns == 0 && rows == 0) {
-		image->grid = false;
-		image->columns = 0;
-		image->rows = 0;
-		image->tile_w = 0;
-		image->tile_h = 0;
-		return;
-	}
-	image->grid = true;
-	image->columns = columns;
-	image->rows = rows;
-	image->tile_w = image->w / columns;
-	image->tile_h = image->h / rows;
-}
-
-int ng_image_color (ngImage* image, int r, int g, int b) {
-	if (SDL_SetTextureColorMod(image->texture, r, g, b) != 0) {
+int ng_image_color (ngImage* image, const ngColor* color) {
+	if (SDL_SetTextureColorMod(image->texture, color->r, color->g, color->b) != 0) {
 		return NG_ERROR;
 	}
-	image->r = r;
-	image->g = g;
-	image->b = b;
+	image->color.r = color->r;
+	image->color.g = color->g;
+	image->color.b = color->b;
 	return NG_SUCCESS;
 }
 
-int ng_image_alpha (ngImage* image, int a) {
-	if (SDL_SetTextureAlphaMod(image->texture, a) != 0) {
+int ng_image_alpha (ngImage* image, const ngColor* color) {
+	if (SDL_SetTextureAlphaMod(image->texture, color->a) != 0) {
 		return NG_ERROR;
 	}
-	image->a = a;
+	image->color.a = color->a;
 	return NG_SUCCESS;
+}
+
+void ng_image_flip (ngImage* image, int flip) {
+	image->flip = flip;
+}
+
+void ng_image_angle (ngImage* image, double angle) {
+	image->angle = angle;
 }
 
 int ng_graphics_init (ngGraphics* g, const char* title, int w, int h) {
 	g->window = NULL;
 	g->renderer = NULL;
-	g->w = w;
-	g->h = h;
-	g->r = 255;
-	g->g = 255;
-	g->b = 255;
-	g->a = 255;
+	ng_rect_init(&g->rect, 0, 0, w, h);
+	ng_color_init(&g->color, 0, 0, 0);
 	
 	g->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED, w, h, 0);
+		SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_RESIZABLE);
 	if (g->window == NULL) {
 		return NG_ERROR;
 	}
@@ -267,37 +199,32 @@ void ng_graphics_quit (ngGraphics* g) {
 		SDL_DestroyWindow(g->window);
 		g->window = NULL;
 	}
-	
-	g->w = 0;
-	g->h = 0;
-	g->r = 0;
-	g->g = 0;
-	g->b = 0;
-	g->a = 0;
 }
 
-int ng_graphics_color (ngGraphics* g2, int r, int g, int b) {
-	if (SDL_SetRenderDrawColor(g2->renderer, r, g, b, g2->a) != 0) {
+int ng_graphics_color (ngGraphics* g, const ngColor* color) {
+	if (SDL_SetRenderDrawColor(g->renderer, color->r, color->g, color->b,
+	g->color.a) != 0) {
 		return NG_ERROR;
 	}
-	g2->r = r;
-	g2->g = g;
-	g2->b = b;
+	g->color.r = color->r;
+	g->color.g = color->g;
+	g->color.b = color->b;
 	return NG_SUCCESS;
 }
 
-int ng_graphics_alpha (ngGraphics* g, int a) {
+int ng_graphics_alpha (ngGraphics* g, const ngColor* color) {
 	int blendmode;
-	if (a == 255) {
+	if (color->a == 255) {
 		blendmode = SDL_BLENDMODE_NONE;
 	} else {
 		blendmode = SDL_BLENDMODE_BLEND;
 	}
 	if (SDL_SetRenderDrawBlendMode(g->renderer, blendmode) != 0 ||
-	SDL_SetRenderDrawColor(g->renderer, g->r, g->g, g->b, a) != 0) {
+	SDL_SetRenderDrawColor(g->renderer, g->color.r, g->color.g, g->color.b,
+	color->a) != 0) {
 		return NG_ERROR;
 	}
-	g->a = a;
+	g->color.a = color->a;
 	return NG_SUCCESS;
 }
 
@@ -313,47 +240,41 @@ void ng_graphics_draw (ngGraphics* g) {
 }
 
 int ng_draw_image (ngGraphics* g, ngImage* image, const ngRect* s,
-const ngRect* d, int flip, double angle) {
+const ngRect* d) {
 	if (image == NULL || image->texture == NULL) {
 		return ng_draw_rect(g, d, true);
 	}
 	SDL_Rect src;
-	if (s == NULL) {
-		src.x = 0;
-		src.y = 0;
-		src.w = image->w;
-		src.h = image->h;
+	if (s != NULL) {
+		ng_rect_to_sdl(&src, s);
 	} else {
-		src.x = s->x;
-		src.y = s->y;
-		src.w = s->w;
-		src.h = s->h;
-	}
-	if (image->grid) {
-		src.x = src.x * image->tile_w;
-		src.y = src.y * image->tile_h;
-		src.w = src.w * image->tile_w;
-		src.h = src.h * image->tile_h;
+		ng_rect_to_sdl(&src, &image->rect);
 	}
 	SDL_Rect dest;
-	if (d == NULL) {
-		dest.x = 0;
-		dest.y = 0;
-		dest.w = g->w;
-		dest.h = g->h;
+	if (d != NULL) {
+		ng_rect_to_sdl(&dest, d);
 	} else {
-		dest.x = d->x;
-		dest.y = d->y;
-		dest.w = d->w;
-		dest.h = d->h;
+		ng_rect_to_sdl(&dest, &g->rect);
 	}
-	if (flip == SDL_FLIP_NONE && angle == 0.0) {
+	if (image->flip == NG_FLIP_NONE && image->angle == 0.0) {
 		if (SDL_RenderCopy(g->renderer, image->texture, &src, &dest) != 0) {
 			return NG_ERROR;
 		}
 	} else {
+		int flip;
+		switch (image->flip) {
+			case NG_FLIP_X: {
+				flip = SDL_FLIP_HORIZONTAL;
+				break;
+			} case NG_FLIP_Y: {
+				flip = SDL_FLIP_VERTICAL;
+				break;
+			} default: {
+				flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+			}
+		}
 		if (SDL_RenderCopyEx(g->renderer, image->texture, &src, &dest,
-		angle, NULL, flip) != 0) {
+		image->angle, NULL, flip) != 0) {
 			return NG_ERROR;
 		}
 	}
@@ -362,16 +283,10 @@ const ngRect* d, int flip, double angle) {
 
 int ng_draw_rect (ngGraphics* g, const ngRect* r, bool fill) {
 	SDL_Rect dest;
-	if (r == NULL) {
-		dest.x = 0;
-		dest.y = 0;
-		dest.w = g->w;
-		dest.h = g->h;
+	if (r != NULL) {
+		ng_rect_to_sdl(&dest, r);
 	} else {
-		dest.x = r->x;
-		dest.y = r->y;
-		dest.w = r->w;
-		dest.h = r->h;
+		ng_rect_to_sdl(&dest, &g->rect);
 	}
 	if (fill) {
 		if (SDL_RenderFillRect(g->renderer, &dest) != 0) {
@@ -397,6 +312,26 @@ int ng_draw_point (ngGraphics* g, int x, int y) {
 		return NG_ERROR;
 	}
 	return NG_SUCCESS;
+}
+
+void ng_window_event (ngGraphics* g, SDL_Event* event) {
+	switch (event->window.event) {
+		case SDL_WINDOWEVENT_RESIZED: {
+			g->rect.w = event->window.data1;
+			g->rect.h = event->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
+			g->rect.w = event->window.data1;
+			g->rect.h = event->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_MAXIMIZED: {
+			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
+			break;
+		} case SDL_WINDOWEVENT_RESTORED: {
+			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
+			break;
+		}
+	}
 }
 
 /*

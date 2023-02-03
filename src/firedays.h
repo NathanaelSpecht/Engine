@@ -14,59 +14,72 @@ enum fdEnumScreenMode {
 	FD_TITLESCREEN = 1,
 	FD_FILESCREEN = 2,
 	FD_WORLDSCREEN = 3,
-	FD_LEVELSCREEN = 4,
-	FD_CREATIVESCREEN = 5
+	FD_LEVELSCREEN = 4
 };
 
 typedef struct fdTitleScreen {
 	ngRect header_rect;
-	ngFrame button_frame;
+	ngRect button_rect;
 	ngRect start_rect;
 	ngRect quit_rect;
 } fdTitleScreen;
-
 void fd_title_screen_init (fdTitleScreen*);
-void fd_title_screen_draw (fdTitleScreen*, ngGraphics*, ngView*);
+void fd_title_screen_draw (fdTitleScreen*, ngGraphics*);
 
 typedef struct fdFileScreen {
 	ngRect header_rect;
-	ngFrame save_frame;
+	ngRect save_rect;
 	ngRect save1_rect;
 } fdFileScreen;
-
 void fd_file_screen_init (fdFileScreen*);
-void fd_file_screen_draw (fdFileScreen*, ngGraphics*, ngView*);
+void fd_file_screen_draw (fdFileScreen*, ngGraphics*);
 
 typedef struct fdWorldScreen {
 	ngRect header_rect;
-	ngFrame level_frame;
+	ngRect level_rect;
 	ngRect level1_rect;
 } fdWorldScreen;
-
 void fd_world_screen_init (fdWorldScreen*);
-void fd_world_screen_draw (fdWorldScreen*, ngGraphics*, ngView*);
+void fd_world_screen_draw (fdWorldScreen*, ngGraphics*);
 
-typedef struct fdLevelScreen {
-	ngRect header_rect;
-	ngFrame hud_frame; // overlay on virtual screen
+enum fdEnumHudMode { FD_HUDMENU = 1 };
+typedef struct fdHudMenu {
+	int mode;
+	ngRect hud_rect;
 	ngRect temperature_rect;
 	ngRect heat_rect;
 	ngRect fuel_rect;
+} fdHudMenu;
+void fd_hud_menu_init (fdHudMenu*);
+void fd_hud_menu_draw (fdHudMenu*, ngGraphics*);
+
+enum fdEnumPauseMode { FD_PAUSEMENU = 1 };
+typedef struct fdPauseMenu {
+	int mode;
+	ngRect header_rect;
+	ngRect button_rect;
+	ngRect resume_rect;
+	ngRect quit_rect;
+} fdPauseMenu;
+void fd_pause_menu_init (fdPauseMenu*);
+void fd_pause_menu_draw (fdPauseMenu*, ngGraphics*);
+
+typedef struct fdLevelScreen {
+	ngRect header_rect;
+	fdHudMenu hud_menu;
+	fdPauseMenu pause_menu;
 } fdLevelScreen;
-
 void fd_level_screen_init (fdLevelScreen*);
-void fd_level_screen_draw (fdLevelScreen*, ngGraphics*, ngView*);
+void fd_level_screen_draw (fdLevelScreen*, ngGraphics*);
 
-enum fdEnumDebugMode { FD_DEBUGSCREEN = 1 };
-
-typedef struct fdDebugScreen {
+enum fdEnumDebugMode { FD_DEBUGMENU = 1 };
+typedef struct fdDebugMenu {
 	int mode;
 	ngRect version_rect;
 	ngRect fps_rect;
-} fdDebugScreen;
-
-void fd_debug_screen_init (fdDebugScreen*);
-void fd_debug_screen_draw (fdDebugScreen*, ngGraphics*, ngView*);
+} fdDebugMenu;
+void fd_debug_menu_init (fdDebugMenu*);
+void fd_debug_menu_draw (fdDebugMenu*, ngGraphics*);
 
 // Level
 

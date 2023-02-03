@@ -30,18 +30,28 @@ int main (int argc, char** argv) {
 	*/
 	
 	// init graphics
+	ngRect screen_rect;
+	ng_rect_init(&screen_rect, 0, 0, 640, 480);
+	// ^ 4:3
+	ngGrid char_grid;
+	ng_grid_init(&char_grid, &screen_rect, 80, 30);
+	// ^ 80x30 8x16 chars, 4:3
+	ngGrid tile_grid;
+	ng_grid_init(&tile_grid, &screen_rect, 40, 30);
+	// ^ 40x30 16x16 tiles, 4:3
+	
 	ngGraphics g;
-	if (!ng_graphics_init(&g, "Fire Days Demo", 640, 480)) {
-		// ^ 80x30 8x16 chars, 4:3
+	if (!ng_graphics_init(&g, "Fire Days Demo", screen_rect.w, screen_rect.h)) {
 		ng_here();
 		printf("can't init graphics\n");
 		exit(EXIT_FAILURE);
 	}
-	ngView screen_view; // portal from virtual screen to window pixels
-	// ^ fills the whole window
-	// ^ allows user to resize window while screen positions stay the same.
+	ngColor background_color;
+	ng_color_init(&background_color, 0, 0, 0);
+	ngColor draw_color;
+	ng_color_init(&draw_color, 255, 255, 255);
 	
-	int screen_mode = FD_NONE;
+	int screen_mode = FD_TITLESCREEN;
 	
 	fdTitleScreen title_screen;
 	fd_title_screen_init(&title_screen);
@@ -55,22 +65,16 @@ int main (int argc, char** argv) {
 	fdLevelScreen level_screen;
 	fd_level_screen_init(&level_screen);
 	
-	fdDebugScreen debug_screen;
-	fd_debug_screen_init(&debug_screen);
+	fdDebugMenu debug_menu;
+	fd_debug_menu_init(&debug_menu);
 	
-	/*
-	ngFrame screen;
-	ng_frame_init(&screen, 8, 16, g.w-16, g.h-32);
-	
-	ngImage title_image;
-	ng_image_init(&g, &title_image, "art/title-screen.bmp", 0, 0, 0, 0, 0);
-	*/
+	ngColor color_key;
+	ng_color_init(&color_key, 0, 0, 0);
+	// load image bank
 	
 	// start game
 	//ng_channel_start_sound(&music, &music_breath, NG_LOOP);
 	//ng_audio_play(&a);
-	
-	//ngRect dest;
 	
 	SDL_Event event;
 	while (true) {
@@ -78,98 +82,56 @@ int main (int argc, char** argv) {
 			switch (event.type) {
 				case SDL_QUIT: {
 					goto quit;
-				} /* case SDL_WINDOWEVENT: {
-					switch (event.window.event) {
-						case SDL_WINDOWEVENT_MAXIMIZED: {
-							SDL_GetWindowSize(g->window, &(g->w), &(g->h));
-							break;
-						} case SDL_WINDOWEVENT_RESTORED: {
-							SDL_GetWindowSize(g->window, &(g->w), &(g->h));
-							break;
-						} case SDL_WINDOWEVENT_SIZE_CHANGED: {
-							g->w = event.window.data1;
-							g->h = event.window.data2;
-							break;
-						}
-					}
+				} case SDL_WINDOWEVENT: {
+					ng_window_event(&g, &event);
 					break;
-				} */ case SDL_KEYDOWN: {
-					int scancode = event.key.keysym.scancode;
-					switch (scancode) {
-						case SDL_SCANCODE_ESCAPE: {
-							break;
-						} case SDL_SCANCODE_RETURN: {
-							//ng_channel_start_sound(&sound, &sound_glass, NG_PLAYONCE);
-							break;
-						} case SDL_SCANCODE_SPACE: {
-							break;
-						} case SDL_SCANCODE_W: {
-							//player.move_up = 1 * 3;
-							break;
-						} case SDL_SCANCODE_A: {
-							//player.move_left = 1 * 3;
-							break;
-						} case SDL_SCANCODE_S: {
-							//player.move_down = 1 * 3;
-							break;
-						} case SDL_SCANCODE_D: {
-							//player.move_right = 1 * 3;
-							break;
-						}
-					}
+				} case SDL_KEYDOWN: {
+					//fd_screen_key_press(&screen, &event);
 					break;
 				} case SDL_KEYUP: {
-					int scancode = event.key.keysym.scancode;
-					switch (scancode) {
-						case SDL_SCANCODE_W: {
-							//player.move_up = 0;
-							break;
-						} case SDL_SCANCODE_A: {
-							//player.move_left = 0;
-							break;
-						} case SDL_SCANCODE_S: {
-							//player.move_down = 0;
-							break;
-						} case SDL_SCANCODE_D: {
-							//player.move_right = 0;
-							break;
-						}
-					}
+					//fd_screen_key_release(&screen, &event, &screen_mode);
+					break;
+				} case SDL_TEXTINPUT: {
+					//fd_screen_text_input(&screen, &event);
+					break;
+				} case SDL_MOUSEBUTTONDOWN: {
+					//fd_screen_mouse_press(&screen, &event);
+					break;
+				} case SDL_MOUSEBUTTONUP: {
+					//fd_screen_mouse_release(&screen, &event, &screen_mode);
+					break;
+				} case SDL_MOUSEMOTION: {
+					//fd_screen_mouse_move(&screen, &event);
+					break;
+				} case SDL_MOUSEWHEEL: {
+					//fd_screen_mouse_scroll(&screen, &event);
 					break;
 				}
 			}
 		}
 		
 		{ // graphics
-			ng_graphics_color(&g, 0, 0, 0);
+			ng_graphics_color(&g, &background_color);
 			ng_graphics_clear(&g);
 			
+			ng_graphics_color(&g, &draw_color);
 			switch (screen_mode) {
 				case FD_TITLESCREEN: {
-					fd_title_screen_draw(&title_screen, &g, &screen_view);
+					fd_title_screen_draw(&title_screen, &g);
 					break;
 				} case FD_FILESCREEN: {
-					fd_file_screen_draw(&file_screen, &g, &screen_view);
+					fd_file_screen_draw(&file_screen, &g);
 					break;
 				} case FD_WORLDSCREEN: {
-					fd_world_screen_draw(&world_screen, &g, &screen_view);
+					fd_world_screen_draw(&world_screen, &g);
 					break;
 				} case FD_LEVELSCREEN: {
-					fd_level_screen_draw(&level_screen, &g, &screen_view);
+					fd_level_screen_draw(&level_screen, &g);
 					break;
 				}
 			}
 			
-			if (FD_DEBUGSCREEN) {
-				fd_debug_screen_draw(&debug_screen, &g, &screen_view);
-			}
-			
-			/*
-			ng_graphics_color(&g, 127, 127, 127);
-			ng_rect_init(&dest, screen.x, screen.y, screen.w, screen.h);
-			//ng_frame_out(&screen, &dest);
-			ng_draw_image(&g, &title_image, NULL, &dest, SDL_FLIP_NONE, 0.0);
-			*/
+			fd_debug_menu_draw(&debug_menu, &g);
 			
 			ng_graphics_draw(&g);
 		}
@@ -195,7 +157,6 @@ quit:
 	ng_audio_quit(&a);
 	*/
 	
-	//ng_image_quit(&title_image);
 	ng_graphics_quit(&g);
 	
 	SDL_Quit();
