@@ -3,11 +3,15 @@
 
 #include "firedays.h"
 
-void fd_title_screen_init (fdTitleScreen* s) {
+void fd_titlescreen_init (fdTitleScreen* s, fdGameState* g) {
 	//TODO
 }
 
-void fd_title_screen_draw (fdTitleScreen* s, ngGraphics* g) {
+void fd_titlescreen_event (fdTitleScreen* s, fdGameState* g) {
+	//TODO
+}
+
+void fd_titlescreen_draw (fdTitleScreen* s, fdGameState* g) {
 	//TODO
 }
 

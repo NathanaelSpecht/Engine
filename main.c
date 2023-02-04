@@ -12,6 +12,16 @@ int main (int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	
+	// init game
+	fdGameState game;
+	game.screen_mode = NULL;
+	game.screen_rect = NULL;
+	game.char_grid = NULL;
+	game.tile_grid = NULL;
+	game.g = NULL;
+	game.mouse = NULL;
+	game.key = NULL;
+	
 	// init time
 	ngTime t;
 	ng_time_init(&t);
@@ -32,12 +42,15 @@ int main (int argc, char** argv) {
 	// init graphics
 	ngRect screen_rect;
 	ng_rect_init(&screen_rect, 0, 0, 640, 480);
+	game.screen_rect = &screen_rect;
 	// ^ 4:3
 	ngGrid char_grid;
 	ng_grid_init(&char_grid, &screen_rect, 80, 30);
+	game.char_grid = &char_grid;
 	// ^ 80x30 8x16 chars, 4:3
 	ngGrid tile_grid;
 	ng_grid_init(&tile_grid, &screen_rect, 40, 30);
+	game.tile_grid = &tile_grid;
 	// ^ 40x30 16x16 tiles, 4:3
 	
 	ngGraphics g;
@@ -46,39 +59,53 @@ int main (int argc, char** argv) {
 		printf("can't init graphics\n");
 		exit(EXIT_FAILURE);
 	}
+	game.g = &g;
 	ngColor background_color;
 	ng_color_init(&background_color, 0, 0, 0);
 	ngColor draw_color;
 	ng_color_init(&draw_color, 255, 255, 255);
 	
 	int screen_mode = FD_TITLESCREEN;
+	game.screen_mode = &screen_mode;
 	
 	fdTitleScreen title_screen;
-	fd_title_screen_init(&title_screen);
-	
+	fd_titlescreen_init(&title_screen, &game);
+	// ^ start
 	fdFileScreen file_screen;
-	fd_file_screen_init(&file_screen);
-	
+	fd_filescreen_init(&file_screen, &game);
+	// ^ save select
 	fdWorldScreen world_screen;
-	fd_world_screen_init(&world_screen);
-	
+	fd_worldscreen_init(&world_screen, &game);
+	// ^ level select
 	fdLevelScreen level_screen;
-	fd_level_screen_init(&level_screen);
-	
+	fd_levelscreen_init(&level_screen, &game);
+	// ^ playing level
 	fdDebugMenu debug_menu;
-	fd_debug_menu_init(&debug_menu);
+	fd_debugmenu_init(&debug_menu, &game);
+	// ^ debug overlay
 	
 	ngColor color_key;
 	ng_color_init(&color_key, 0, 0, 0);
+	// ^ bmp transparent color
 	// load image bank
 	
 	// start game
 	//ng_channel_start_sound(&music, &music_breath, NG_LOOP);
 	//ng_audio_play(&a);
 	
+	// init event
 	SDL_Event event;
+	ngMouse mouse;
+	ng_mouse_init(&mouse);
+	game.mouse = &mouse;
+	ngKey key;
+	ng_key_init(&key);
+	game.key = &key;
+	
 	while (true) {
 		while (SDL_PollEvent(&event)) {
+			mouse.event = NG_NONE;
+			key.event = NG_NONE;
 			switch (event.type) {
 				case SDL_QUIT: {
 					goto quit;
@@ -86,28 +113,45 @@ int main (int argc, char** argv) {
 					ng_window_event(&g, &event);
 					break;
 				} case SDL_KEYDOWN: {
-					//fd_screen_key_press(&screen, &event);
+					ng_key_press(&key, &event);
 					break;
 				} case SDL_KEYUP: {
-					//fd_screen_key_release(&screen, &event, &screen_mode);
+					ng_key_release(&key, &event);
 					break;
 				} case SDL_TEXTINPUT: {
-					//fd_screen_text_input(&screen, &event);
+					ng_text_input(&key, &event);
 					break;
 				} case SDL_MOUSEBUTTONDOWN: {
-					//fd_screen_mouse_press(&screen, &event);
+					ng_mouse_press(&mouse, &event);
 					break;
 				} case SDL_MOUSEBUTTONUP: {
-					//fd_screen_mouse_release(&screen, &event, &screen_mode);
+					ng_mouse_release(&mouse, &event);
 					break;
 				} case SDL_MOUSEMOTION: {
-					//fd_screen_mouse_move(&screen, &event);
+					ng_mouse_move(&mouse, &event);
 					break;
 				} case SDL_MOUSEWHEEL: {
-					//fd_screen_mouse_scroll(&screen, &event);
+					ng_mouse_scroll(&mouse, &event);
 					break;
 				}
 			}
+			
+			switch (screen_mode) {
+				case FD_TITLESCREEN: {
+					fd_titlescreen_event(&title_screen, &game);
+					break;
+				} case FD_FILESCREEN: {
+					fd_filescreen_event(&file_screen, &game);
+					break;
+				} case FD_WORLDSCREEN: {
+					fd_worldscreen_event(&world_screen, &game);
+					break;
+				} case FD_LEVELSCREEN: {
+					fd_levelscreen_event(&level_screen, &game);
+					break;
+				}
+			}
+			fd_debugmenu_event(&debug_menu, &game);
 		}
 		
 		{ // graphics
@@ -117,21 +161,20 @@ int main (int argc, char** argv) {
 			ng_graphics_color(&g, &draw_color);
 			switch (screen_mode) {
 				case FD_TITLESCREEN: {
-					fd_title_screen_draw(&title_screen, &g);
+					fd_titlescreen_draw(&title_screen, &game);
 					break;
 				} case FD_FILESCREEN: {
-					fd_file_screen_draw(&file_screen, &g);
+					fd_filescreen_draw(&file_screen, &game);
 					break;
 				} case FD_WORLDSCREEN: {
-					fd_world_screen_draw(&world_screen, &g);
+					fd_worldscreen_draw(&world_screen, &game);
 					break;
 				} case FD_LEVELSCREEN: {
-					fd_level_screen_draw(&level_screen, &g);
+					fd_levelscreen_draw(&level_screen, &game);
 					break;
 				}
 			}
-			
-			fd_debug_menu_draw(&debug_menu, &g);
+			fd_debugmenu_draw(&debug_menu, &game);
 			
 			ng_graphics_draw(&g);
 		}

@@ -3,11 +3,15 @@
 
 #include "firedays.h"
 
-void fd_hud_menu_init (fdHudMenu* m) {
+void fd_hudmenu_init (fdHudMenu* m, fdGameState* g) {
 	//TODO
 }
 
-void fd_hud_menu_draw (fdHudMenu* m, ngGraphics* g) {
+void fd_hudmenu_event (fdHudMenu* m, fdGameState* g) {
+	//TODO
+}
+
+void fd_hudmenu_draw (fdHudMenu* m, fdGameState* g) {
 	//TODO
 }
 

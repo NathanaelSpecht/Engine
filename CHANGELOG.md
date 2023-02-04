@@ -8,6 +8,8 @@
 February 03:
 - Refactor frames and views into rects and grids.
 Less code for more functionality.
+- Refactor image and graphics variables into rects and colors.
+- Mouse, keyboard, and game state.
 
 February 01:
 - 1 file per screen.

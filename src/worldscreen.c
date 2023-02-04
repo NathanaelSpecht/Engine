@@ -3,11 +3,15 @@
 
 #include "firedays.h"
 
-void fd_world_screen_init (fdWorldScreen* s) {
+void fd_worldscreen_init (fdWorldScreen* s, fdGameState* g) {
 	//TODO
 }
 
-void fd_world_screen_draw (fdWorldScreen* s, ngGraphics* g) {
+void fd_worldscreen_event (fdWorldScreen* s, fdGameState* g) {
+	//TODO
+}
+
+void fd_worldscreen_draw (fdWorldScreen* s, fdGameState* g) {
 	//TODO
 }
 

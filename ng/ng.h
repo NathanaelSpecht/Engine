@@ -16,6 +16,7 @@
 #define ng_here(); printf("%s:%d\n",__FILE__,__LINE__);
 
 // These are compatible with bool
+enum ngEnumNone { NG_NONE = 0 };
 enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
@@ -64,7 +65,6 @@ typedef struct ngColor {
 
 // This is compatible with bool
 enum ngEnumImageFlip {
-	NG_FLIP_NONE = 0,
 	NG_FLIP_X = 1,
 	NG_FLIP_Y = 2
 }; // both = x | y
@@ -124,6 +124,63 @@ void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame, int w_frames,
 	const char* str, int di);
 void ng_graphics_render_tile (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames);
 */
+
+// Event
+// These are compatible with bool
+enum ngEnumButtonState {
+	NG_RELEASED = 0,
+	NG_PRESSED = 1
+};
+enum ngEnumMouseEvent {
+	NG_MOUSE_PRESS = 1,
+	NG_MOUSE_RELEASE = 2,
+	NG_MOUSE_MOVE = 3,
+	NG_MOUSE_SCROLL = 4
+};
+typedef struct ngMouse {
+	int event;
+	int left;
+	int middle;
+	int right;
+	int x;
+	int y;
+	int dx;
+	int dy;
+	int scroll_x;
+	int scroll_y;
+} ngMouse;
+void ng_mouse_init (ngMouse*);
+void ng_mouse_press (ngMouse*, SDL_Event*);
+void ng_mouse_release (ngMouse*, SDL_Event*);
+void ng_mouse_move (ngMouse*, SDL_Event*);
+void ng_mouse_scroll (ngMouse*, SDL_Event*);
+
+// This is compatible with bool
+enum ngEnumKeyEvent {
+	NG_KEY_PRESS = 1,
+	NG_KEY_RELEASE = 2,
+	NG_TEXT_INPUT = 3
+};
+enum ngEnumKeyNum { NG_KEYTEXT = 33 };
+typedef struct ngKey {
+	int event;
+	int scancode; // SDL_Scancode
+	int keycode; // SDL_Keycode
+	int lshift;
+	int rshift;
+	int lctrl;
+	int rctrl;
+	int lalt;
+	int ralt;
+	int caps;
+	char text[NG_KEYTEXT]; // null-terminated utf-8 text
+	// ^ text input should play nice with international keyboards,
+	// ^ even if it can't process their inputs.
+} ngKey;
+void ng_key_init (ngKey*);
+void ng_key_press (ngKey*, SDL_Event*);
+void ng_key_release (ngKey*, SDL_Event*);
+void ng_text_input (ngKey*, SDL_Event*);
 
 // Audio
 enum ngEnumSoundMode { NG_PLAYONCE, NG_LOOP, NG_COMPLETE };

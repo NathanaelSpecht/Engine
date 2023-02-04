@@ -3,16 +3,18 @@
 
 #include "firedays.h"
 
-void fd_level_screen_init (fdLevelScreen* s) {
-	//TODO
-	fd_hud_menu_init(&s->hud_menu);
-	fd_pause_menu_init(&s->pause_menu);
+void fd_levelscreen_init (fdLevelScreen* s, fdGameState* g) {
+	fd_hudmenu_init(&s->hud_menu, g);
+	fd_pausemenu_init(&s->pause_menu, g);
 }
 
-void fd_level_screen_draw (fdLevelScreen* s, ngGraphics* g) {
+void fd_levelscreen_event (fdLevelScreen* s, fdGameState* g) {
 	//TODO
-	fd_hud_menu_draw(&s->hud_menu, g);
-	fd_pause_menu_draw(&s->pause_menu, g);
+}
+
+void fd_levelscreen_draw (fdLevelScreen* s, fdGameState* g) {
+	fd_hudmenu_draw(&s->hud_menu, g);
+	fd_pausemenu_draw(&s->pause_menu, g);
 }
 
 

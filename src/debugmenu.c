@@ -3,11 +3,15 @@
 
 #include "firedays.h"
 
-void fd_debug_menu_init (fdDebugMenu* m) {
+void fd_debugmenu_init (fdDebugMenu* m, fdGameState* g) {
 	//TODO
 }
 
-void fd_debug_menu_draw (fdDebugMenu* m, ngGraphics* g) {
+void fd_debugmenu_event (fdDebugMenu* m, fdGameState* g) {
+	//TODO
+}
+
+void fd_debugmenu_draw (fdDebugMenu* m, fdGameState* g) {
 	//TODO
 }
 

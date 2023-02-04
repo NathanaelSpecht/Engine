@@ -110,7 +110,7 @@ const ngColor* key) {
 	image->texture = NULL;
 	ng_rect_init(&image->rect, 0, 0, 0, 0);
 	ng_color_init(&image->color, 255, 255, 255);
-	image->flip = NG_FLIP_NONE;
+	image->flip = NG_NONE;
 	image->angle = 0.0;
 	
 	SDL_Surface* surface = NULL;
@@ -256,7 +256,7 @@ const ngRect* d) {
 	} else {
 		ng_rect_to_sdl(&dest, &g->rect);
 	}
-	if (image->flip == NG_FLIP_NONE && image->angle == 0.0) {
+	if (image->flip == NG_NONE && image->angle == 0.0) {
 		if (SDL_RenderCopy(g->renderer, image->texture, &src, &dest) != 0) {
 			return NG_ERROR;
 		}
