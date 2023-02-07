@@ -3,15 +3,16 @@
 
 #include "firedays.h"
 
-void fd_worldscreen_init (fdWorldScreen* s, fdGameState* g) {
+void fd_worldscreen_init (fdWorldScreen* s, fdScreen* screen, fdCore* core) {
+	s->core = core;
+	s->screen = screen;
+}
+
+void fd_worldscreen_event (fdWorldScreen* s) {
 	//TODO
 }
 
-void fd_worldscreen_event (fdWorldScreen* s, fdGameState* g) {
-	//TODO
-}
-
-void fd_worldscreen_draw (fdWorldScreen* s, fdGameState* g) {
+void fd_worldscreen_draw (fdWorldScreen* s) {
 	//TODO
 }
 

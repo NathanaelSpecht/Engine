@@ -5,6 +5,11 @@
 
 ## 2023 February
 
+February 06:
+- Refactor Fire Days's game state into core and screen.
+- Refactor Fire Days's init into core and screen.
+- Shallow copy core and screen into screens when they init.
+
 February 03:
 - Refactor frames and views into rects and grids.
 Less code for more functionality.

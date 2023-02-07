@@ -3,6 +3,79 @@
 
 #include "ng.h"
 
+void ng_event_init (ngEvent* e, ngGraphics* g) {
+	e->mode = NG_NONE;
+	ng_mouse_init(&e->mouse);
+	ng_key_init(&e->key);
+	e->g = g;
+}
+
+bool ng_event_next (ngEvent* e) {
+	while (SDL_PollEvent(&e->event)) {
+		switch (e->event.type) {
+			case SDL_QUIT: {
+				e->mode = NG_QUIT;
+				return true;
+			} case SDL_WINDOWEVENT: {
+				e->mode = NG_WINDOW;
+				ng_window_event(e->g, &e->event);
+				return true;
+			} case SDL_KEYDOWN: {
+				e->mode = NG_KEY;
+				ng_key_press(&e->key, &e->event);
+				return true;
+			} case SDL_KEYUP: {
+				e->mode = NG_KEY;
+				ng_key_release(&e->key, &e->event);
+				return true;
+			} case SDL_TEXTINPUT: {
+				e->mode = NG_KEY;
+				ng_text_input(&e->key, &e->event);
+				return true;
+			} case SDL_MOUSEBUTTONDOWN: {
+				e->mode = NG_MOUSE;
+				ng_mouse_press(&e->mouse, &e->event);
+				return true;
+			} case SDL_MOUSEBUTTONUP: {
+				e->mode = NG_MOUSE;
+				ng_mouse_release(&e->mouse, &e->event);
+				return true;
+			} case SDL_MOUSEMOTION: {
+				e->mode = NG_MOUSE;
+				ng_mouse_move(&e->mouse, &e->event);
+				return true;
+			} case SDL_MOUSEWHEEL: {
+				e->mode = NG_MOUSE;
+				ng_mouse_scroll(&e->mouse, &e->event);
+				return true;
+			} default: {
+				e->mode = NG_NONE;
+			}
+		}
+	}
+	return false;
+}
+
+void ng_window_event (ngGraphics* g, SDL_Event* e) {
+	switch (e->window.event) {
+		case SDL_WINDOWEVENT_RESIZED: {
+			g->rect.w = e->window.data1;
+			g->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
+			g->rect.w = e->window.data1;
+			g->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_MAXIMIZED: {
+			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
+			break;
+		} case SDL_WINDOWEVENT_RESTORED: {
+			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
+			break;
+		}
+	}
+}
+
 void ng_mouse_init (ngMouse* m) {
 	m->event = NG_NONE;
 	m->left = NG_RELEASED;
@@ -120,7 +193,7 @@ void ng_text_input (ngKey* k, SDL_Event* e) {
 	k->event = NG_TEXT_INPUT;
 	char* text = e->text.text;
 	int i=0;
-	for (; i<NG_KEYTEXT && text[i] != '\0'; i++) {
+	for (; i<NG_KEYTEXT-1 && text[i] != '\0'; i++) {
 		k->text[i] = text[i];
 	}
 	for (; i<NG_KEYTEXT; i++) {

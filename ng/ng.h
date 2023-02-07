@@ -65,8 +65,8 @@ typedef struct ngColor {
 
 // This is compatible with bool
 enum ngEnumImageFlip {
-	NG_FLIP_X = 1,
-	NG_FLIP_Y = 2
+	NG_FLIP_X = 1, // flip x coords (horizontal flip) (NOT flip over x axis)
+	NG_FLIP_Y = 2 // flip y coords (vertical flip) (NOT flip over y axis)
 }; // both = x | y
 
 typedef struct ngImage {
@@ -117,8 +117,6 @@ int ng_draw_rect (ngGraphics*, const ngRect*, bool fill);
 int ng_draw_line (ngGraphics*, int x1, int y1, int x2, int y2);
 int ng_draw_point (ngGraphics*, int x, int y);
 
-void ng_window_event (ngGraphics*, SDL_Event*);
-
 /*
 void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames,
 	const char* str, int di);
@@ -126,6 +124,8 @@ void ng_graphics_render_tile (ngGraphics* g, const ngFrame* frame, int w_frames,
 */
 
 // Event
+void ng_window_event (ngGraphics*, SDL_Event*);
+
 // These are compatible with bool
 enum ngEnumButtonState {
 	NG_RELEASED = 0,
@@ -181,6 +181,17 @@ void ng_key_init (ngKey*);
 void ng_key_press (ngKey*, SDL_Event*);
 void ng_key_release (ngKey*, SDL_Event*);
 void ng_text_input (ngKey*, SDL_Event*);
+
+enum ngEnumEventMode { NG_QUIT = 1, NG_WINDOW = 2, NG_MOUSE = 3, NG_KEY = 4 };
+typedef struct ngEvent {
+	int mode;
+	ngMouse mouse;
+	ngKey key;
+	ngGraphics* g;
+	SDL_Event event;
+} ngEvent;
+void ng_event_init (ngEvent*, ngGraphics*);
+bool ng_event_next (ngEvent*);
 
 // Audio
 enum ngEnumSoundMode { NG_PLAYONCE, NG_LOOP, NG_COMPLETE };

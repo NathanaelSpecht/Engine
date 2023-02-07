@@ -3,16 +3,21 @@
 
 #include "firedays.h"
 
-void fd_hudmenu_init (fdHudMenu* m, fdGameState* g) {
-	//TODO
+void fd_hudmenu_init (fdHudMenu* m, fdScreen* screen, fdCore* core) {
+	m->core = core;
+	m->screen = screen;
 }
 
-void fd_hudmenu_event (fdHudMenu* m, fdGameState* g) {
-	//TODO
+void fd_hudmenu_event (fdHudMenu* m) {
+	if (m->mode) {
+		//TODO
+	}
 }
 
-void fd_hudmenu_draw (fdHudMenu* m, fdGameState* g) {
-	//TODO
+void fd_hudmenu_draw (fdHudMenu* m) {
+	if (m->mode) {
+		//TODO
+	}
 }
 
 

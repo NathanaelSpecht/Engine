@@ -314,26 +314,6 @@ int ng_draw_point (ngGraphics* g, int x, int y) {
 	return NG_SUCCESS;
 }
 
-void ng_window_event (ngGraphics* g, SDL_Event* event) {
-	switch (event->window.event) {
-		case SDL_WINDOWEVENT_RESIZED: {
-			g->rect.w = event->window.data1;
-			g->rect.h = event->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
-			g->rect.w = event->window.data1;
-			g->rect.h = event->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_MAXIMIZED: {
-			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
-			break;
-		} case SDL_WINDOWEVENT_RESTORED: {
-			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
-			break;
-		}
-	}
-}
-
 /*
 void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames,
 const char* str, int di) {
