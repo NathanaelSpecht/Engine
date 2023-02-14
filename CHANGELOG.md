@@ -7,6 +7,7 @@
 
 February 14:
 - Title, file, world, and level screens.
+- HUD, pause, and debug menus.
 - Simplified event modes.
 
 February 06:
