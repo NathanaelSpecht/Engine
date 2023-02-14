@@ -15,9 +15,7 @@ enum fdEnumNone { FD_NONE = 0 };
 typedef struct fdCore {
 	ngTime time;
 	ngGraphics graphics;
-	//TODO image bank;
-	//TODO audio
-	//TODO clip bank;
+	//TODO audio & channels
 	ngEvent event;
 } fdCore;
 void fd_core_init (fdCore*);
@@ -40,14 +38,17 @@ typedef struct fdScreen {
 } fdScreen;
 void fd_screen_init (fdScreen*);
 
+//TODO image bank
+//TODO clip bank
+
 // Title Screen
 typedef struct fdTitleScreen {
 	fdCore* core;
 	fdScreen* screen;
-	ngRect header_rect;
-	ngRect button_rect;
-	ngRect start_rect;
-	ngRect quit_rect;
+	ngRect header;
+	ngRect frame;
+	ngRect start_btn;
+	ngRect quit_btn;
 } fdTitleScreen;
 void fd_titlescreen_init (fdTitleScreen*, fdScreen*, fdCore*);
 void fd_titlescreen_event (fdTitleScreen*);
@@ -57,9 +58,9 @@ void fd_titlescreen_draw (fdTitleScreen*);
 typedef struct fdFileScreen {
 	fdCore* core;
 	fdScreen* screen;
-	ngRect header_rect;
-	ngRect save_rect;
-	ngRect save1_rect;
+	ngRect header;
+	ngRect frame;
+	ngRect save1;
 } fdFileScreen;
 void fd_filescreen_init (fdFileScreen*, fdScreen*, fdCore*);
 void fd_filescreen_event (fdFileScreen*);
@@ -69,9 +70,9 @@ void fd_filescreen_draw (fdFileScreen*);
 typedef struct fdWorldScreen {
 	fdCore* core;
 	fdScreen* screen;
-	ngRect header_rect;
-	ngRect level_rect;
-	ngRect level1_rect;
+	ngRect header;
+	ngRect frame;
+	ngRect level1;
 } fdWorldScreen;
 void fd_worldscreen_init (fdWorldScreen*, fdScreen*, fdCore*);
 void fd_worldscreen_event (fdWorldScreen*);
@@ -83,10 +84,10 @@ typedef struct fdHudMenu {
 	fdCore* core;
 	fdScreen* screen;
 	int mode;
-	ngRect hud_rect;
-	ngRect temperature_rect;
-	ngRect heat_rect;
-	ngRect fuel_rect;
+	ngRect frame;
+	ngRect temp;
+	ngRect heat;
+	ngRect fuel;
 } fdHudMenu;
 void fd_hudmenu_init (fdHudMenu*, fdScreen*, fdCore*);
 void fd_hudmenu_event (fdHudMenu*);
@@ -98,10 +99,10 @@ typedef struct fdPauseMenu {
 	fdCore* core;
 	fdScreen* screen;
 	int mode;
-	ngRect header_rect;
-	ngRect button_rect;
-	ngRect resume_rect;
-	ngRect quit_rect;
+	ngRect header;
+	ngRect frame;
+	ngRect resume_btn;
+	ngRect quit_btn;
 } fdPauseMenu;
 void fd_pausemenu_init (fdPauseMenu*, fdScreen*, fdCore*);
 void fd_pausemenu_event (fdPauseMenu*);
@@ -111,7 +112,6 @@ void fd_pausemenu_draw (fdPauseMenu*);
 typedef struct fdLevelScreen {
 	fdCore* core;
 	fdScreen* screen;
-	ngRect header_rect;
 	fdHudMenu hud_menu;
 	fdPauseMenu pause_menu;
 } fdLevelScreen;
@@ -125,8 +125,9 @@ typedef struct fdDebugMenu {
 	fdCore* core;
 	fdScreen* screen;
 	int mode;
-	ngRect version_rect;
-	ngRect fps_rect;
+	ngRect frame;
+	ngRect version;
+	ngRect fps;
 } fdDebugMenu;
 void fd_debugmenu_init (fdDebugMenu*, fdScreen*, fdCore*);
 void fd_debugmenu_event (fdDebugMenu*);

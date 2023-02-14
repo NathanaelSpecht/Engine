@@ -19,6 +19,7 @@
 enum ngEnumNone { NG_NONE = 0 };
 enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
+enum ngEnumRectFill { NG_FRAME = 0, NG_FILL = 1 };
 
 // File
 bool ng_file_exists (const char* file);
@@ -182,7 +183,12 @@ void ng_key_press (ngKey*, SDL_Event*);
 void ng_key_release (ngKey*, SDL_Event*);
 void ng_text_input (ngKey*, SDL_Event*);
 
-enum ngEnumEventMode { NG_QUIT = 1, NG_WINDOW = 2, NG_MOUSE = 3, NG_KEY = 4 };
+enum ngEnumEventMode {
+	NG_QUIT = 1,
+	NG_WINDOW = 2,
+	NG_MOUSE = 3,
+	NG_KEY = 4
+};
 typedef struct ngEvent {
 	int mode;
 	ngMouse mouse;

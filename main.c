@@ -40,6 +40,8 @@ int main (int argc, char** argv) {
 				} case FD_LEVELSCREEN: {
 					fd_levelscreen_event(&level_screen);
 					break;
+				} default: {
+					goto quit;
 				}
 			}
 			fd_debugmenu_event(&debug_menu);
