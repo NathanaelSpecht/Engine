@@ -41,6 +41,10 @@ void fd_screen_init (fdScreen*);
 //TODO image bank
 //TODO clip bank
 
+// Quality of Life
+void fd_frame_mouse(ngRect* r, fdCore*, fdScreen*, ngRect* frame);
+void fd_frame_draw_rect(const ngRect* r, fdCore*, fdScreen*, ngRect* frame);
+
 // Title Screen
 typedef struct fdTitleScreen {
 	fdCore* core;

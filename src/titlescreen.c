@@ -16,45 +16,25 @@ void fd_titlescreen_init (fdTitleScreen* s, fdScreen* screen, fdCore* core) {
 
 void fd_titlescreen_event (fdTitleScreen* s) {
 	ngEvent* e = &s->core->event;
+	// if mouse press start, then filescreen
+	// if mouse press quit, then quit
 	if (e->mode == NG_MOUSE && e->mouse.event == NG_MOUSE_PRESS) {
 		ngRect p;
-		ng_rect_init(&p, e->mouse.x, e->mouse.y, 0, 0);
-		ng_rect_portal(&p, &s->core->graphics.rect, &s->screen->rect);
-		ng_absolute_to_relative(&p, NULL, &s->screen->tile_grid);
-		ng_absolute_to_relative(&p, &s->frame, NULL);
+		fd_frame_mouse(&p, s->core, s->screen, &s->frame);
 		
-		if (ng_rect_contains(&s->quit_btn, p.x, p.y)) {
-			s->screen->mode = FD_NONE;
-		} else if (ng_rect_contains(&s->start_btn, p.x, p.y)) {
+		if (ng_rect_contains(&s->start_btn, p.x, p.y)) {
 			s->screen->mode = FD_FILESCREEN;
+		} else if (ng_rect_contains(&s->quit_btn, p.x, p.y)) {
+			s->screen->mode = FD_NONE;
 		}
 	}
 }
 
 void fd_titlescreen_draw (fdTitleScreen* s) {
-	ngRect r;
-	
-	r = s->header;
-	ng_relative_to_absolute(&r, NULL, &s->screen->tile_grid);
-	ng_rect_portal(&r, &s->screen->rect, &s->core->graphics.rect);
-	ng_draw_rect(&s->core->graphics, &r, NG_FRAME);
-	
-	r = s->frame;
-	ng_relative_to_absolute(&r, NULL, &s->screen->tile_grid);
-	ng_rect_portal(&r, &s->screen->rect, &s->core->graphics.rect);
-	ng_draw_rect(&s->core->graphics, &r, NG_FRAME);
-	
-	r = s->start_btn;
-	ng_relative_to_absolute(&r, &s->frame, NULL);
-	ng_relative_to_absolute(&r, NULL, &s->screen->tile_grid);
-	ng_rect_portal(&r, &s->screen->rect, &s->core->graphics.rect);
-	ng_draw_rect(&s->core->graphics, &r, NG_FRAME);
-	
-	r = s->quit_btn;
-	ng_relative_to_absolute(&r, &s->frame, NULL);
-	ng_relative_to_absolute(&r, NULL, &s->screen->tile_grid);
-	ng_rect_portal(&r, &s->screen->rect, &s->core->graphics.rect);
-	ng_draw_rect(&s->core->graphics, &r, NG_FRAME);
+	fd_frame_draw_rect(&s->header, s->core, s->screen, NULL);
+	fd_frame_draw_rect(&s->frame, s->core, s->screen, NULL);
+	fd_frame_draw_rect(&s->start_btn, s->core, s->screen, &s->frame);
+	fd_frame_draw_rect(&s->quit_btn, s->core, s->screen, &s->frame);
 }
 
 

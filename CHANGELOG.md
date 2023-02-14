@@ -6,7 +6,7 @@
 ## 2023 February
 
 February 14:
-- Title screen.
+- Title screen, file screen.
 
 February 06:
 - Refactor Fire Days's game state into core and screen.

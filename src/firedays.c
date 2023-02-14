@@ -41,4 +41,23 @@ void fd_screen_init (fdScreen* s) {
 //TODO image bank
 //TODO clip bank
 
+void fd_frame_mouse(ngRect* r, fdCore* c, fdScreen* s, ngRect* frame) {
+	ng_rect_init(r, c->event.mouse.x, c->event.mouse.y, 0, 0);
+	ng_rect_portal(r, &c->graphics.rect, &s->rect);
+	ng_absolute_to_relative(r, NULL, &s->tile_grid);
+	if (frame != NULL) {
+		ng_absolute_to_relative(r, frame, NULL);
+	}
+}
+
+void fd_frame_draw_rect(const ngRect* r, fdCore* c, fdScreen* s, ngRect* frame) {
+	ngRect r2 = *r;
+	if (frame != NULL) {
+		ng_relative_to_absolute(&r2, frame, NULL);
+	}
+	ng_relative_to_absolute(&r2, NULL, &s->tile_grid);
+	ng_rect_portal(&r2, &s->rect, &c->graphics.rect);
+	ng_draw_rect(&c->graphics, &r2, NG_FRAME);
+}
+
 
