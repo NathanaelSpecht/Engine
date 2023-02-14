@@ -7,6 +7,9 @@ void ng_event_init (ngEvent* e, ngGraphics* g) {
 	e->mode = NG_NONE;
 	ng_mouse_init(&e->mouse);
 	ng_key_init(&e->key);
+	for (int i=0; i<NG_EVENT_TEXT; i++) {
+		e->text[i] = '\0';
+	}
 	e->g = g;
 }
 
@@ -20,33 +23,33 @@ bool ng_event_next (ngEvent* e) {
 				e->mode = NG_WINDOW;
 				ng_window_event(e->g, &e->event);
 				return true;
-			} case SDL_KEYDOWN: {
-				e->mode = NG_KEY;
-				ng_key_press(&e->key, &e->event);
-				return true;
-			} case SDL_KEYUP: {
-				e->mode = NG_KEY;
-				ng_key_release(&e->key, &e->event);
-				return true;
-			} case SDL_TEXTINPUT: {
-				e->mode = NG_KEY;
-				ng_text_input(&e->key, &e->event);
-				return true;
 			} case SDL_MOUSEBUTTONDOWN: {
-				e->mode = NG_MOUSE;
+				e->mode = NG_MOUSE_PRESS;
 				ng_mouse_press(&e->mouse, &e->event);
 				return true;
 			} case SDL_MOUSEBUTTONUP: {
-				e->mode = NG_MOUSE;
+				e->mode = NG_MOUSE_RELEASE;
 				ng_mouse_release(&e->mouse, &e->event);
 				return true;
 			} case SDL_MOUSEMOTION: {
-				e->mode = NG_MOUSE;
+				e->mode = NG_MOUSE_MOVE;
 				ng_mouse_move(&e->mouse, &e->event);
 				return true;
 			} case SDL_MOUSEWHEEL: {
-				e->mode = NG_MOUSE;
+				e->mode = NG_MOUSE_SCROLL;
 				ng_mouse_scroll(&e->mouse, &e->event);
+				return true;
+			} case SDL_KEYDOWN: {
+				e->mode = NG_KEY_PRESS;
+				ng_key_press(&e->key, &e->event);
+				return true;
+			} case SDL_KEYUP: {
+				e->mode = NG_KEY_RELEASE;
+				ng_key_release(&e->key, &e->event);
+				return true;
+			} case SDL_TEXTINPUT: {
+				e->mode = NG_TEXT_INPUT;
+				ng_text_input(e, &e->event);
 				return true;
 			} default: {
 				e->mode = NG_NONE;
@@ -77,10 +80,9 @@ void ng_window_event (ngGraphics* g, SDL_Event* e) {
 }
 
 void ng_mouse_init (ngMouse* m) {
-	m->event = NG_NONE;
-	m->left = NG_RELEASED;
-	m->middle = NG_RELEASED;
-	m->right = NG_RELEASED;
+	m->left = NG_RELEASE;
+	m->middle = NG_RELEASE;
+	m->right = NG_RELEASE;
 	m->x = 0;
 	m->y = 0;
 	m->dx = 0;
@@ -90,16 +92,15 @@ void ng_mouse_init (ngMouse* m) {
 }
 
 void ng_mouse_press (ngMouse* m, SDL_Event* e) {
-	m->event = NG_MOUSE_PRESS;
 	switch (e->button.button) {
 		case SDL_BUTTON_LEFT: {
-			m->left = NG_PRESSED;
+			m->left = NG_PRESS;
 			break;
 		} case SDL_BUTTON_MIDDLE: {
-			m->middle = NG_PRESSED;
+			m->middle = NG_PRESS;
 			break;
 		} case SDL_BUTTON_RIGHT: {
-			m->right = NG_PRESSED;
+			m->right = NG_PRESS;
 			break;
 		}
 	}
@@ -110,16 +111,15 @@ void ng_mouse_press (ngMouse* m, SDL_Event* e) {
 }
 
 void ng_mouse_release (ngMouse* m, SDL_Event* e) {
-	m->event = NG_MOUSE_RELEASE;
 	switch (e->button.button) {
 		case SDL_BUTTON_LEFT: {
-			m->left = NG_RELEASED;
+			m->left = NG_RELEASE;
 			break;
 		} case SDL_BUTTON_MIDDLE: {
-			m->middle = NG_RELEASED;
+			m->middle = NG_RELEASE;
 			break;
 		} case SDL_BUTTON_RIGHT: {
-			m->right = NG_RELEASED;
+			m->right = NG_RELEASE;
 			break;
 		}
 	}
@@ -130,7 +130,6 @@ void ng_mouse_release (ngMouse* m, SDL_Event* e) {
 }
 
 void ng_mouse_move (ngMouse* m, SDL_Event* e) {
-	m->event = NG_MOUSE_MOVE;
 	m->x = e->motion.x;
 	m->y = e->motion.y;
 	m->dx = e->motion.xrel;
@@ -138,7 +137,6 @@ void ng_mouse_move (ngMouse* m, SDL_Event* e) {
 }
 
 void ng_mouse_scroll (ngMouse* m, SDL_Event* e) {
-	m->event = NG_MOUSE_SCROLL;
 	m->scroll_x = e->wheel.x;
 	m->scroll_y = e->wheel.y;
 	if (e->wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
@@ -148,21 +146,16 @@ void ng_mouse_scroll (ngMouse* m, SDL_Event* e) {
 }
 
 void ng_key_init (ngKey* k) {
-	k->event = NG_NONE;
-	k->lshift = NG_RELEASED;
-	k->rshift = NG_RELEASED;
-	k->lctrl = NG_RELEASED;
-	k->rctrl = NG_RELEASED;
-	k->lalt = NG_RELEASED;
-	k->ralt = NG_RELEASED;
-	k->caps = NG_RELEASED;
-	for (int i=0; i<NG_KEYTEXT; i++) {
-		k->text[i] = '\0';
-	}
+	k->lshift = NG_RELEASE;
+	k->rshift = NG_RELEASE;
+	k->lctrl = NG_RELEASE;
+	k->rctrl = NG_RELEASE;
+	k->lalt = NG_RELEASE;
+	k->ralt = NG_RELEASE;
+	k->caps = NG_RELEASE;
 }
 
 void ng_key_press (ngKey* k, SDL_Event* e) {
-	k->event = NG_KEY_PRESS;
 	k->scancode = e->key.keysym.scancode;
 	k->keycode = e->key.keysym.sym;
 	uint16_t mod = e->key.keysym.mod;
@@ -176,7 +169,6 @@ void ng_key_press (ngKey* k, SDL_Event* e) {
 }
 
 void ng_key_release (ngKey* k, SDL_Event* e) {
-	k->event = NG_KEY_RELEASE;
 	k->scancode = e->key.keysym.scancode;
 	k->keycode = e->key.keysym.sym;
 	uint16_t mod = e->key.keysym.mod;
@@ -189,15 +181,14 @@ void ng_key_release (ngKey* k, SDL_Event* e) {
 	k->caps = !!(mod & KMOD_CAPS);
 }
 
-void ng_text_input (ngKey* k, SDL_Event* e) {
-	k->event = NG_TEXT_INPUT;
+void ng_text_input (ngEvent* t, SDL_Event* e) {
 	char* text = e->text.text;
 	int i=0;
-	for (; i<NG_KEYTEXT-1 && text[i] != '\0'; i++) {
-		k->text[i] = text[i];
+	for (; i<NG_EVENT_TEXT-1 && text[i] != '\0'; i++) {
+		t->text[i] = text[i];
 	}
-	for (; i<NG_KEYTEXT; i++) {
-		k->text[i] = '\0';
+	for (; i<NG_EVENT_TEXT; i++) {
+		t->text[i] = '\0';
 	}
 }
 

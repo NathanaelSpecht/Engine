@@ -11,7 +11,8 @@ void fd_levelscreen_init (fdLevelScreen* s, fdScreen* screen, fdCore* core) {
 }
 
 void fd_levelscreen_event (fdLevelScreen* s) {
-	//TODO
+	fd_hudmenu_event(&s->hud_menu);
+	fd_pausemenu_event(&s->pause_menu);
 }
 
 void fd_levelscreen_draw (fdLevelScreen* s) {

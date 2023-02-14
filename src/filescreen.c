@@ -10,21 +10,21 @@ void fd_filescreen_init (fdFileScreen* s, fdScreen* screen, fdCore* core) {
 	ng_rect_init(&s->header, 5, 1, 30, 3);
 	ng_rect_init(&s->frame, 1, 5, 38, 24);
 	// tiles in frame
-	ng_rect_init(&s->save1, 1, 1, 4, 3);
+	ng_rect_init(&s->save1, 1, 1, 36, 5);
 }
 
 void fd_filescreen_event (fdFileScreen* s) {
 	ngEvent* e = &s->core->event;
 	// if mouse press save1, then worldscreen
 	// if key press escape, then titlescreen
-	if (e->mode == NG_MOUSE && e->mouse.event == NG_MOUSE_PRESS) {
+	if (e->mode == NG_MOUSE_PRESS) {
 		ngRect p;
 		fd_frame_mouse(&p, s->core, s->screen, &s->frame);
 		
 		if (ng_rect_contains(&s->save1, p.x, p.y)) {
 			s->screen->mode = FD_WORLDSCREEN;
 		}
-	} else if (e->mode == NG_KEY && e->key.event == NG_KEY_PRESS) {
+	} else if (e->mode == NG_KEY_PRESS) {
 		int k = e->key.scancode;
 		
 		if (k == SDL_SCANCODE_ESCAPE) {

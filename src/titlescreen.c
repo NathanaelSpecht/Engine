@@ -18,7 +18,7 @@ void fd_titlescreen_event (fdTitleScreen* s) {
 	ngEvent* e = &s->core->event;
 	// if mouse press start, then filescreen
 	// if mouse press quit, then quit
-	if (e->mode == NG_MOUSE && e->mouse.event == NG_MOUSE_PRESS) {
+	if (e->mode == NG_MOUSE_PRESS) {
 		ngRect p;
 		fd_frame_mouse(&p, s->core, s->screen, &s->frame);
 		
