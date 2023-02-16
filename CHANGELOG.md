@@ -5,6 +5,9 @@
 
 ## 2023 February
 
+February 16:
+- Memory functions.
+
 February 14:
 - Title, file, world, and level screens.
 - HUD, pause, and debug menus.

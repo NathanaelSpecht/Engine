@@ -20,6 +20,24 @@ enum ngEnumNone { NG_NONE = 0 };
 enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
+// Memory
+// These functions are wrappers around malloc, realloc, and free.
+// When a memory error occurs, they exit the program.
+void* ng_new (size_t);
+void* ng_resize (void*, size_t);
+void* ng_free (void*); // always returns NULL
+
+// These also print the file and line they are called from,
+// then "memory error", before exit.
+void* ng_debug_new (size_t, const char*, int);
+void* ng_debug_resize (void*, size_t, const char*, int);
+#define ng_newf(a); ng_debug_new(a,__FILE__,__LINE__);
+#define ng_resizef(a,b); ng_debug_resize(a,b,__FILE__,__LINE__);
+
+// String
+// These functions replace clib's string functions
+// with boundary-checked ones.
+
 // File
 bool ng_file_exists (const char* file);
 void ng_file_delete (const char* file);
