@@ -21,8 +21,8 @@ enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
 // Memory
-// These functions are wrappers around malloc, realloc, and free.
-// When a memory error occurs, they exit the program.
+// Wrappers around malloc, realloc, and free.
+// When a memory error occurs, the program exits.
 void* ng_new (size_t);
 void* ng_resize (void*, size_t);
 void* ng_free (void*); // always returns NULL
@@ -35,8 +35,21 @@ void* ng_debug_resize (void*, size_t, const char*, int);
 #define ng_resizef(a,b); ng_debug_resize(a,b,__FILE__,__LINE__);
 
 // String
-// These functions replace clib's string functions
-// with boundary-checked ones.
+// Wrappers around clib's string functions - with boundary checking and
+// memory re-allocation - to (hopefully) avoid undefined behavior.
+int64_t ng_strlen (const char*);
+int ng_strcmp (const char*, const char*);
+char* ng_strcpy (char*, const char*);
+char* ng_strcat (char*, const char*);
+char* ng_strcatc (char*, char); // calls strcat(s,char[2])
+char* ng_strstr (const char*, const char*);
+char* ng_strtok (char*, const char*);
+double ng_atof (const char*);
+int64_t ng_atoi (const char*);
+bool ng_atob (const char*);
+char* ng_ftoa (char*, const char*, double); // calls sprintf(s,fmt,d)
+char* ng_itoa (char*, const char*, int64_t); // calls sprintf(s,fmt,i)
+char* ng_btoa (char*, bool);
 
 // File
 bool ng_file_exists (const char* file);

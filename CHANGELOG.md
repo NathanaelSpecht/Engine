@@ -6,7 +6,7 @@
 ## 2023 February
 
 February 16:
-- Memory functions.
+- Memory and string functions.
 
 February 14:
 - Title, file, world, and level screens.
