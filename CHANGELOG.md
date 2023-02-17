@@ -7,6 +7,7 @@
 
 February 17:
 - Fix memory and string functions.
+- Refactor file functions.
 
 February 16:
 - Memory and string functions.

@@ -21,18 +21,29 @@ enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
 // Memory
-// Wrappers around malloc, realloc, and free.
+// Wrappers around malloc, realloc, and free - with NULL checking.
 // When a memory error occurs, the program exits.
 void* ng_new (size_t);
 void* ng_resize (void*, size_t);
 void* ng_free (void*); // always returns NULL
 
 // These also print the file and line they are called from,
-// then "memory error", before exit.
+// then "memory error", before exit. The 'd' stands for debug.
 void* ng_debug_new (size_t, const char*, int);
 void* ng_debug_resize (void*, size_t, const char*, int);
-#define ng_newf(a); ng_debug_new(a,__FILE__,__LINE__);
-#define ng_resizef(a,b); ng_debug_resize(a,b,__FILE__,__LINE__);
+#define ng_dnew(a); ng_debug_new(a,__FILE__,__LINE__);
+#define ng_dresize(a,b); ng_debug_resize(a,b,__FILE__,__LINE__);
+
+// These do the same checks and DO NOT EXIT.
+// The 'x' stands for no e'x'it.
+void* ng_xnew (size_t);
+void* ng_xresize (void*, size_t);
+
+// These do the checks, print the debug message, and DO NOT EXIT.
+void* ng_debugx_new (size_t, const char*, int);
+void* ng_debugx_resize (void*, size_t, const char*, int);
+#define ng_dxnew(a); ng_debugx_new(a,__FILE__,__LINE__);
+#define ng_dxresize(a,b); ng_debugx_resize(a,b,__FILE__,__LINE__);
 
 // String
 // Wrappers around clib's string functions - with boundary checking and
@@ -59,11 +70,35 @@ char* ng_itoa (char*, const char*, int64_t); // calls sprintf(s,fmt,i)
 char* ng_btoa (char*, bool);
 
 // File
+// Wrappers around clib's file functions - with boundary checking and
+// error checking - to (hopefully) avoid undefined behavior.
+FILE* ng_fopen (const char*, const char*); // returns NULL on error
+char* ng_fgets (char*, FILE*, int buf); // returns chars read before error/EOF
+// Buf is the number of chars to read at a time.
+// - Larger buffers allow faster reads, but skip data when an error occurs,
+//   and require ftell and fseek to return to where it left off.
+// - Reading 1 char at a time is slow, but will pick up right where it
+//   left off after errors are dealt with.
+int ng_fputs (const char*, FILE*);
+FILE* ng_fclose (FILE*); // always returns NULL
+int ng_rename (const char*, const char*);
+int ng_delete (const char*);
+bool ng_exist (const char*, char); // file exists and program/user has permission
+// check for 'r'ead/'w'rite/'+'both access
+
+// Folders are OS-dependent
+// Linux: int mkdir (const char*, int mode); requires <sys/stat.h>
+// Windows: int mkdir (const char*); requires <windows.h>
+// ng_delete can remove empty folders
+// TODO List files in a folder?
+
+/*
 bool ng_file_exists (const char* file);
 void ng_file_delete (const char* file);
 char* ng_file_read (const char* file);
 void ng_file_write (const char* file, const char* s);
 void ng_file_append (const char* file, const char* s);
+*/
 
 // Time
 typedef struct ngTime {
