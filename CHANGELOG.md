@@ -8,6 +8,7 @@
 February 17:
 - Fix memory and string functions.
 - Refactor file functions.
+- Code still works on Windows.
 
 February 16:
 - Memory and string functions.
