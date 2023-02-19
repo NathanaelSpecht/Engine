@@ -8,18 +8,13 @@ FILE* ng_fopen (const char* file, const char* mode) {
 	if (file == NULL || mode == NULL || file[0] == '\0' || mode[0] == '\0') {
 		return NULL;
 	}
-	FILE* fp = NULL;
-	fp = fopen(file, mode);
-	if (fp == NULL) {
-		return NULL;
-	}
-	return fp;
+	return fopen(file, mode);
 }
 
 char* ng_fgets (char* s, FILE* fp, int buf) {
 	// returns chars read before error/EOF
 	s = ng_free(s);
-	if (fp == NULL || feof(fp) != 0 || ferror(fp) != 0) {
+	if (fp == NULL || feof(fp) || ferror(fp)) {
 		return s;
 	}
 	// Buf is the number of chars to read at a time.
@@ -27,10 +22,16 @@ char* ng_fgets (char* s, FILE* fp, int buf) {
 	//   and require ftell and fseek to return to where it left off.
 	// - Reading 1 char at a time is slow, but will pick up right where it
 	//   left off after errors are dealt with.
+	int64_t s_len = 0;
 	if (buf > 1) {
 		char a[buf+1];
+		int64_t a_len;
 		while (fgets(a, buf+1, fp) != NULL) {
-			s = ng_strcat(s, a);
+			// fgets stops at EOF or '\n' or buf, so len <= buf.
+			// fgets does NOT return len, so it must be re-measured each time.
+			a_len = ng_strlen(a);
+			s = ng_qstrcat(s, s_len, a, a_len);
+			s_len += a_len;
 			if (feof(fp) != 0) {
 				break;
 			}
@@ -38,12 +39,40 @@ char* ng_fgets (char* s, FILE* fp, int buf) {
 	} else {
 		int c;
 		while ((c = fgetc(fp)) != EOF) {
-			s = ng_strcatc(s, (char)c);
+			s = ng_qstrcatc(s, s_len, (char)c);
+			s_len+=1;
 		}
 	}
 	return s;
 }
 
+int64_t ng_fputs (const char* s, FILE* fp) {
+	// returns chars written before error/len
+	// writes 1 char at a time, as if by repeated calls to fputc.
+	int64_t i=0;
+	if (fp == NULL || feof(fp) || ferror(fp) || s == NULL) {
+		return i;
+	}
+	
+	for (; s[i] != '\0'; i++) {
+		if (fputc((int)s[i], fp) == EOF) {
+			break;
+		}
+	}
+	return i;
+}
+
+int ng_fputc (char c, FILE* fp) {
+	if (fp == NULL || feof(fp) || ferror(fp)) {
+		return NG_ERROR;
+	} else if (fputc((int)c, fp) != EOF) {
+		return NG_SUCCESS;
+	} else {
+		return NG_ERROR;
+	}
+}
+
+/*
 int ng_fputs (const char* s, FILE* fp) {
 	if (fp == NULL || feof(fp) != 0 || ferror(fp) != 0) {
 		return NG_ERROR;
@@ -53,6 +82,7 @@ int ng_fputs (const char* s, FILE* fp) {
 		return NG_ERROR;
 	}
 }
+*/
 
 FILE* ng_fclose (FILE* fp) {
 	// always returns NULL

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "SDL.h"
 
 // Core
@@ -92,7 +93,9 @@ char* ng_fgets (char*, FILE*, int buf); // returns chars read before error/EOF
 //   and require ftell and fseek to return to where it left off.
 // - Reading 1 char at a time is slow, but will pick up right where it
 //   left off after errors are dealt with.
-int ng_fputs (const char*, FILE*);
+int64_t ng_fputs (const char*, FILE*); // returns chars written before error/len
+// ^ writes 1 char at a time, as if by repeated calls to fputc.
+int ng_fputc (char, FILE*);
 FILE* ng_fclose (FILE*); // always returns NULL
 int ng_rename (const char*, const char*);
 int ng_delete (const char*);

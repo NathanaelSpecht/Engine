@@ -7,6 +7,7 @@
 
 February 18:
 - Quick string functions.
+- File functions use quick string functions where possible.
 
 February 17:
 - Fix memory and string functions.
