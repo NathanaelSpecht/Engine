@@ -5,6 +5,9 @@
 
 ## 2023 February
 
+February 18:
+- Quick string functions.
+
 February 17:
 - Fix memory and string functions.
 - Refactor file functions.

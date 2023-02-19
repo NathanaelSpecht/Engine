@@ -54,13 +54,23 @@ char* ng_strcpy (char*, const char*);
 char* ng_strcat (char*, const char*);
 char* ng_strcatc (char*, char); // calls strcat(s,char[2])
 char* ng_substr (char*, const char*, int64_t, int64_t);
-// ^ calls strncpy(s,a+start,len)
-int64_t ng_strdelim (const char*, const char*, bool, int64_t);
+int64_t ng_strdelim (const char*, const char*, int64_t);
+int64_t ng_strndelim (const char*, const char*, int64_t);
 // ^ first delim/non-delim char from start
+// ^ calls strncpy(s,a+start,len)
+char* ng_qstrcpy (char*, const char*, int64_t);
+char* ng_qstrcat (char*, int64_t, const char*, int64_t);
+char* ng_qstrcatc (char*, int64_t, char);
+char* ng_qsubstr (char*, const char*, int64_t, int64_t, int64_t);
+int64_t ng_qstrdelim (const char*, int64_t, const char*, int64_t);
+int64_t ng_qstrndelim (const char*, int64_t, const char*, int64_t);
+// ^ quick str functions. the 'q' stands for quick.
 bool ng_strchr (const char*, char); // returns strchr(s,c)!=NULL
 void ng_strupper (char*);
 void ng_strlower (char*);
-char* ng_atoh (char*, const char*);
+char* ng_atoh (char*, const char*, char);
+// ^ pass an uppercase/lowercase letter to output uppercase/lowercase hex.
+// ^ if the letter is X/x, also prepends "0x".
 double ng_atof (const char*);
 int64_t ng_atoi (const char*);
 bool ng_atob (const char*);
@@ -68,6 +78,9 @@ char* ng_htoa (char*, const char*);
 char* ng_ftoa (char*, const char*, double); // calls sprintf(s,fmt,d)
 char* ng_itoa (char*, const char*, int64_t); // calls sprintf(s,fmt,i)
 char* ng_btoa (char*, bool);
+// more quick str functions
+char* ng_qatoh (char*, const char*, int64_t, char c);
+char* ng_qhtoa (char*, const char*, int64_t);
 
 // File
 // Wrappers around clib's file functions - with boundary checking and
