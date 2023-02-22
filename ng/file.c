@@ -5,7 +5,7 @@
 
 FILE* ng_fopen (const char* file, const char* mode) {
 	// returns NULL on error
-	if (file == NULL || mode == NULL || file[0] == '\0' || mode[0] == '\0') {
+	if (file[0] == '\0' || mode[0] == '\0') {
 		return NULL;
 	}
 	return fopen(file, mode);
@@ -13,7 +13,7 @@ FILE* ng_fopen (const char* file, const char* mode) {
 
 char* ng_fgets (char* s, FILE* fp, int buf) {
 	// returns chars read before error/EOF
-	s = ng_free(s);
+	s = ng_strnul(s);
 	if (fp == NULL || feof(fp) || ferror(fp)) {
 		return s;
 	}
@@ -50,7 +50,7 @@ int64_t ng_fputs (const char* s, FILE* fp) {
 	// returns chars written before error/len
 	// writes 1 char at a time, as if by repeated calls to fputc.
 	int64_t i=0;
-	if (fp == NULL || feof(fp) || ferror(fp) || s == NULL) {
+	if (fp == NULL || feof(fp) || ferror(fp)) {
 		return i;
 	}
 	
@@ -93,7 +93,7 @@ FILE* ng_fclose (FILE* fp) {
 }
 
 int ng_rename (const char* oldfile, const char* newfile) {
-	if (oldfile == NULL || newfile == NULL || oldfile[0] == '\0' || newfile[0] == '\0') {
+	if (oldfile[0] == '\0' || newfile[0] == '\0') {
 		return NG_ERROR;
 	} else if (!ng_exist(oldfile, 'w') || ng_exist(newfile, 'r')) {
 		return NG_ERROR;
@@ -105,7 +105,7 @@ int ng_rename (const char* oldfile, const char* newfile) {
 }
 
 int ng_delete (const char* file) {
-	if (file == NULL || file[0] == '\0') {
+	if (file[0] == '\0') {
 		return NG_ERROR;
 	} else if (!ng_exist(file, 'w')) {
 		return NG_ERROR;
@@ -119,7 +119,7 @@ int ng_delete (const char* file) {
 bool ng_exist (const char* file, char perm) {
 	// file exists and program/user has permission
 	// check for 'r'ead/'w'rite/'+'both access
-	if (file == NULL || file[0] == '\0') {
+	if (file[0] == '\0') {
 		return false;
 	} else if (!ng_strchr("rw+", perm)) {
 		return false;

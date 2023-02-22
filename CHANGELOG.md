@@ -5,6 +5,14 @@
 
 ## 2023 February
 
+February 22:
+- Remove memory functions. See ng.h for reasons.
+- String and file functions assume str can't be NULL.
+Clear a str with strnul function (set it to nul char '\0').
+Please do not free a str until the very end of its lifetime.
+- If you're trying to pass info using NULL pointer, it is best to
+use a flag instead.
+
 February 18:
 - Quick string functions.
 - File functions use quick string functions where possible.

@@ -4,21 +4,17 @@
 #include "ng.h"
 
 int64_t ng_strlen (const char* s) {
-	if (s == NULL) {
-		return 0;
-	}
 	return strlen(s);
 }
 
 int ng_strcmp (const char* s, const char* a) {
-	if (s == NULL && a == NULL) {
-		return 0;
-	} else if (s == NULL) {
-		return -1;
-	} else if (a == NULL) {
-		return 1;
-	}
 	return strcmp(s, a);
+}
+
+char* ng_strnul (char* s) {
+	s = realloc(s, 1);
+	s[0] = '\0';
+	return s;
 }
 
 char* ng_strcpy (char* s, const char* a) {
@@ -58,36 +54,33 @@ int64_t ng_strndelim (const char* s, const char* delim, int64_t start) {
 
 // quick str functions. the 'q' stands for quick.
 char* ng_qstrcpy (char* s, const char* a, int64_t len) {
-	if (a == NULL) {
-		return ng_free(s);
+	if (len == 0) {
+		return ng_strnul(s);
 	}
-	s = ng_resize(s, len+1);
+	s = realloc(s, len+1);
 	return strcpy(s, a);
 }
 
 char* ng_qstrcat (char* s, int64_t s_len, const char* a, int64_t a_len) {
-	if (a == NULL) {
-		return s;
-	}
 	int64_t len = s_len + a_len;
-	s = ng_resize(s, len+1);
+	s = realloc(s, len+1);
 	return strcat(s, a);
 }
 
 char* ng_qstrcatc (char* s, int64_t s_len, char c) {
 	int64_t len = s_len + 1;
-	s = ng_resize(s, len+1);
+	s = realloc(s, len+1);
 	char a[2] = {c, '\0'};
 	return strcat(s, a);
 }
 
 char* ng_qsubstr (char* s, const char* a, int64_t a_len, int64_t start, int64_t len) {
-	if (a == NULL || start < 0 || len < 0 || start >= a_len) {
-		return ng_free(s);
+	if (start == a_len) {
+		return ng_strnul(s);
 	} else if (start + len > a_len) {
 		len = a_len - start;
 	}
-	s = ng_resize(s, len+1);
+	s = realloc(s, len+1);
 	s = strncpy(s, a+start, len);
 	s[len] = '\0';
 	return s;
@@ -95,48 +88,34 @@ char* ng_qsubstr (char* s, const char* a, int64_t a_len, int64_t start, int64_t 
 
 int64_t ng_qstrdelim (const char* s, int64_t len, const char* delim, int64_t start) {
 	// first delim char from start
-	if (s == NULL || delim == NULL || start < 0 || start >= len) {
-		return -1;
+	for (int64_t i=start; s[i] != '\0'; i++) {
+		if (ng_strchr(delim, s[i])) {
+			return i;
+		}
 	}
-	
-	int64_t i = start;
-	while (s[i] != '\0' && !ng_strchr(delim, s[i])) {
-		i++;
-	}
-	if (s[i] == '\0') {
-		return -1;
-	}
-	return i;
+	return -1;
 }
 
 int64_t ng_qstrndelim (const char* s, int64_t len, const char* delim, int64_t start) {
 	// first non-delim char from start
-	if (s == NULL || delim == NULL || start < 0 || start >= len) {
-		return -1;
+	for (int64_t i=start; s[i] != '\0'; i++) {
+		if (!ng_strchr(delim, s[i])) {
+			return i;
+		}
 	}
-	
-	int64_t i = start;
-	while (s[i] != '\0' && ng_strchr(delim, s[i])) {
-		i++;
-	}
-	if (s[i] == '\0') {
-		return -1;
-	}
-	return i;
+	return -1;
 }
 
 bool ng_strchr (const char* s, char c) {
-	// returns strchr(s,c)!=NULL
-	if (s == NULL) {
-		return false;
+	for (int64_t i=0; s[i] != '\0'; i++) {
+		if (s[i] == c) {
+			return true;
+		}
 	}
-	return strchr(s, c) != NULL;
+	return false;
 }
 
 void ng_strupper (char* s) {
-	if (s == NULL) {
-		return;
-	}
 	for (int64_t i=0; s[i] != '\0'; i++) {
 		if (s[i] >= 'a' && s[i] <= 'z') {
 			s[i] = s[i] - 32;
@@ -145,9 +124,6 @@ void ng_strupper (char* s) {
 }
 
 void ng_strlower (char* s) {
-	if (s == NULL) {
-		return;
-	}
 	for (int64_t i=0; s[i] != '\0'; i++) {
 		if (s[i] >= 'A' && s[i] <= 'Z') {
 			s[i] = s[i] + 32;
@@ -163,16 +139,10 @@ char* ng_atoh (char* s, const char* a, char c) {
 }
 
 double ng_atof (const char* s) {
-	if (s == NULL) {
-		return 0.0;
-	}
 	return atof(s);
 }
 
 int64_t ng_atoi (const char* s) {
-	if (s == NULL) {
-		return 0;
-	}
 	return (int64_t)atoll(s);
 }
 
@@ -191,9 +161,6 @@ char* ng_htoa (char* s, const char* a) {
 
 char* ng_ftoa (char* s, const char* fmt, double d) {
 	// calls sprintf(s,fmt,d)
-	if (fmt == NULL || fmt[0] == '\0') {
-		return ng_free(s);
-	}
 	// Max buffer length:
 	// smallest subnormal double is about 5*10^-324
 	// plus 3 chars for "-0." and 1 char for '\0'
@@ -203,9 +170,9 @@ char* ng_ftoa (char* s, const char* fmt, double d) {
 	char a[len];
 	int64_t n = sprintf(a, fmt, d);
 	if (n < 0) {
-		return ng_free(s);
+		return ng_strnul(s);
 	}
-	s = ng_resize(s, n+1);
+	s = realloc(s, n+1);
 	s = strncpy(s, a, n);
 	s[n] = '\0';
 	return s;
@@ -213,9 +180,6 @@ char* ng_ftoa (char* s, const char* fmt, double d) {
 
 char* ng_itoa (char* s, const char* fmt, int64_t i) {
 	// calls sprintf(s,fmt,i)
-	if (fmt == NULL || fmt[0] == '\0') {
-		return ng_free(s);
-	}
 	// Max buffer length:
 	// smallest int64_t is -9,223,372,036,854,775,808 or 19 digits
 	// plus 1 char for '-' and 1 char for '\0'
@@ -225,9 +189,9 @@ char* ng_itoa (char* s, const char* fmt, int64_t i) {
 	char a[len];
 	int64_t n = sprintf(a, fmt, i);
 	if (n < 0) {
-		return ng_free(s);
+		return ng_strnul(s);
 	}
-	s = ng_resize(s, n+1);
+	s = realloc(s, n+1);
 	s = strncpy(s, a, n);
 	s[n] = '\0';
 	return s;
@@ -243,10 +207,6 @@ char* ng_btoa (char* s, bool b) {
 
 // more quick str functions
 char* ng_qatoh (char* s, const char* a, int64_t len, char c) {
-	if (a == NULL) {
-		return ng_free(s);
-	}
-	
 	bool upper;
 	if (c >= 'A' && c <='Z') {
 		upper = true;
@@ -258,12 +218,12 @@ char* ng_qatoh (char* s, const char* a, int64_t len, char c) {
 	int64_t i;
 	if (c == 'X' || c == 'x') {
 		n+=2;
-		s = ng_resize(s, n+1);
+		s = realloc(s, n+1);
 		s[0] = '0';
 		s[1] = 'x';
 		i=2;
 	} else {
-		s = ng_resize(s, n+1);
+		s = realloc(s, n+1);
 		i=0;
 	}
 	
@@ -295,14 +255,10 @@ char* ng_qatoh (char* s, const char* a, int64_t len, char c) {
 }
 
 char* ng_qhtoa (char* s, const char* a, int64_t len) {
-	if (a == NULL) {
-		return ng_free(s);
-	}
-	
 	int64_t i=0;
 	int64_t j = ng_strdelim(a, "0123456789abcdefABCDEF", 0);
 	if (j < 0) {
-		return ng_free(s);
+		return ng_strnul(s);
 	} else if (a[j] == '0' && a[j+1] == 'x') {
 		i = j+2;
 	} else {

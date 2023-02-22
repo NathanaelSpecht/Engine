@@ -15,6 +15,7 @@
 
 // Core
 #define ng_here(); printf("%s:%d\n",__FILE__,__LINE__);
+#define ng_debug printf("%s:%d: ",__FILE__,__LINE__);printf
 
 // These are compatible with bool
 enum ngEnumNone { NG_NONE = 0 };
@@ -22,35 +23,69 @@ enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
 // Memory
+/*
+ * A good way to avoid memory errors is to not make any. Seriously.
+ * Malloc and init your memory, so no matter what you plan to do with it, you 
+ * never need to check for NULL before free. If a program must resume where it
+ * left off between crashes/restarts, implement an autosave.
+ * Don't rely on NULL pointers.
+ *
+ * When a program runs out of memory and malloc/realloc return NULL, then
+ * anything not yet initialized will start breaking, because the remaining
+ * memory it thinks it has is not actually available. The best way to recover
+ * from an out-of-memory error is to let the program crash. The OS will then
+ * recover the lost memory, and the user can restart the program if they want.
+ *
+ * A simple program that sometimes crashes but can quickly be restarted is
+ * much better than a complex program that never crashes but propagates errors
+ * forwards, becoming more buggy over time. (For example, the
+ * Apollo Guidance Computer could crash or be restarted in the case of some
+ * errors, and this was deemed better than a system that never crashed but had
+ * the possibility of propagating errors forwards in time. Besides, it only
+ * took a few milliseconds to restart.)
+ *
+ * To learn from my previous mistakes, see below.
+ */
+
+/*
+ * These functions were a good idea.
+ *
+ * Unfortunately, C compilers consider malloc/realloc returning NULL to be
+ * undefined behavior (UB) when optimizing. Optimizers treat UB as
+ * unreachable code, and unreachable code gets removed during compilation.
+ * Thus, these all become normal old calls to malloc/realloc/free with
+ * optimizations turned on.
+ *
+ * These functions also produce UB when used in a multithreaded environment.
+ * This is because they call exit, and the result of exit is undefined when
+ * called more than once, which it can be if two threads run out of memory
+ * (more likely than you think). Thus, these functions are NOT thread-safe,
+ * but only when optimizations are turned off.
+ *
+ * The result of all this is wrappers around malloc/realloc/free that are
+ * worse in 2 ways while also NOT providing the improvements they seek.
+ * Anyone using them along with any form of optimization subject themselves to
+ * buggy behavior that is very hard to diagnose, may only appear in production,
+ * and subtly changes based on a compiler flag it doesn't check.
+ *
+ * I leave this message here as a warning of what not to do.
+ * Nathanael
+ */
+
+/*
 // Wrappers around malloc, realloc, and free - with NULL checking.
 // When a memory error occurs, the program exits.
 void* ng_new (size_t);
 void* ng_resize (void*, size_t);
 void* ng_free (void*); // always returns NULL
-
-// These also print the file and line they are called from,
-// then "memory error", before exit. The 'd' stands for debug.
-void* ng_debug_new (size_t, const char*, int);
-void* ng_debug_resize (void*, size_t, const char*, int);
-#define ng_dnew(a); ng_debug_new(a,__FILE__,__LINE__);
-#define ng_dresize(a,b); ng_debug_resize(a,b,__FILE__,__LINE__);
-
-// These do the same checks and DO NOT EXIT.
-// The 'x' stands for no e'x'it.
-void* ng_xnew (size_t);
-void* ng_xresize (void*, size_t);
-
-// These do the checks, print the debug message, and DO NOT EXIT.
-void* ng_debugx_new (size_t, const char*, int);
-void* ng_debugx_resize (void*, size_t, const char*, int);
-#define ng_dxnew(a); ng_debugx_new(a,__FILE__,__LINE__);
-#define ng_dxresize(a,b); ng_debugx_resize(a,b,__FILE__,__LINE__);
+*/
 
 // String
 // Wrappers around clib's string functions - with boundary checking and
 // memory re-allocation - to (hopefully) avoid undefined behavior.
 int64_t ng_strlen (const char*);
 int ng_strcmp (const char*, const char*);
+char* ng_strnul (char*); // str beginning with ascii 0 (nul), hence strnul.
 char* ng_strcpy (char*, const char*);
 char* ng_strcat (char*, const char*);
 char* ng_strcatc (char*, char); // calls strcat(s,char[2])
@@ -66,7 +101,7 @@ char* ng_qsubstr (char*, const char*, int64_t, int64_t, int64_t);
 int64_t ng_qstrdelim (const char*, int64_t, const char*, int64_t);
 int64_t ng_qstrndelim (const char*, int64_t, const char*, int64_t);
 // ^ quick str functions. the 'q' stands for quick.
-bool ng_strchr (const char*, char); // returns strchr(s,c)!=NULL
+bool ng_strchr (const char*, char); // if char in str.
 void ng_strupper (char*);
 void ng_strlower (char*);
 char* ng_atoh (char*, const char*, char);
