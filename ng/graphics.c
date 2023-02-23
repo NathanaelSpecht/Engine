@@ -17,23 +17,24 @@ void ng_rect_to_sdl (SDL_Rect* r, const ngRect* copy) {
 	r->h = copy->h;
 }
 
-int ng_rect_contains (ngRect* r, int x, int y) {
-	if ((x < r->x || r->x + r->w < x) || (y < r->y || r->y + r->h < y)) {
+int ng_rect_contains (const ngRect* r, int x, int y) {
+	int xc = ng_contains(r->x, r->w, x);
+	int yc = ng_contains(r->y, r->h, y);
+	if (!xc || !yc) {
 		return NG_FALSE;
-	} else if ((x == r->x || r->x + r->w == x) ||
-	(y == r->y || r->y + r->h == y)) {
+	} else if (xc == NG_EDGE || yc == NG_EDGE) {
 		return NG_EDGE;
 	} else {
 		return NG_TRUE;
 	}
 }
 
-int ng_rect_overlaps (ngRect* r1, ngRect* r2) {
-	if ((r2->x + r2->w < r1->x || r1->x + r1->w < r2->x) ||
-	(r2->y + r2->h < r1->y || r1->y + r1->h < r2->y)) {
+int ng_rect_overlaps (const ngRect* r1, const ngRect* r2) {
+	int xo = ng_overlaps(r1->x, r1->w, r2->x, r2->w);
+	int yo = ng_overlaps(r1->y, r1->h, r1->y, r1->h);
+	if (!xo || !yo) {
 		return NG_FALSE;
-	} else if ((r2->x + r2->w == r1->x || r1->x + r1->w == r2->x) ||
-	(r2->y + r2->h == r1->y || r1->y + r1->h == r2->y)) {
+	} else if (xo == NG_EDGE || yo == NG_EDGE) {
 		return NG_EDGE;
 	} else {
 		return NG_TRUE;

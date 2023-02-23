@@ -210,8 +210,8 @@ typedef struct ngGraphics {
 
 void ng_rect_init (ngRect*, int x, int y, int w, int h);
 void ng_rect_to_sdl (SDL_Rect*, const ngRect*);
-int ng_rect_contains (ngRect*, int x, int y);
-int ng_rect_overlaps (ngRect*, ngRect*);
+int ng_rect_contains (const ngRect*, int x, int y);
+int ng_rect_overlaps (const ngRect*, const ngRect*);
 
 void ng_grid_init (ngGrid*, const ngRect*, int columns, int rows);
 
@@ -365,5 +365,35 @@ void ng_audio_mix_sound (ngAudio*, ngChannel*, int sound); // add clip data to q
 void ng_audio_mix_channel (ngAudio*, ngChannel*);
 int ng_audio_queue (ngAudio*); // queue audio
 
+// Physics
+typedef struct ngVec {
+	int x;
+	int y;
+} ngVec;
+void ng_vec_init (ngVec*, int x, int y);
+
+int ng_contains (int x, int w, int p);
+int ng_overlaps (int x1, int w1, int x2, int w2);
+
+// return true/edge/false if x + d crosses axis.
+int ng_intercepts (int axis, int x, int d);
+
+// y-intercept along x = axis. assumes dx != 0.
+int ng_yintercept (int axis, int x, int y, int dx, int dy);
+
+// x-intercept along y = axis. assumes dy != 0.
+int ng_xintercept (int axis, int x, int y, int dx, int dy);
+
+// return true/edge/false if rects will collide.
+// edge means they will touch and not move any further.
+// assumes rects are not overlapping.
+int ng_rect_collides (const ngRect*, const ngVec*, const ngRect*, const ngVec*);
+
+// move each rect by the part of its vec that gets it to collide, and
+// reduce each vec by the remaining motion.
+// assumes rects are not overlapping and will collide/touch.
+void ng_rect_collide (ngRect*, ngVec*, ngRect*, ngVec*);
+
 #endif
+
 

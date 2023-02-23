@@ -5,6 +5,9 @@
 
 ## 2023 February
 
+February 23:
+- First physics functions.
+
 February 22:
 - Remove memory functions. See ng.h for reasons.
 - String and file functions assume str can't be NULL.
