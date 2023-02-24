@@ -15,6 +15,12 @@ void ng_vec2w_init (ngVec* v, int x, int y, int w) {
 	v->w = w;
 }
 
+void ng_circle_init (ngVec* c, int x, int y, int r) {
+	c->x = x;
+	c->y = y;
+	c->w = r;
+}
+
 int ng_contains (int x, int w, int p) {
 	if (p < x || x + w < p) {
 		return NG_FALSE;
@@ -49,16 +55,22 @@ int ng_yint (int axis, int x, int y, int dx, int dy) {
 	// y = mx + b
 	// m = dy/dx
 	// b = y-intercept = y - mx
-	int x1 = x - axis;
-	return y - ((dy * x1) / dx);
+	// use int64 for x1 * dy > int32, to avoid overflow.
+	int64_t x1, mx;
+	x1 = x - axis;
+	mx = ((int64_t)dy * x1) / (int64_t)dx;
+	return (int)(y - mx);
 }
 
 int ng_xint (int axis, int x, int y, int dx, int dy) {
 	// x = my + b
 	// m = dx/dy
 	// b = x-intercept = x - my
-	int y1 = y - axis;
-	return x - ((dx * y1) / dy);
+	// use int64 for y1 * dx > int32, to avoid overflow.
+	int64_t y1, my;
+	y1 = y - axis;
+	my = ((int64_t)dx * y1) / (int64_t)dy;
+	return (int)(x - my);
 }
 
 void ng_rect_moveby (ngRect* r, ngVec* v) {
@@ -180,6 +192,73 @@ int ng_qcos (int x, int r) {
 	} else {
 		return ng_bhaskara(x - 270, r);
 	}
+}
+
+int ng_sqrt (int64_t x) {
+	// integer square root.
+	// int wrapper for float sqrt function in math.h
+	// assumes x >= 0.
+	return (int)sqrt((double)x);
+}
+
+int64_t ng_sq (int x) {
+	// x squared.
+	int64_t lx = x;
+	return lx * lx;
+}
+
+int ng_distance_l1 (int x1, int y1, int x2, int y2) {
+	// L1 distance, taxicab distance, or manhattan distance.
+	return abs(x2 - x1) + abs(y2 - y1);
+}
+
+int64_t ng_distance_sq (int x1, int y1, int x2, int y2) {
+	// squared euclidean/pythagorean distance.
+	return ng_sq(x2 - x1) + ng_sq(y2 - y1);
+}
+
+int ng_distance (int x1, int y1, int x2, int y2) {
+	// euclidean/pythagorean distance.
+	return ng_sqrt(ng_distance_sq(x1, y1, x2, y2));
+}
+
+int ng_circle_contains (const ngVec* c, int x, int y) {
+	// return true/edge/false if circle contains (x, y).
+	int64_t r2, d2;
+	r2 = ng_sq(c->w);
+	d2 = ng_distance_sq(c->x, c->y, x, y);
+	if (d2 > r2) {
+		return NG_FALSE;
+	} else if (d2 == r2) {
+		return NG_EDGE;
+	} else {
+		return NG_TRUE;
+	}
+}
+
+int ng_circle_overlaps (const ngVec* a, const ngVec* b) {
+	// return true/edge/false if circles overlap/touch.
+	int64_t ar2, br2, d2;
+	ar2 = ng_sq(a->w);
+	br2 = ng_sq(b->w);
+	d2 = ng_distance_sq(a->x, a->y, b->x, b->y);
+	if (d2 > ar2 + br2) {
+		return NG_FALSE;
+	} else if (d2 == ar2 + br2) {
+		return NG_EDGE;
+	} else {
+		return NG_TRUE;
+	}
+}
+
+int ng_circle_collide (ngVec* a, ngVec* v, const ngVec* b) {
+	// return true/edge/false if circle a collided with stationary circle b, and
+	// move circle a by the part of its vec v that gets it to collide, and
+	// reduce vec v to the remaining motion.
+	// edge means they will touch and not move any further.
+	// assumes circles are not overlapping.
+	// TODO
+	return NG_FALSE;
 }
 
 

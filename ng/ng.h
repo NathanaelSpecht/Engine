@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <math.h>
 #include "SDL.h"
 
 // Core
@@ -372,6 +373,7 @@ typedef struct ngVec {
 // vec represents all types of vector, so they can be interchanged.
 void ng_vec2_init (ngVec*, int x, int y);
 void ng_vec2w_init (ngVec*, int x, int y, int w);
+void ng_circle_init (ngVec*, int x, int y, int r);
 
 int ng_contains (int x, int w, int p);
 int ng_overlaps (int x1, int w1, int x2, int w2);
@@ -415,6 +417,36 @@ int ng_qsin (int x, int r);
 // quick integer cosine.
 // given degrees x [0, 359], and radius r (-inf, inf), produces cos(x) [-r, r].
 int ng_qcos (int x, int r);
+
+// integer square root.
+// int wrapper for float sqrt function in math.h
+// assumes x >= 0.
+int ng_sqrt (int64_t x);
+
+// x squared.
+int64_t ng_sq (int x);
+
+// L1 distance, taxicab distance, or manhattan distance.
+int ng_distance_l1 (int x1, int y1, int x2, int y2);
+
+// squared euclidean/pythagorean distance.
+int64_t ng_distance_sq (int x1, int y1, int x2, int y2);
+
+// euclidean/pythagorean distance.
+int ng_distance (int x1, int y1, int x2, int y2);
+
+// return true/edge/false if circle contains (x, y).
+int ng_circle_contains (const ngVec*, int x, int y);
+
+// return true/edge/false if circles overlap/touch.
+int ng_circle_overlaps (const ngVec*, const ngVec*);
+
+// return true/edge/false if circle a collided with stationary circle b, and
+// move circle a by the part of its vec v that gets it to collide, and
+// reduce vec v to the remaining motion.
+// edge means they will touch and not move any further.
+// assumes circles are not overlapping.
+int ng_circle_collide (ngVec* a, ngVec* v, const ngVec* b);
 
 #endif
 
