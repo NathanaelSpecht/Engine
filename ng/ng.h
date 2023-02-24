@@ -399,6 +399,23 @@ void ng_rect_moveto (ngRect*, ngVec*, int x, int y);
 // assumes rects are not overlapping.
 int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b);
 
+// given degrees x (-inf, inf), produces angle [0, 359].
+int ng_wrap_degrees (int x);
+
+// Bhaskara I's sine approximation
+// max absolute error is 0.00165, and max relative error is 1.8 percent.
+// error approaches 0 for x approaching 0, 30, 90, 150, and 180.
+// given degrees x [0, 180], and radius r (-inf, inf), produces sin(x) [0, r].
+int ng_bhaskara (int x, int r);
+
+// quick integer sine.
+// given degrees x [0, 359], and radius r (-inf, inf), produces sin(x) [-r, r].
+int ng_qsin (int x, int r);
+
+// quick integer cosine.
+// given degrees x [0, 359], and radius r (-inf, inf), produces cos(x) [-r, r].
+int ng_qcos (int x, int r);
+
 #endif
 
 

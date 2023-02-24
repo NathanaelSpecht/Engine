@@ -7,6 +7,7 @@
 
 February 24:
 - Vector and rect collision.
+- Integer angle, sin, and cos.
 
 February 23:
 - First physics functions.

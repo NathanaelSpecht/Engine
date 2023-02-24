@@ -137,4 +137,49 @@ int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b) {
 	return NG_FALSE;
 }
 
+int ng_wrap_degrees (int x) {
+	// given degrees x (-inf, inf), produces angle [0, 359].
+	// x + m must be >= 0, so no problems occur during modulo, and
+	// m must be a multiple of 360.
+	// 0 <= x + m <= max_int32, so
+	// max range of x is: -m <= x <= m, while m <= max_int32 / 2.
+	int m, y;
+	m = 1073741760; // largest multiple of 360 <= max_int32 / 2
+	y = (x + m) % 360;
+	return y;
+}
+
+int ng_bhaskara (int x, int r) {
+	// Bhaskara I's sine approximation
+	// max absolute error is 0.00165, and max relative error is 1.8 percent.
+	// error approaches 0 for x approaching 0, 30, 90, 150, and 180.
+	// given degrees x [0, 180], and radius r (-inf, inf), produces sin(x) [0, r].
+	int p, y;
+	p = x * (180 - x);
+	y = (4 * p * r) / (40500 - p);
+	return y;
+}
+
+int ng_qsin (int x, int r) {
+	// quick integer sine.
+	// given degrees x [0, 359], and radius r (-inf, inf), produces sin(x) [-r, r].
+	if (x <= 180) {
+		return ng_bhaskara(x, r);
+	} else {
+		return -ng_bhaskara(x - 180, r);
+	}
+}
+
+int ng_qcos (int x, int r) {
+	// quick integer cosine.
+	// given degrees x [0, 359], and radius r (-inf, inf), produces cos(x) [-r, r].
+	if (x <= 90) {
+		return ng_bhaskara(x + 90, r);
+	} else if (x < 270) {
+		return -ng_bhaskara(x - 90, r);
+	} else {
+		return ng_bhaskara(x - 270, r);
+	}
+}
+
 
