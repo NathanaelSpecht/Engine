@@ -14,8 +14,11 @@
 #include "SDL.h"
 
 // Core
-#define ng_here(); printf("%s:%d\n",__FILE__,__LINE__);
-#define ng_debug printf("%s:%d: ",__FILE__,__LINE__);printf
+// prints "function:line\n"
+#define ng_here(); printf("%s:%d\n",__func__,__LINE__);
+
+// prints "function:line: your-print-statement"
+#define ng_debug printf("%s:%d: ",__func__,__LINE__);printf
 
 // These are compatible with bool
 enum ngEnumNone { NG_NONE = 0 };
@@ -35,14 +38,6 @@ enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
  * memory it thinks it has is not actually available. The best way to recover
  * from an out-of-memory error is to let the program crash. The OS will then
  * recover the lost memory, and the user can restart the program if they want.
- *
- * A simple program that sometimes crashes but can quickly be restarted is
- * much better than a complex program that never crashes but propagates errors
- * forwards, becoming more buggy over time. (For example, the
- * Apollo Guidance Computer could crash or be restarted in the case of some
- * errors, and this was deemed better than a system that never crashed but had
- * the possibility of propagating errors forwards in time. Besides, it only
- * took a few milliseconds to restart.)
  *
  * To learn from my previous mistakes, see below.
  */
@@ -369,8 +364,14 @@ int ng_audio_queue (ngAudio*); // queue audio
 typedef struct ngVec {
 	int x;
 	int y;
+	// magnitude. defaults to 1.
+	// may represent length, radius, etc.
+	int w;
 } ngVec;
-void ng_vec_init (ngVec*, int x, int y);
+
+// vec represents all types of vector, so they can be interchanged.
+void ng_vec2_init (ngVec*, int x, int y);
+void ng_vec2w_init (ngVec*, int x, int y, int w);
 
 int ng_contains (int x, int w, int p);
 int ng_overlaps (int x1, int w1, int x2, int w2);
@@ -378,21 +379,25 @@ int ng_overlaps (int x1, int w1, int x2, int w2);
 // return true/edge/false if x + d crosses axis.
 int ng_intercepts (int axis, int x, int d);
 
-// y-intercept along x = axis. assumes dx != 0.
-int ng_yintercept (int axis, int x, int y, int dx, int dy);
+// y-intercept along axis. assumes dx != 0.
+int ng_yint (int axis, int x, int y, int dx, int dy);
 
-// x-intercept along y = axis. assumes dy != 0.
-int ng_xintercept (int axis, int x, int y, int dx, int dy);
+// x-intercept along axis. assumes dy != 0.
+int ng_xint (int axis, int x, int y, int dx, int dy);
 
-// return true/edge/false if rects will collide.
+// move rect by vec, consuming vec in the process (vec -> 0). 2d.
+void ng_rect_moveby (ngRect*, ngVec*);
+
+// move rect to (x, y), and reduce vec to the remaining motion. 2d.
+// assumes (x, y) is in the direction of vec.
+void ng_rect_moveto (ngRect*, ngVec*, int x, int y);
+
+// return true/edge/false if rect a collided with stationary rect b, and
+// move rect a by the part of its vec v that gets it to collide, and
+// reduce vec v to the remaining motion.
 // edge means they will touch and not move any further.
 // assumes rects are not overlapping.
-int ng_rect_collides (const ngRect*, const ngVec*, const ngRect*, const ngVec*);
-
-// move each rect by the part of its vec that gets it to collide, and
-// reduce each vec by the remaining motion.
-// assumes rects are not overlapping and will collide/touch.
-void ng_rect_collide (ngRect*, ngVec*, ngRect*, ngVec*);
+int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b);
 
 #endif
 

@@ -3,9 +3,16 @@
 
 #include "ng.h"
 
-void ng_vec_init (ngVec* v, int x, int y) {
+void ng_vec2_init (ngVec* v, int x, int y) {
 	v->x = x;
 	v->y = y;
+	v->w = 1;
+}
+
+void ng_vec2w_init (ngVec* v, int x, int y, int w) {
+	v->x = x;
+	v->y = y;
+	v->w = w;
 }
 
 int ng_contains (int x, int w, int p) {
@@ -38,7 +45,7 @@ int ng_intercepts (int axis, int x, int d) {
 	}
 }
 
-int ng_yintercept (int axis, int x, int y, int dx, int dy) {
+int ng_yint (int axis, int x, int y, int dx, int dy) {
 	// y = mx + b
 	// m = dy/dx
 	// b = y-intercept = y - mx
@@ -46,7 +53,7 @@ int ng_yintercept (int axis, int x, int y, int dx, int dy) {
 	return y - ((dy * x1) / dx);
 }
 
-int ng_xintercept (int axis, int x, int y, int dx, int dy) {
+int ng_xint (int axis, int x, int y, int dx, int dy) {
 	// x = my + b
 	// m = dx/dy
 	// b = x-intercept = x - my
@@ -54,57 +61,80 @@ int ng_xintercept (int axis, int x, int y, int dx, int dy) {
 	return x - ((dx * y1) / dy);
 }
 
-int ng_rect_collides (const ngRect* a, const ngVec* av, const ngRect* b, const ngVec* bv) {
-	// return true/edge/false if rects will collide.
-	// edge means they will touch and not move any further.
-	// assumes rects are not overlapping.
-	// obtain b relative to a.
-	ngRect o, r; // a -> origin rect o, b -> relative rect r
-	ng_rect_init(&o, 0, 0, a->w, a->h);
-	ng_rect_init(&r, b->x - a->x, b->y - a->y, b->w, b->h);
-	ngVec z, v; // av -> zero vector z, bv -> relative vector v
-	ng_vec_init(&z, 0, 0);
-	ng_vec_init(&v, bv->x - av->x, bv->y - av->y);
-	// where is b in relation to a?
-	bool right = o.w < r.x;
-	bool left = r.x + r.w < o.x;
-	bool below = o.h < r.y;
-	bool above = r.y + r.h < o.y;
-	// b moving away from a
-	if ((right && v.x >= 0) || (left && v.x <= 0) ||
-	(below && v.y >= 0) || (above && v.y <= 0)) {
-		return NG_FALSE;
-	}
-	// b moving vaguely towards a, from:
-	if (right && below) { // check for 2 side intercepts.
-		// if 1 pair of sides miss, other pair might hit, so check both.
-		// TODO
-	} else if (right && above) {
-		// TODO
-	} else if (left && below) {
-		// TODO
-	} else if (left && above) {
-		// TODO
-	} else if (right) { // check for 1 side intercept.
-		// if this pair of sides miss, cannot hit other sides.
-		// TODO
-	} else if (left) {
-		// TODO
-	} else if (below) {
-		// TODO
-	} else if (above) {
-		// TODO
-	}
-	// side pair(s) miss, no collision.
-	return NG_FALSE;
+void ng_rect_moveby (ngRect* r, ngVec* v) {
+	// move rect by vec, consuming vec in the process (vec -> 0).
+	r->x += v->x;
+	r->y += v->y;
+	v->x = 0;
+	v->y = 0;
 }
 
-void ng_rect_collide (ngRect* a, ngVec* av, ngRect* b, ngVec* bv) {
-	// move each rect by the part of its vec that gets it to collide, and
-	// reduce each vec by the remaining motion.
-	// assumes rects are not overlapping and will collide/touch.
-	// collision will occur. don't over-engineer for a miss that won't happen.
-	// TODO
+void ng_rect_moveto (ngRect* r, ngVec* v, int x, int y) {
+	// move rect to (x, y), and reduce vec to the remaining motion.
+	// assumes (x, y) is in the direction of vec.
+	int dx = x - r->x;
+	int dy = y - r->y;
+	r->x += dx;
+	r->y += dy;
+	v->x -= dx;
+	v->y -= dy;
+}
+
+int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b) {
+	// return true/edge/false if rect a collided with stationary rect b, and
+	// move rect a by the part of its vec v that gets it to collide, and
+	// reduce vec v to the remaining motion.
+	// edge means they will touch and not move any further.
+	// assumes rects are not overlapping.
+	// where is a in relation to b?
+	bool right = b->x + b->w < a->x;
+	bool left = a->x + a->w < b->x;
+	bool below = b->y + b->h < a->y;
+	bool above = a->y + a->h < b->y;
+	// a moving away from b.
+	if ((right && v->x >= 0) || (left && v->x <= 0) ||
+	(below && v->y >= 0) || (above && v->y <= 0)) {
+		ng_rect_moveby(a, v);
+		return NG_FALSE;
+	}
+	// a moving vaguely towards b, from right/left/below/above.
+	int result;
+	int x, y;
+	if (right && ng_intercepts(b->w, a->x, v->x)) {
+		y = ng_yint(x = b->w, a->x, a->y, v->x, v->y);
+		result = ng_overlaps(b->y, b->h, y, a->h);
+		if (result) {
+			ng_rect_moveto(a, v, x, y);
+			return result;
+		}
+	}
+	if (left && ng_intercepts(b->x, a->x + a->w, v->x)) {
+		y = ng_yint(x = b->x, a->x - a->w, a->y, v->x, v->y);
+		result = ng_overlaps(b->y, b->h, y, a->h);
+		if (result) {
+			ng_rect_moveto(a, v, x, y);
+			return result;
+		}
+	}
+	if (below && ng_intercepts(b->h, a->y, v->y)) {
+		x = ng_xint(y = b->h, a->x, a->y, v->x, v->y);
+		result = ng_overlaps(b->x, b->w, x, a->w);
+		if (result) {
+			ng_rect_moveto(a, v, x, y);
+			return result;
+		}
+	}
+	if (above && ng_intercepts(b->y, a->y + a->h, v->y)) {
+		x = ng_xint(y = b->y, a->x, a->y - a->h, v->x, v->y);
+		result = ng_overlaps(b->x, b->w, x, a->w);
+		if (result) {
+			ng_rect_moveto(a, v, x, y);
+			return result;
+		}
+	}
+	// rects miss, no collision.
+	ng_rect_moveby(a, v);
+	return NG_FALSE;
 }
 
 
