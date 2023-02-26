@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "firedays.h"
+#include "fireday.h"
 
 void fd_pausemenu_init (fdPauseMenu* m, fdScreen* screen, fdCore* core) {
 	m->core = core;

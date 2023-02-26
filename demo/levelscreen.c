@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "firedays.h"
+#include "fireday.h"
 
 void fd_levelscreen_init (fdLevelScreen* s, fdScreen* screen, fdCore* core) {
 	s->core = core;

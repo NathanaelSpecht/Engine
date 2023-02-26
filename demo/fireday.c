@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "firedays.h"
+#include "fireday.h"
 
 void fd_core_init (fdCore* c) {
 	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
@@ -12,7 +12,7 @@ void fd_core_init (fdCore* c) {
 	
 	ng_time_init(&c->time);
 	
-	if (!ng_graphics_init(&c->graphics, "Fire Days Demo", 640, 480)) {
+	if (!ng_graphics_init(&c->graphics, "Fire Day Demo", 640, 480)) {
 		ng_here();
 		printf("can't init graphics\n");
 		exit(EXIT_FAILURE);

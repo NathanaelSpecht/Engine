@@ -1,11 +1,11 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht
- * Fire Days API
+ * Fire Day API
  */
 
 
-#ifndef FIREDAYS_H
-#define FIREDAYS_H
+#ifndef FIREDAY_H
+#define FIREDAY_H
 
 #include "ng.h"
 

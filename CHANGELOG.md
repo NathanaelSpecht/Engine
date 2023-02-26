@@ -5,6 +5,12 @@
 
 ## 2023 February
 
+February 26:
+- Simplify README, remove redundant INSTALL.
+- Rename src folder to demo, rename firedays to fireday.
+- Reorganize sdl folder.
+- Move art folder into demo.
+
 February 24:
 - Vector and rect collision.
 - Integer angle, sin, cos, sqrt, and distance.

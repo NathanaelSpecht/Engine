@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "firedays.h"
+#include "fireday.h"
 
 void fd_debugmenu_init (fdDebugMenu* m, fdScreen* screen, fdCore* core) {
 	m->core = core;

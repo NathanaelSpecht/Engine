@@ -2,7 +2,7 @@
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
 #include "ng.h"
-#include "firedays.h"
+#include "fireday.h"
 
 int main (int argc, char** argv) {
 	fdCore core;
