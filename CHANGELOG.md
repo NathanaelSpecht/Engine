@@ -10,6 +10,7 @@ February 26:
 - Rename src folder to demo, rename firedays to fireday.
 - Reorganize sdl folder.
 - Move art folder into demo.
+- Still works on Windows.
 
 February 24:
 - Vector and rect collision.
