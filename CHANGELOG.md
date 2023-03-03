@@ -6,11 +6,12 @@
 ## 2023 March
 
 March 03:
-- port Engie from C to C++.
+- Port Engie from C to C++.
+- Still works on Windows.
 
 March 01:
-- release version 0.0.1.
-- split Fire Days demo into its own repo.
+- Release version 0.0.1.
+- Split Fire Days demo into its own repo.
 
 ## 2023 February
 
