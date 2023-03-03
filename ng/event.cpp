@@ -4,7 +4,7 @@
 #include "ng.h"
 
 void ng_event_init (ngEvent* e, ngGraphics* g) {
-	e->mode = NG_NONE;
+	e->mode = ng::None;
 	ng_mouse_init(&e->mouse);
 	ng_key_init(&e->key);
 	for (int i=0; i<NG_EVENT_TEXT; i++) {
@@ -52,7 +52,7 @@ bool ng_event_next (ngEvent* e) {
 				ng_text_input(e, &e->event);
 				return true;
 			} default: {
-				e->mode = NG_NONE;
+				e->mode = ng::None;
 			}
 		}
 	}

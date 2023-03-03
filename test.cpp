@@ -2,30 +2,26 @@
 /* Copyright (C) 2023 Nathanael Specht */
 
 #include "ng.h"
+#include <cstdlib>
 
 int main (int argc, char** argv) {
-	ngTime time;
-	ngGraphics graphics;
+	ngTime t;
+	ngGraphics g;
 	//TODO audio & channels
-	ngEvent event;
+	ngEvent e;
 	
-	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
-		ng_here();
-		printf("can't init SDL: %s\n", SDL_GetError());
+	try {
+		ng::init();
+		
+		ng_time_init(&t);
+		ng_graphics_init(&g, "Fire Days Demo", 640, 480);
+		//TODO audio & channels
+		ng_event_init(&e, &g);
+		
+	} catch (const std::exception& ex) {
+		std::cout << NG_HERE << ": can't init: " << ex.what() << "\n";
 		exit(EXIT_FAILURE);
 	}
-	
-	ng_time_init(&time);
-	
-	if (!ng_graphics_init(&graphics, "Fire Days Demo", 640, 480)) {
-		ng_here();
-		printf("can't init graphics\n");
-		exit(EXIT_FAILURE);
-	}
-	
-	//TODO audio & channels
-	
-	ng_event_init(&event, &graphics);
 	
 	ngColor background_color;
 	ng_color_init(&background_color, 0, 0, 0);
@@ -35,40 +31,46 @@ int main (int argc, char** argv) {
 	ng_rect_init(&rect, 250, 200, 150, 100);
 	
 	while (true) {
-		while (ng_event_next(&event)) {
-			if (event.mode == NG_QUIT) {
+		while (ng_event_next(&e)) {
+			if (e.mode == NG_QUIT) {
 				goto quit;
 			}
 			
 			// handle events
 		}
 		
-		{
-			ng_graphics_color(&graphics, &background_color);
-			ng_graphics_clear(&graphics);
+		try {
+			ng_graphics_color(&g, &background_color);
+			ng_graphics_clear(&g);
 			
-			ng_graphics_color(&graphics, &draw_color);
-			ng_draw_rect(&graphics, &rect, NG_FILL);
+			ng_graphics_color(&g, &draw_color);
+			ng_draw_rect(&g, &rect, NG_FILL);
 			
-			ng_graphics_draw(&graphics);
+			ng_graphics_draw(&g);
+		} catch (const std::exception& ex) {
+			std::cout << NG_HERE << ": graphics error: " << ex.what() << "\n";
+			exit(EXIT_FAILURE);
 		}
 		
-		{ //TODO audio
+		try {
 			/*
 			ng_audio_clear(&a);
 			ng_audio_mix_channel(&a, &music);
 			ng_audio_mix_channel(&a, &sound);
 			ng_audio_queue(&a);
 			*/
+		} catch (const std::exception& ex) {
+			std::cout << NG_HERE << ": audio error: " << ex.what() << "\n";
+			exit(EXIT_FAILURE);
 		}
 		
-		ng_time_tick(&time);
+		ng_time_tick(&t);
 	}
 
 quit:
-	ng_graphics_quit(&graphics);
+	ng_graphics_quit(&g);
+	ng::quit();
 	
-	SDL_Quit();
 	return EXIT_SUCCESS;
 };
 

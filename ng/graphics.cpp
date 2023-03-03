@@ -21,11 +21,11 @@ int ng_rect_contains (const ngRect* r, int x, int y) {
 	int xc = ng_contains(r->x, r->w, x);
 	int yc = ng_contains(r->y, r->h, y);
 	if (!xc || !yc) {
-		return NG_FALSE;
-	} else if (xc == NG_EDGE || yc == NG_EDGE) {
-		return NG_EDGE;
+		return ng::False;
+	} else if (xc == ng::Edge || yc == ng::Edge) {
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
@@ -33,11 +33,11 @@ int ng_rect_overlaps (const ngRect* r1, const ngRect* r2) {
 	int xo = ng_overlaps(r1->x, r1->w, r2->x, r2->w);
 	int yo = ng_overlaps(r1->y, r1->h, r1->y, r1->h);
 	if (!xo || !yo) {
-		return NG_FALSE;
-	} else if (xo == NG_EDGE || yo == NG_EDGE) {
-		return NG_EDGE;
+		return ng::False;
+	} else if (xo == ng::Edge || yo == ng::Edge) {
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
@@ -106,37 +106,35 @@ void ng_color_init (ngColor* color, int r, int g, int b) {
 	color->a = 255;
 }
 
-int ng_image_init (ngGraphics* g, ngImage* image, const char* file,
+void ng_image_init (ngGraphics* g, ngImage* image, const char* file,
 const ngColor* key) {
 	image->texture = NULL;
 	ng_rect_init(&image->rect, 0, 0, 0, 0);
 	ng_color_init(&image->color, 255, 255, 255);
-	image->flip = NG_NONE;
+	image->flip = ng::None;
 	image->angle = 0.0;
 	
 	SDL_Surface* surface = NULL;
 	surface = SDL_LoadBMP(file);
 	if (surface == NULL) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	
 	if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 
 	key->r, key->g, key->b)) != 0) {
 		SDL_FreeSurface(surface);
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	SDL_Texture* texture = NULL;
 	texture = SDL_CreateTextureFromSurface(g->renderer, surface);
 	if (texture == NULL) {
 		SDL_FreeSurface(surface);
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	
 	image->texture = texture;
 	image->rect.w = surface->w;
 	image->rect.h = surface->h;
-	
-	return NG_SUCCESS;
 }
 
 void ng_image_quit (ngImage* image) {
@@ -146,22 +144,20 @@ void ng_image_quit (ngImage* image) {
 	}
 }
 
-int ng_image_color (ngImage* image, const ngColor* color) {
+void ng_image_color (ngImage* image, const ngColor* color) {
 	if (SDL_SetTextureColorMod(image->texture, color->r, color->g, color->b) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	image->color.r = color->r;
 	image->color.g = color->g;
 	image->color.b = color->b;
-	return NG_SUCCESS;
 }
 
-int ng_image_alpha (ngImage* image, const ngColor* color) {
+void ng_image_alpha (ngImage* image, const ngColor* color) {
 	if (SDL_SetTextureAlphaMod(image->texture, color->a) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	image->color.a = color->a;
-	return NG_SUCCESS;
 }
 
 void ng_image_flip (ngImage* image, int flip) {
@@ -172,7 +168,7 @@ void ng_image_angle (ngImage* image, double angle) {
 	image->angle = angle;
 }
 
-int ng_graphics_init (ngGraphics* g, const char* title, int w, int h) {
+void ng_graphics_init (ngGraphics* g, const char* title, int w, int h) {
 	g->window = NULL;
 	g->renderer = NULL;
 	ng_rect_init(&g->rect, 0, 0, w, h);
@@ -181,14 +177,12 @@ int ng_graphics_init (ngGraphics* g, const char* title, int w, int h) {
 	g->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_RESIZABLE);
 	if (g->window == NULL) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	g->renderer = SDL_CreateRenderer(g->window, -1, SDL_RENDERER_ACCELERATED);
 	if (g->renderer == NULL) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
-	
-	return NG_SUCCESS;
 }
 
 void ng_graphics_quit (ngGraphics* g) {
@@ -202,18 +196,17 @@ void ng_graphics_quit (ngGraphics* g) {
 	}
 }
 
-int ng_graphics_color (ngGraphics* g, const ngColor* color) {
+void ng_graphics_color (ngGraphics* g, const ngColor* color) {
 	if (SDL_SetRenderDrawColor(g->renderer, color->r, color->g, color->b,
 	g->color.a) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	g->color.r = color->r;
 	g->color.g = color->g;
 	g->color.b = color->b;
-	return NG_SUCCESS;
 }
 
-int ng_graphics_alpha (ngGraphics* g, const ngColor* color) {
+void ng_graphics_alpha (ngGraphics* g, const ngColor* color) {
 	SDL_BlendMode blendmode;
 	if (color->a == 255) {
 		blendmode = SDL_BLENDMODE_NONE;
@@ -223,27 +216,25 @@ int ng_graphics_alpha (ngGraphics* g, const ngColor* color) {
 	if (SDL_SetRenderDrawBlendMode(g->renderer, blendmode) != 0 ||
 	SDL_SetRenderDrawColor(g->renderer, g->color.r, g->color.g, g->color.b,
 	color->a) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	g->color.a = color->a;
-	return NG_SUCCESS;
 }
 
-int ng_graphics_clear (ngGraphics* g) {
+void ng_graphics_clear (ngGraphics* g) {
 	if (SDL_RenderClear(g->renderer) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
-	return NG_SUCCESS;
 }
 
 void ng_graphics_draw (ngGraphics* g) {
 	SDL_RenderPresent(g->renderer);
 }
 
-int ng_draw_image (ngGraphics* g, ngImage* image, const ngRect* s,
+void ng_draw_image (ngGraphics* g, ngImage* image, const ngRect* s,
 const ngRect* d) {
 	if (image == NULL || image->texture == NULL) {
-		return ng_draw_rect(g, d, true);
+		ng_draw_rect(g, d, true);
 	}
 	SDL_Rect src;
 	if (s != NULL) {
@@ -257,14 +248,14 @@ const ngRect* d) {
 	} else {
 		ng_rect_to_sdl(&dest, &g->rect);
 	}
-	if (image->flip == NG_NONE && image->angle == 0.0) {
+	if (image->flip == ng::None && image->angle == 0.0) {
 		if (SDL_RenderCopy(g->renderer, image->texture, &src, &dest) != 0) {
-			return NG_ERROR;
+			throw std::runtime_error(SDL_GetError());
 		}
 	} else {
 		SDL_RendererFlip flip;
 		switch (image->flip) {
-			case NG_NONE: {
+			case ng::None: {
 				flip = SDL_FLIP_NONE;
 				break;
 			} case NG_FLIP_X: {
@@ -281,13 +272,12 @@ const ngRect* d) {
 		}
 		if (SDL_RenderCopyEx(g->renderer, image->texture, &src, &dest,
 		image->angle, NULL, flip) != 0) {
-			return NG_ERROR;
+			throw std::runtime_error(SDL_GetError());
 		}
 	}
-	return NG_SUCCESS;
 }
 
-int ng_draw_rect (ngGraphics* g, const ngRect* r, bool fill) {
+void ng_draw_rect (ngGraphics* g, const ngRect* r, bool fill) {
 	SDL_Rect dest;
 	if (r != NULL) {
 		ng_rect_to_sdl(&dest, r);
@@ -296,28 +286,25 @@ int ng_draw_rect (ngGraphics* g, const ngRect* r, bool fill) {
 	}
 	if (fill) {
 		if (SDL_RenderFillRect(g->renderer, &dest) != 0) {
-			return NG_ERROR;
+			throw std::runtime_error(SDL_GetError());
 		}
 	} else {
 		if (SDL_RenderDrawRect(g->renderer, &dest) != 0) {
-			return NG_ERROR;
+			throw std::runtime_error(SDL_GetError());
 		}
 	}
-	return NG_SUCCESS;
 }
 
-int ng_draw_line (ngGraphics* g, int x1, int y1, int x2, int y2) {
+void ng_draw_line (ngGraphics* g, int x1, int y1, int x2, int y2) {
 	if (SDL_RenderDrawLine(g->renderer, x1, y1, x2, y2) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
-	return NG_SUCCESS;
 }
 
-int ng_draw_point (ngGraphics* g, int x, int y) {
+void ng_draw_point (ngGraphics* g, int x, int y) {
 	if (SDL_RenderDrawPoint(g->renderer, x, y) != 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
-	return NG_SUCCESS;
 }
 
 /*

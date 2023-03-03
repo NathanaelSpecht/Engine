@@ -3,7 +3,7 @@
 
 #include "ng.h"
 
-int ng_audio_init (ngAudio* a) {
+void ng_audio_init (ngAudio* a) {
 	SDL_AudioDeviceID device_id = 0;
 	SDL_AudioSpec desired;
 	desired.freq = 44100;
@@ -14,7 +14,7 @@ int ng_audio_init (ngAudio* a) {
 	SDL_AudioSpec obtained;
 	device_id = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained, 0);
 	if (device_id == 0) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	
 	a->spec = obtained;
@@ -22,8 +22,6 @@ int ng_audio_init (ngAudio* a) {
 	a->data = static_cast<uint8_t*>(malloc(4096 * sizeof(uint8_t)));
 	a->samples = 4096;
 	a->playing = false;
-	
-	return NG_SUCCESS;
 }
 
 void ng_audio_quit (ngAudio* a) {
@@ -38,11 +36,11 @@ void ng_audio_quit (ngAudio* a) {
 	a->device = 0;
 }
 
-int ng_clip_init (ngAudio* a, ngClip* clip, const char* file) {
+void ng_clip_init (ngAudio* a, ngClip* clip, const char* file) {
 	// load audio file
 	ngClip wav;
 	if (SDL_LoadWAV(file, &(wav.spec), &(wav.data), &(wav.samples)) == NULL) {
-		return NG_ERROR;
+		throw std::runtime_error(SDL_GetError());
 	}
 	clip->spec = a->spec;
 	clip->data = NULL;
@@ -54,12 +52,15 @@ int ng_clip_init (ngAudio* a, ngClip* clip, const char* file) {
 	wav.spec.format, wav.spec.channels, wav.spec.freq,
 	clip->spec.format, clip->spec.channels, clip->spec.freq);
 	if (stream == NULL) {
-		return NG_ERROR;
+		SDL_FreeWAV(wav.data);
+		throw std::runtime_error("unsupported audio format");
 	}
 	
 	// put audio into stream
 	if (SDL_AudioStreamPut(stream, wav.data, wav.samples) != 0) {
-		return NG_ERROR;
+		SDL_FreeAudioStream(stream);
+		SDL_FreeWAV(wav.data);
+		throw std::runtime_error("audio conversion failure");
 	}
 	
 	// convert audio
@@ -69,12 +70,12 @@ int ng_clip_init (ngAudio* a, ngClip* clip, const char* file) {
 	int buffer_max = ((int)clip->spec.freq * 3600) * (int)clip->spec.channels;
 	uint8_t* buffer = static_cast<uint8_t*>(malloc(buffer_max * sizeof(uint8_t)));
 	int buffer_length = SDL_AudioStreamGet(stream, buffer, buffer_max);
-	if (buffer_length <= 0) {
-		// technically an error is -1, but we can't malloc 0 so catch that too
-		return NG_ERROR;
-	}
 	SDL_FreeAudioStream(stream);
 	SDL_FreeWAV(wav.data);
+	if (buffer_length <= 0) {
+		// technically an error is -1, but we can't malloc 0 so catch that too
+		throw std::runtime_error("audio conversion failure");
+	}
 	
 	// copy converted audio to clip
 	clip->data = static_cast<uint8_t*>(malloc(buffer_length * sizeof(uint8_t)));
@@ -83,8 +84,6 @@ int ng_clip_init (ngAudio* a, ngClip* clip, const char* file) {
 	}
 	clip->samples = buffer_length;
 	free(buffer);
-	
-	return NG_SUCCESS;
 }
 
 void ng_clip_quit (ngClip* clip) {
@@ -216,12 +215,12 @@ void ng_audio_mix_channel (ngAudio* a, ngChannel* c) {
 	}
 }
 
-int ng_audio_queue (ngAudio* a) { // queue audio
+void ng_audio_queue (ngAudio* a) { // queue audio
 	if (a->playing && SDL_GetQueuedAudioSize(a->device) < (a->samples * 2)) {
 		if (SDL_QueueAudio(a->device, a->data, a->samples) != 0) {
-			return NG_ERROR;
+			throw std::runtime_error(SDL_GetError());
 		}
 	}
-	return NG_SUCCESS;
 }
+
 

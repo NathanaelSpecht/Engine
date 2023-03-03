@@ -25,7 +25,7 @@ void fd_titlescreen_event (fdTitleScreen* s) {
 		if (ng_rect_contains(&s->start_btn, p.x, p.y)) {
 			s->screen->mode = FD_FILESCREEN;
 		} else if (ng_rect_contains(&s->quit_btn, p.x, p.y)) {
-			s->screen->mode = FD_NONE;
+			s->screen->mode = fd::None;
 		}
 	}
 }

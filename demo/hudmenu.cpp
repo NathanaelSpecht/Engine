@@ -6,7 +6,7 @@
 void fd_hudmenu_init (fdHudMenu* m, fdScreen* screen, fdCore* core) {
 	m->core = core;
 	m->screen = screen;
-	m->mode = FD_NONE;
+	m->mode = fd::None;
 	// tiles
 	ng_rect_init(&m->frame, 1, 1, 18, 5);
 	// tiles in frame

@@ -9,8 +9,13 @@
 
 #include "ng.h"
 
-// Core
-enum fdEnumNone { FD_NONE = 0 };
+// Fire Days
+namespace fd {
+
+// Every code that can be something or nothing uses fd::None for nothing.
+enum EnumNone { None = 0 };
+
+} // namespace fd
 
 typedef struct fdCore {
 	ngTime time;

@@ -4,29 +4,21 @@
 #include "firedays.h"
 
 void fd_core_init (fdCore* c) {
-	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
-		ng_here();
-		printf("can't init SDL: %s\n", SDL_GetError());
+	try {
+		ng::init();
+		ng_time_init(&c->time);
+		ng_graphics_init(&c->graphics, "Fire Days Demo", 640, 480);
+		//TODO audio & channels
+		ng_event_init(&c->event, &c->graphics);
+	} catch (const std::exception& ex) {
+		std::cout << NG_HERE << ": can't init: " << ex.what();
 		exit(EXIT_FAILURE);
 	}
-	
-	ng_time_init(&c->time);
-	
-	if (!ng_graphics_init(&c->graphics, "Fire Days Demo", 640, 480)) {
-		ng_here();
-		printf("can't init graphics\n");
-		exit(EXIT_FAILURE);
-	}
-	
-	//TODO audio & channels
-	
-	ng_event_init(&c->event, &c->graphics);
 }
 
 void fd_core_quit (fdCore* c) {
 	ng_graphics_quit(&c->graphics);
-	
-	SDL_Quit();
+	ng::quit();
 }
 
 void fd_screen_init (fdScreen* s) {

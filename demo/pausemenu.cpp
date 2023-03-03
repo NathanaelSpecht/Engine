@@ -36,7 +36,7 @@ void fd_pausemenu_event (fdPauseMenu* m) {
 		fd_frame_mouse(&p, m->core, m->screen, &m->frame);
 		
 		if (ng_rect_contains(&m->resume_btn, p.x, p.y)) {
-			m->mode = FD_NONE;
+			m->mode = fd::None;
 		} else if (ng_rect_contains(&m->quit_btn, p.x, p.y)) {
 			m->screen->mode = FD_WORLDSCREEN;
 		}

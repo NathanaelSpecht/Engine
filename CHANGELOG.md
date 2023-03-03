@@ -8,6 +8,7 @@
 March 03:
 - Port Engie from C to C++.
 - Still works on Windows.
+- Change return error codes into thrown exceptions. Most functions return void now.
 
 March 01:
 - Release version 0.0.1.

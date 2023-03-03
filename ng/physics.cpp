@@ -23,31 +23,31 @@ void ng_circle_init (ngVec* c, int x, int y, int r) {
 
 int ng_contains (int x, int w, int p) {
 	if (p < x || x + w < p) {
-		return NG_FALSE;
+		return ng::False;
 	} else if (p == x || x + w == p) {
-		return NG_EDGE;
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
 int ng_overlaps (int x1, int w1, int x2, int w2) {
 	if ((x1 + w1 < x2) || (x2 + w2 < x1)) {
-		return NG_FALSE;
+		return ng::False;
 	} else if ((x1 + w1 == x2) || (x2 + w2 == x1)) {
-		return NG_EDGE;
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
 int ng_intercepts (int axis, int x, int d) {
 	if ((x > axis && x + d < axis) || (x < axis && x + d > axis)) {
-		return NG_TRUE;
+		return ng::True;
 	} else if (x + d == axis) {
-		return NG_EDGE;
+		return ng::Edge;
 	} else {
-		return NG_FALSE;
+		return ng::False;
 	}
 }
 
@@ -107,7 +107,7 @@ int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b) {
 	if ((right && v->x >= 0) || (left && v->x <= 0) ||
 	(below && v->y >= 0) || (above && v->y <= 0)) {
 		ng_rect_moveby(a, v);
-		return NG_FALSE;
+		return ng::False;
 	}
 	// a moving vaguely towards b, from right/left/below/above.
 	int result;
@@ -146,7 +146,7 @@ int ng_rect_collide (ngRect* a, ngVec* v, const ngRect* b) {
 	}
 	// rects miss, no collision.
 	ng_rect_moveby(a, v);
-	return NG_FALSE;
+	return ng::False;
 }
 
 int ng_wrap_degrees (int x) {
@@ -228,11 +228,11 @@ int ng_circle_contains (const ngVec* c, int x, int y) {
 	r2 = ng_sq(c->w);
 	d2 = ng_distance_sq(c->x, c->y, x, y);
 	if (d2 > r2) {
-		return NG_FALSE;
+		return ng::False;
 	} else if (d2 == r2) {
-		return NG_EDGE;
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
@@ -243,11 +243,11 @@ int ng_circle_overlaps (const ngVec* a, const ngVec* b) {
 	br2 = ng_sq(b->w);
 	d2 = ng_distance_sq(a->x, a->y, b->x, b->y);
 	if (d2 > ar2 + br2) {
-		return NG_FALSE;
+		return ng::False;
 	} else if (d2 == ar2 + br2) {
-		return NG_EDGE;
+		return ng::Edge;
 	} else {
-		return NG_TRUE;
+		return ng::True;
 	}
 }
 
@@ -258,7 +258,7 @@ int ng_circle_collide (ngVec* a, ngVec* v, const ngVec* b) {
 	// edge means they will touch and not move any further.
 	// assumes circles are not overlapping.
 	// TODO
-	return NG_FALSE;
+	return ng::False;
 }
 
 
