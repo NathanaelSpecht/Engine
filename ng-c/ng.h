@@ -4,14 +4,14 @@
 #ifndef NG_H
 #define NG_H
 
-#include <cstddef>
-#include <cstdbool>
-#include <cstdint>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cerrno>
-#include <cmath>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <math.h>
 #include "SDL.h"
 
 // Core
@@ -26,10 +26,59 @@ enum ngEnumNone { NG_NONE = 0 };
 enum ngEnumError { NG_ERROR = 0, NG_SUCCESS = 1 };
 enum ngEnumTernary { NG_FALSE = 0, NG_EDGE = 1, NG_TRUE = 2 };
 
+// Memory
+/*
+ * A good way to avoid memory errors is to not make any. Seriously.
+ * Malloc and init your memory, so no matter what you plan to do with it, you 
+ * never need to check for NULL before free. If a program must resume where it
+ * left off between crashes/restarts, implement an autosave.
+ * Don't rely on NULL pointers.
+ *
+ * When a program runs out of memory and malloc/realloc return NULL, then
+ * anything not yet initialized will start breaking, because the remaining
+ * memory it thinks it has is not actually available. The best way to recover
+ * from an out-of-memory error is to let the program crash. The OS will then
+ * recover the lost memory, and the user can restart the program if they want.
+ *
+ * To learn from my previous mistakes, see below.
+ */
+
+/*
+ * These functions were a good idea.
+ *
+ * Unfortunately, C compilers consider malloc/realloc returning NULL to be
+ * undefined behavior (UB) when optimizing. Optimizers treat UB as
+ * unreachable code, and unreachable code gets removed during compilation.
+ * Thus, these all become normal old calls to malloc/realloc/free with
+ * optimizations turned on.
+ *
+ * These functions also produce UB when used in a multithreaded environment.
+ * This is because they call exit, and the result of exit is undefined when
+ * called more than once, which it can be if two threads run out of memory
+ * (more likely than you think). Thus, these functions are NOT thread-safe,
+ * but only when optimizations are turned off.
+ *
+ * The result of all this is wrappers around malloc/realloc/free that are
+ * worse in 2 ways while also NOT providing the improvements they seek.
+ * Anyone using them along with any form of optimization subject themselves to
+ * buggy behavior that is very hard to diagnose, may only appear in production,
+ * and subtly changes based on a compiler flag it doesn't check.
+ *
+ * I leave this message here as a warning of what not to do.
+ * Nathanael
+ */
+
+/*
+// Wrappers around malloc, realloc, and free - with NULL checking.
+// When a memory error occurs, the program exits.
+void* ng_new (size_t);
+void* ng_resize (void*, size_t);
+void* ng_free (void*); // always returns NULL
+*/
+
 // String
 // Wrappers around clib's string functions - with boundary checking and
 // memory re-allocation - to (hopefully) avoid undefined behavior.
-/*
 int64_t ng_strlen (const char*);
 int ng_strcmp (const char*, const char*);
 char* ng_strnul (char*); // str beginning with ascii 0 (nul), hence strnul.
@@ -64,12 +113,10 @@ char* ng_btoa (char*, bool);
 // more quick str functions
 char* ng_qatoh (char*, const char*, int64_t, char c);
 char* ng_qhtoa (char*, const char*, int64_t);
-*/
 
 // File
 // Wrappers around clib's file functions - with boundary checking and
 // error checking - to (hopefully) avoid undefined behavior.
-/*
 FILE* ng_fopen (const char*, const char*); // returns NULL on error
 char* ng_fgets (char*, FILE*, int buf); // returns chars read before error/EOF
 // Buf is the number of chars to read at a time.
@@ -85,7 +132,6 @@ int ng_rename (const char*, const char*);
 int ng_delete (const char*);
 bool ng_exist (const char*, char); // file exists and program/user has permission
 // check for 'r'ead/'w'rite/'+'both access
-*/
 
 // Folders are OS-dependent
 // Linux: int mkdir (const char*, int mode); requires <sys/stat.h>

@@ -20,9 +20,9 @@ Engie also has:
 # Demo and Test
 
 This project contains a demo for Engie, a physics game about fire.
-In the `demo/` folder, and `demo.c`.
+In the `demo/` folder, and `demo.cpp`.
 
-Tests are in the `test/` folder, and `test.c`.
+Tests are in the `test/` folder, and `test.cpp`.
 
 # Build
 
@@ -42,8 +42,14 @@ that give a little more detail than `git log`.
 The `LICENSE` file applies to:
 - Engie source files in the `ng/` folder,
 - Engie documentation: `README.md` and `CHANGELOG.md`.
-- Engie demo in the `demo/` folder, `demo.c` and `Makefile`.
-- Engie tests in the `test/` folder, `test.c` and `Makefile`.
+- Engie demo in the `demo/` folder, `demo.cpp` and `Makefile`.
+- Engie tests in the `test/` folder, `test.cpp` and `Makefile`.
+
+Engie is currently being ported from C to C++.
+The old C files from Engie version 0.0.1 are in
+the `demo-c/` folder and `demo-c.c`, and in
+the `test-c/` folder and `test-c.c`.
+The `LICENSE` file also applies to this old code.
 
 SDL2's files and license are in the `sdl/` folder, `README-SDL.txt`, and
 `SDL2.dll`.
