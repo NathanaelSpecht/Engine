@@ -2,37 +2,37 @@
 /* Copyright (C) 2023 Nathanael Specht */
 
 #include "ng.h"
-#include <cstdlib>
+#include <iostream>
 
 int main (int argc, char** argv) {
-	ngTime t;
-	ngGraphics g;
+	ng::Time time;
+	ng::Graphics graphics;
 	//TODO audio & channels
-	ngEvent e;
+	ng::Event event;
 	
 	try {
 		ng::init();
 		
-		ng_time_init(&t);
-		ng_graphics_init(&g, "Fire Days Demo", 640, 480);
+		time.init();
+		graphics.init("Fire Days Demo", 640, 480);
 		//TODO audio & channels
-		ng_event_init(&e, &g);
+		event.init(&graphics);
 		
 	} catch (const std::exception& ex) {
 		std::cout << NG_HERE << ": can't init: " << ex.what() << "\n";
 		exit(EXIT_FAILURE);
 	}
 	
-	ngColor background_color;
-	ng_color_init(&background_color, 0, 0, 0);
-	ngColor draw_color;
-	ng_color_init(&draw_color, 255, 255, 255);
-	ngRect rect;
-	ng_rect_init(&rect, 250, 200, 150, 100);
+	ng::Color background_color;
+	background_color.init(0, 0, 0);
+	ng::Color draw_color;
+	draw_color.init(255, 255, 255);
+	ng::Rect rect;
+	rect.init(250, 200, 150, 100);
 	
 	while (true) {
-		while (ng_event_next(&e)) {
-			if (e.mode == NG_QUIT) {
+		while (event.next()) {
+			if (event.mode == ng::Quit) {
 				goto quit;
 			}
 			
@@ -40,13 +40,14 @@ int main (int argc, char** argv) {
 		}
 		
 		try {
-			ng_graphics_color(&g, &background_color);
-			ng_graphics_clear(&g);
+			graphics.set_color(&background_color);
+			graphics.clear();
 			
-			ng_graphics_color(&g, &draw_color);
-			ng_draw_rect(&g, &rect, NG_FILL);
+			graphics.set_color(&draw_color);
+			graphics.draw_rect(&rect, ng::DrawFill);
 			
-			ng_graphics_draw(&g);
+			graphics.draw();
+			
 		} catch (const std::exception& ex) {
 			std::cout << NG_HERE << ": graphics error: " << ex.what() << "\n";
 			exit(EXIT_FAILURE);
@@ -64,11 +65,11 @@ int main (int argc, char** argv) {
 			exit(EXIT_FAILURE);
 		}
 		
-		ng_time_tick(&t);
+		time.tick();
 	}
 
 quit:
-	ng_graphics_quit(&g);
+	graphics.quit();
 	ng::quit();
 	
 	return EXIT_SUCCESS;

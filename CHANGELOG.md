@@ -5,6 +5,10 @@
 
 ## 2023 March
 
+March 04:
+- Use namespaces and classes for Engie.
+- Start using namespaces and classes for demo (work in progress).
+
 March 03:
 - Port Engie from C to C++.
 - Still works on Windows.

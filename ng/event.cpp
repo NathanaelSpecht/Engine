@@ -3,192 +3,192 @@
 
 #include "ng.h"
 
-void ng_event_init (ngEvent* e, ngGraphics* g) {
-	e->mode = ng::None;
-	ng_mouse_init(&e->mouse);
-	ng_key_init(&e->key);
-	for (int i=0; i<NG_EVENT_TEXT; i++) {
-		e->text[i] = '\0';
+void ng::Graphics::window_event (SDL_Event* const e) {
+	switch (e->window.event) {
+		case SDL_WINDOWEVENT_RESIZED: {
+			this->rect.w = e->window.data1;
+			this->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
+			this->rect.w = e->window.data1;
+			this->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_MAXIMIZED: {
+			SDL_GetWindowSize(this->window, &this->rect.w, &this->rect.h);
+			break;
+		} case SDL_WINDOWEVENT_RESTORED: {
+			SDL_GetWindowSize(this->window, &this->rect.w, &this->rect.h);
+			break;
+		}
 	}
-	e->g = g;
 }
 
-bool ng_event_next (ngEvent* e) {
-	while (SDL_PollEvent(&e->event)) {
-		switch (e->event.type) {
+void ng::Mouse::init () {
+	this->left = ng::Release;
+	this->middle = ng::Release;
+	this->right = ng::Release;
+	this->x = 0;
+	this->y = 0;
+	this->dx = 0;
+	this->dy = 0;
+	this->scroll_x = 0;
+	this->scroll_y = 0;
+}
+
+void ng::Mouse::press (SDL_Event* const e) {
+	switch (e->button.button) {
+		case SDL_BUTTON_LEFT: {
+			this->left = ng::Press;
+			break;
+		} case SDL_BUTTON_MIDDLE: {
+			this->middle = ng::Press;
+			break;
+		} case SDL_BUTTON_RIGHT: {
+			this->right = ng::Press;
+			break;
+		}
+	}
+	this->dx = e->button.x - this->x;
+	this->dy = e->button.y - this->y;
+	this->x = e->button.x;
+	this->y = e->button.y;
+}
+
+void ng::Mouse::release (SDL_Event* const e) {
+	switch (e->button.button) {
+		case SDL_BUTTON_LEFT: {
+			this->left = ng::Release;
+			break;
+		} case SDL_BUTTON_MIDDLE: {
+			this->middle = ng::Release;
+			break;
+		} case SDL_BUTTON_RIGHT: {
+			this->right = ng::Release;
+			break;
+		}
+	}
+	this->dx = e->button.x - this->x;
+	this->dy = e->button.y - this->y;
+	this->x = e->button.x;
+	this->y = e->button.y;
+}
+
+void ng::Mouse::move (SDL_Event* const e) {
+	this->x = e->motion.x;
+	this->y = e->motion.y;
+	this->dx = e->motion.xrel;
+	this->dy = e->motion.yrel;
+}
+
+void ng::Mouse::scroll (SDL_Event* const e) {
+	this->scroll_x = e->wheel.x;
+	this->scroll_y = e->wheel.y;
+	if (e->wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
+		this->scroll_x = this->scroll_x * -1;
+		this->scroll_y = this->scroll_y * -1;
+	}
+}
+
+void ng::Key::init () {
+	this->lshift = ng::Release;
+	this->rshift = ng::Release;
+	this->lctrl = ng::Release;
+	this->rctrl = ng::Release;
+	this->lalt = ng::Release;
+	this->ralt = ng::Release;
+	this->caps = ng::Release;
+}
+
+void ng::Key::press (SDL_Event* const e) {
+	this->scancode = e->key.keysym.scancode;
+	this->keycode = e->key.keysym.sym;
+	uint16_t mod = e->key.keysym.mod;
+	this->lshift = !!(mod & KMOD_LSHIFT);
+	this->rshift = !!(mod & KMOD_RSHIFT);
+	this->lctrl = !!(mod & KMOD_LCTRL);
+	this->rctrl = !!(mod & KMOD_RCTRL);
+	this->lalt = !!(mod & KMOD_LALT);
+	this->ralt = !!(mod & KMOD_RALT);
+	this->caps = !!(mod & KMOD_CAPS);
+}
+
+void ng::Key::release (SDL_Event* const e) {
+	this->scancode = e->key.keysym.scancode;
+	this->keycode = e->key.keysym.sym;
+	uint16_t mod = e->key.keysym.mod;
+	this->lshift = !!(mod & KMOD_LSHIFT);
+	this->rshift = !!(mod & KMOD_RSHIFT);
+	this->lctrl = !!(mod & KMOD_LCTRL);
+	this->rctrl = !!(mod & KMOD_RCTRL);
+	this->lalt = !!(mod & KMOD_LALT);
+	this->ralt = !!(mod & KMOD_RALT);
+	this->caps = !!(mod & KMOD_CAPS);
+}
+
+void ng::Event::init (Graphics* const g) {
+	this->mode = ng::None;
+	this->mouse.init();
+	this->key.init();
+	for (int i=0; i<NG_EVENT_TEXT; i++) {
+		this->text[i] = '\0';
+	}
+	this->g = g;
+}
+
+bool ng::Event::next () {
+	while (SDL_PollEvent(&this->event)) {
+		switch (this->event.type) {
 			case SDL_QUIT: {
-				e->mode = NG_QUIT;
+				this->mode = ng::Quit;
 				return true;
 			} case SDL_WINDOWEVENT: {
-				e->mode = NG_WINDOW;
-				ng_window_event(e->g, &e->event);
+				this->mode = ng::WindowEvent;
+				this->g->window_event(&this->event);
 				return true;
 			} case SDL_MOUSEBUTTONDOWN: {
-				e->mode = NG_MOUSE_PRESS;
-				ng_mouse_press(&e->mouse, &e->event);
+				this->mode = ng::MousePress;
+				this->mouse.press(&this->event);
 				return true;
 			} case SDL_MOUSEBUTTONUP: {
-				e->mode = NG_MOUSE_RELEASE;
-				ng_mouse_release(&e->mouse, &e->event);
+				this->mode = ng::MouseRelease;
+				this->mouse.release(&this->event);
 				return true;
 			} case SDL_MOUSEMOTION: {
-				e->mode = NG_MOUSE_MOVE;
-				ng_mouse_move(&e->mouse, &e->event);
+				this->mode = ng::MouseMove;
+				this->mouse.move(&this->event);
 				return true;
 			} case SDL_MOUSEWHEEL: {
-				e->mode = NG_MOUSE_SCROLL;
-				ng_mouse_scroll(&e->mouse, &e->event);
+				this->mode = ng::MouseScroll;
+				this->mouse.scroll(&this->event);
 				return true;
 			} case SDL_KEYDOWN: {
-				e->mode = NG_KEY_PRESS;
-				ng_key_press(&e->key, &e->event);
+				this->mode = ng::KeyPress;
+				this->key.press(&this->event);
 				return true;
 			} case SDL_KEYUP: {
-				e->mode = NG_KEY_RELEASE;
-				ng_key_release(&e->key, &e->event);
+				this->mode = ng::KeyRelease;
+				this->key.release(&this->event);
 				return true;
 			} case SDL_TEXTINPUT: {
-				e->mode = NG_TEXT_INPUT;
-				ng_text_input(e, &e->event);
+				this->mode = ng::TextInput;
+				this->text_input(&this->event);
 				return true;
 			} default: {
-				e->mode = ng::None;
+				this->mode = ng::None;
 			}
 		}
 	}
 	return false;
 }
 
-void ng_window_event (ngGraphics* g, SDL_Event* e) {
-	switch (e->window.event) {
-		case SDL_WINDOWEVENT_RESIZED: {
-			g->rect.w = e->window.data1;
-			g->rect.h = e->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
-			g->rect.w = e->window.data1;
-			g->rect.h = e->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_MAXIMIZED: {
-			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
-			break;
-		} case SDL_WINDOWEVENT_RESTORED: {
-			SDL_GetWindowSize(g->window, &g->rect.w, &g->rect.h);
-			break;
-		}
-	}
-}
-
-void ng_mouse_init (ngMouse* m) {
-	m->left = NG_RELEASE;
-	m->middle = NG_RELEASE;
-	m->right = NG_RELEASE;
-	m->x = 0;
-	m->y = 0;
-	m->dx = 0;
-	m->dy = 0;
-	m->scroll_x = 0;
-	m->scroll_y = 0;
-}
-
-void ng_mouse_press (ngMouse* m, SDL_Event* e) {
-	switch (e->button.button) {
-		case SDL_BUTTON_LEFT: {
-			m->left = NG_PRESS;
-			break;
-		} case SDL_BUTTON_MIDDLE: {
-			m->middle = NG_PRESS;
-			break;
-		} case SDL_BUTTON_RIGHT: {
-			m->right = NG_PRESS;
-			break;
-		}
-	}
-	m->dx = e->button.x - m->x;
-	m->dy = e->button.y - m->y;
-	m->x = e->button.x;
-	m->y = e->button.y;
-}
-
-void ng_mouse_release (ngMouse* m, SDL_Event* e) {
-	switch (e->button.button) {
-		case SDL_BUTTON_LEFT: {
-			m->left = NG_RELEASE;
-			break;
-		} case SDL_BUTTON_MIDDLE: {
-			m->middle = NG_RELEASE;
-			break;
-		} case SDL_BUTTON_RIGHT: {
-			m->right = NG_RELEASE;
-			break;
-		}
-	}
-	m->dx = e->button.x - m->x;
-	m->dy = e->button.y - m->y;
-	m->x = e->button.x;
-	m->y = e->button.y;
-}
-
-void ng_mouse_move (ngMouse* m, SDL_Event* e) {
-	m->x = e->motion.x;
-	m->y = e->motion.y;
-	m->dx = e->motion.xrel;
-	m->dy = e->motion.yrel;
-}
-
-void ng_mouse_scroll (ngMouse* m, SDL_Event* e) {
-	m->scroll_x = e->wheel.x;
-	m->scroll_y = e->wheel.y;
-	if (e->wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
-		m->scroll_x = m->scroll_x * -1;
-		m->scroll_y = m->scroll_y * -1;
-	}
-}
-
-void ng_key_init (ngKey* k) {
-	k->lshift = NG_RELEASE;
-	k->rshift = NG_RELEASE;
-	k->lctrl = NG_RELEASE;
-	k->rctrl = NG_RELEASE;
-	k->lalt = NG_RELEASE;
-	k->ralt = NG_RELEASE;
-	k->caps = NG_RELEASE;
-}
-
-void ng_key_press (ngKey* k, SDL_Event* e) {
-	k->scancode = e->key.keysym.scancode;
-	k->keycode = e->key.keysym.sym;
-	uint16_t mod = e->key.keysym.mod;
-	k->lshift = !!(mod & KMOD_LSHIFT);
-	k->rshift = !!(mod & KMOD_RSHIFT);
-	k->lctrl = !!(mod & KMOD_LCTRL);
-	k->rctrl = !!(mod & KMOD_RCTRL);
-	k->lalt = !!(mod & KMOD_LALT);
-	k->ralt = !!(mod & KMOD_RALT);
-	k->caps = !!(mod & KMOD_CAPS);
-}
-
-void ng_key_release (ngKey* k, SDL_Event* e) {
-	k->scancode = e->key.keysym.scancode;
-	k->keycode = e->key.keysym.sym;
-	uint16_t mod = e->key.keysym.mod;
-	k->lshift = !!(mod & KMOD_LSHIFT);
-	k->rshift = !!(mod & KMOD_RSHIFT);
-	k->lctrl = !!(mod & KMOD_LCTRL);
-	k->rctrl = !!(mod & KMOD_RCTRL);
-	k->lalt = !!(mod & KMOD_LALT);
-	k->ralt = !!(mod & KMOD_RALT);
-	k->caps = !!(mod & KMOD_CAPS);
-}
-
-void ng_text_input (ngEvent* t, SDL_Event* e) {
+void ng::Event::text_input (SDL_Event* const e) {
 	char* text = e->text.text;
 	int i=0;
 	for (; i<NG_EVENT_TEXT-1 && text[i] != '\0'; i++) {
-		t->text[i] = text[i];
+		this->text[i] = text[i];
 	}
 	for (; i<NG_EVENT_TEXT; i++) {
-		t->text[i] = '\0';
+		this->text[i] = '\0';
 	}
 }
 
