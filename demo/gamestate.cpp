@@ -3,27 +3,26 @@
 
 #include "firedays.h"
 
-void fd::frame_mouse(ngRect* r, GameState* gs, ngRect* frame) {
-	ng_rect_init(r, gs->event.mouse.x, gs->event.mouse.y, 0, 0);
-	ng_rect_portal(r, &gs->graphics.rect, &gs->rect);
-	ng_absolute_to_relative(r, NULL, &gs->tile_grid);
-	if (frame != NULL) {
-		ng_absolute_to_relative(r, frame, NULL);
-	}
+void fd::frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame) {
+	r.init(gs->event.mouse.x, gs->event.mouse.y, 0, 0);
+	r.portal(&gs->graphics.rect, &gs->rect);
+	// frame uses grid coords, so give r grid coords before going relative to frame.
+	r.absolute_to_relative(NULL, &gs->tile_grid);
+	r.absolute_to_relative(frame, NULL);
 }
 
-void fd::frame_draw_rect(const ngRect* r, GameState* gs, ngRect* frame) {
-	ngRect r2 = *r;
-	if (frame != NULL) {
-		ng_relative_to_absolute(&r2, frame, NULL);
-	}
-	ng_relative_to_absolute(&r2, NULL, &gs->tile_grid);
-	ng_rect_portal(&r2, &gs->rect, &gs->graphics.rect);
-	ng_draw_rect(&gs->graphics, &r2, NG_FRAME);
+void fd::frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame) {
+	ng::Rect r2 = *r;
+	// frame uses grid coords, so go absolute before removing grid coords.
+	r2.relative_to_absolute(frame, NULL);
+	r2.relative_to_absolute(NULL, &gs->tile_grid);
+	
+	r2.portal(&gs->rect, &gs->graphics.rect);
+	gs->graphics.draw_rect(&r2, ng::DrawFrame);
 }
 
 void fd::GameState::init () {
-	int w, h;
+	int w, h; // 4:3
 	w = 640;
 	h = 480;
 	
@@ -39,9 +38,9 @@ void fd::GameState::init () {
 		exit(EXIT_FAILURE);
 	}
 	
-	this->rect.init(0, 0, w, h); // 4:3
-	this->char_grid.init(&this->rect, 80, 30); // 80x30 8x16 chars 4:3
-	this->tile_grid.init(&this->rect, 40, 30); // 40x30 16x16 tiles 4:3
+	this->rect.init(0, 0, w, h);
+	this->char_grid.init(&this->rect, w/8, h/16); // 8x16 chars
+	this->tile_grid.init(&this->rect, w/16, h/16); // 16x16 tiles
 	this->background_color.init(0, 0, 0);
 	this->draw_color.init(255, 255, 255);
 	
@@ -66,24 +65,26 @@ void fd::GameState::loop () {
 		while (this->event.next()) {
 			if (this->event.mode == ng::Quit) {
 				return;
+			} else if (this->event.mode == ng::WindowEvent) {
+				// optionally resize screens and menus to fit window.
+				continue;
 			}
 			
-			switch (this->debug_mode) {
-				case fd::MenuDebug: {
-					this->debug_menu.event(this);
-				} default: {}
+			// Find place to process event, then consume event.
+			
+			this->debug_menu.event(this);
+			if (!this->event.exists()) {
+				continue;
 			}
 			
-			switch (this->pause_mode) {
-				case fd::MenuPause: {
-					this->pause_menu.event(this);
-				} default: {}
+			this->hud_menu.event(this);
+			if (!this->event.exists()) {
+				continue;
 			}
 			
-			switch (this->hud_mode) {
-				case fd::MenuHud: {
-					this->hud_menu.event(this);
-				} default: {}
+			this->pause_menu.event(this);
+			if (!this->event.exists()) {
+				continue;
 			}
 			
 			switch (this->screen_mode) {
@@ -128,22 +129,16 @@ void fd::GameState::loop () {
 				}
 			}
 			
-			switch (this->hud_mode) {
-				case fd::MenuHud: {
-					this->hud_menu.draw(this);
-				} default: {}
+			if (this->hud_mode) {
+				this->hud_menu.draw(this);
 			}
 			
-			switch (this->pause_mode) {
-				case fd::MenuPause: {
-					this->pause_menu.draw(this);
-				} default: {}
+			if (this->pause_mode) {
+				this->pause_menu.draw(this);
 			}
 			
-			switch (this->debug_mode) {
-				case fd::MenuDebug: {
-					this->debug_menu.draw(this);
-				} default: {}
+			if (this->debug_mode) {
+				this->debug_menu.draw(this);
 			}
 			
 			this->graphics.draw();
@@ -159,6 +154,7 @@ void fd::GameState::loop () {
 		}
 		
 		this->time.tick();
+		// TODO time.tick(target_millis);
 	}
 }
 

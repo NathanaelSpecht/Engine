@@ -181,6 +181,14 @@ bool ng::Event::next () {
 	return false;
 }
 
+void ng::Event::consume () {
+	this->mode = ng::None;
+}
+
+bool ng::Event::exists () {
+	return this->mode != ng::None;
+}
+
 void ng::Event::text_input (SDL_Event* const e) {
 	char* text = e->text.text;
 	int i=0;

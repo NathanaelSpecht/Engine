@@ -5,6 +5,9 @@
 
 ## 2023 March
 
+March 05:
+- Use namespaces and classes for demo (wip).
+
 March 04:
 - Use namespaces and classes for Engie.
 - Start using namespaces and classes for demo (work in progress).

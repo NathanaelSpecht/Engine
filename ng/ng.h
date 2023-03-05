@@ -347,6 +347,8 @@ public:
 	
 	void init (Graphics* const);
 	bool next ();
+	void consume ();
+	bool exists ();
 	void text_input (SDL_Event* const);
 };
 
