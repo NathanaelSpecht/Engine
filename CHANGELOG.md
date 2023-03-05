@@ -7,6 +7,7 @@
 
 March 05:
 - Use namespaces and classes for demo.
+- Still works on Windows.
 
 March 04:
 - Use namespaces and classes for Engie.
@@ -15,7 +16,8 @@ March 04:
 March 03:
 - Port Engie from C to C++.
 - Still works on Windows.
-- Change return error codes into thrown exceptions. Most functions return void now.
+- Change return error codes into thrown exceptions.
+Most functions return void now.
 
 March 01:
 - Release version 0.0.1.
