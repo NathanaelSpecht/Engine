@@ -3,39 +3,42 @@
 
 #include "firedays.h"
 
-void fd_hudmenu_init (fdHudMenu* m, fdScreen* screen, fdCore* core) {
-	m->core = core;
-	m->screen = screen;
-	m->mode = fd::None;
+void fd::HudMenu::init (GameState* gs) {
+	this->events = false;
+	this->draws = false;
 	// tiles
-	ng_rect_init(&m->frame, 1, 1, 18, 5);
+	this->frame.init(1, 1, 18, 5);
 	// tiles in frame
-	ng_rect_init(&m->temp, 1, 1, 3, 3);
-	ng_rect_init(&m->heat, 5, 1, 13, 2);
-	ng_rect_init(&m->fuel, 5, 3, 13, 1);
+	this->temp.init(1, 1, 3, 3);
+	this->heat.init(5, 1, 13, 2);
+	this->fuel.init(5, 3, 13, 1);
 }
 
-void fd_hudmenu_event (fdHudMenu* m) {
-	ngEvent* e = &m->core->event;
+void fd::HudMenu::event (GameState* gs) {
 	// if key press f1, then toggle hudmenu
-	if (e->mode == NG_KEY_PRESS) {
-		int k = e->key.scancode;
+	if (!this->events) {
+		return;
+	}
+	
+	if (gs->event.mode == ng::KeyPress) {
+		int k = gs->event.key.scancode;
 		
 		if (k == SDL_SCANCODE_F1) {
-			m->mode = !m->mode;
+			this->draws = !this->draws;
+			gs->event.consume();
 		}
 	}
 }
 
-void fd_hudmenu_draw (fdHudMenu* m) {
-	if (!m->mode) {
+void fd::HudMenu::draw (GameState* gs) {
+	if (!this->draws) {
 		return;
 	}
 	
-	fd_frame_draw_rect(&m->frame, m->core, m->screen, NULL);
-	fd_frame_draw_rect(&m->temp, m->core, m->screen, &m->frame);
-	fd_frame_draw_rect(&m->heat, m->core, m->screen, &m->frame);
-	fd_frame_draw_rect(&m->fuel, m->core, m->screen, &m->frame);
+	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->temp, gs, &this->frame);
+	fd::frame_draw_rect(&this->heat, gs, &this->frame);
+	fd::frame_draw_rect(&this->fuel, gs, &this->frame);
 }
 
 

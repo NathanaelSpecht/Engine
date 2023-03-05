@@ -278,16 +278,11 @@ public:
 	void window_event (SDL_Event* const);
 };
 
-enum EnumButton {
-	Release = 0,
-	Press = 1
-};
-
 class Mouse {
 public:
-	int left;
-	int middle;
-	int right;
+	bool left;
+	bool middle;
+	bool right;
 	int x;
 	int y;
 	int dx;
@@ -296,8 +291,8 @@ public:
 	int scroll_y;
 	
 	void init ();
-	void press (SDL_Event* const);
-	void release (SDL_Event* const);
+	bool press (SDL_Event* const);
+	bool release (SDL_Event* const);
 	void move (SDL_Event* const);
 	void scroll (SDL_Event* const);
 };
@@ -306,13 +301,13 @@ class Key {
 public:
 	int scancode; // SDL_Scancode
 	int keycode; // SDL_Keycode
-	int lshift;
-	int rshift;
-	int lctrl;
-	int rctrl;
-	int lalt;
-	int ralt;
-	int caps;
+	bool lshift;
+	bool rshift;
+	bool lctrl;
+	bool rctrl;
+	bool lalt;
+	bool ralt;
+	bool caps;
 	
 	void init ();
 	void press (SDL_Event* const);

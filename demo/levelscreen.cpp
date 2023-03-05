@@ -3,21 +3,16 @@
 
 #include "firedays.h"
 
-void fd_levelscreen_init (fdLevelScreen* s, fdScreen* screen, fdCore* core) {
-	s->core = core;
-	s->screen = screen;
-	fd_hudmenu_init(&s->hud_menu, screen, core);
-	fd_pausemenu_init(&s->pause_menu, screen, core);
+void fd::LevelScreen::init (GameState* gs) {
+	this->frame.init(1, 1, 38, 28);
 }
 
-void fd_levelscreen_event (fdLevelScreen* s) {
-	fd_hudmenu_event(&s->hud_menu);
-	fd_pausemenu_event(&s->pause_menu);
+void fd::LevelScreen::event (GameState* gs) {
+	// TODO character controls here.
 }
 
-void fd_levelscreen_draw (fdLevelScreen* s) {
-	fd_hudmenu_draw(&s->hud_menu);
-	fd_pausemenu_draw(&s->pause_menu);
+void fd::LevelScreen::draw (GameState* gs) {
+	fd::frame_draw_rect(&this->frame, gs, NULL);
 }
 
 

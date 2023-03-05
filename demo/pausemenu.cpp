@@ -3,55 +3,72 @@
 
 #include "firedays.h"
 
-void fd_pausemenu_init (fdPauseMenu* m, fdScreen* screen, fdCore* core) {
-	m->core = core;
-	m->screen = screen;
+void fd::PauseMenu::init (GameState* gs) {
+	this->events = false;
+	this->draws = false;
 	// tiles
-	ng_rect_init(&m->header, 5, 5, 30, 3);
-	ng_rect_init(&m->frame, 14, 13, 12, 5);
+	this->header.init(5, 5, 30, 3);
+	this->frame.init(14, 13, 12, 5);
 	// tiles in frame
-	ng_rect_init(&m->resume_btn, 1, 1, 10, 1);
-	ng_rect_init(&m->quit_btn, 1, 3, 10, 1);
+	this->resume_btn.init(1, 1, 10, 1);
+	this->quit_btn.init(1, 3, 10, 1);
 }
 
-void fd_pausemenu_event (fdPauseMenu* m) {
-	ngEvent* e = &m->core->event;
+void fd::PauseMenu::event (GameState* gs) {
+	if (!this->events) {
+		return;
+	}
+	
 	// if key press escape, then toggle pausemenu
-	if (e->mode == NG_KEY_PRESS) {
-		int k = e->key.scancode;
+	if (gs->event.mode == ng::KeyPress) {
+		int k = gs->event.key.scancode;
 		
 		if (k == SDL_SCANCODE_ESCAPE) {
-			m->mode = !m->mode;
+			this->draws = !this->draws;
+			gs->event.consume();
 			return;
 		}
 	}
 	
-	if (!m->mode) {
-		return;
-	}
 	// if mouse press resume, then hide pausemenu
-	// if mouse press quit, then hide pausemenu and goto worldscreen
-	if (e->mode == NG_MOUSE_PRESS) {
-		ngRect p;
-		fd_frame_mouse(&p, m->core, m->screen, &m->frame);
+	// if mouse press quit, then:
+	// - if levelscreen, then goto worldscreen
+	// - if worldscreen or filescreen, then goto titlescreen
+	// - if titlescreen, then quit
+	if (this->draws && gs->event.mode == ng::MousePress) {
+		ng::Rect p;
+		fd::frame_mouse(&p, gs, &this->frame);
 		
-		if (ng_rect_contains(&m->resume_btn, p.x, p.y)) {
-			m->mode = fd::None;
-		} else if (ng_rect_contains(&m->quit_btn, p.x, p.y)) {
-			m->screen->mode = FD_WORLDSCREEN;
+		if (this->resume_btn.contains(p.x, p.y)) {
+			this->draws = false;
+			gs->event.consume();
+		} else if (this->quit_btn.contains(p.x, p.y)) {
+			switch (gs->screen_mode) {
+				case fd::ScreenLevel: {
+					gs->goto_screen(fd::ScreenWorld);
+					break;
+				} case fd::ScreenWorld: case fd::ScreenFile: {
+					gs->goto_screen(fd::ScreenTitle);
+					break;
+				} case fd::ScreenTitle: {
+					gs->goto_screen(fd::None);
+					break;
+				} default: {}
+			}
+			gs->event.consume();
 		}
 	}
 }
 
-void fd_pausemenu_draw (fdPauseMenu* m) {
-	if (!m->mode) {
+void fd::PauseMenu::draw (GameState* gs) {
+	if (!this->draws) {
 		return;
 	}
 	
-	fd_frame_draw_rect(&m->header, m->core, m->screen, NULL);
-	fd_frame_draw_rect(&m->frame, m->core, m->screen, NULL);
-	fd_frame_draw_rect(&m->resume_btn, m->core, m->screen, &m->frame);
-	fd_frame_draw_rect(&m->quit_btn, m->core, m->screen, &m->frame);
+	fd::frame_draw_rect(&this->header, gs, NULL);
+	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->resume_btn, gs, &this->frame);
+	fd::frame_draw_rect(&this->quit_btn, gs, &this->frame);
 }
 
 

@@ -3,36 +3,40 @@
 
 #include "firedays.h"
 
-void fd_debugmenu_init (fdDebugMenu* m, fdScreen* screen, fdCore* core) {
-	m->core = core;
-	m->screen = screen;
+void fd::DebugMenu::init (GameState* gs) {
+	this->events = false;
+	this->draws = false;
 	// tiles
-	ng_rect_init(&m->frame, 0, 29, 40, 1);
+	this->frame.init(0, 29, 40, 1);
 	// tiles in frame
-	ng_rect_init(&m->version, 0, 0, 25, 1);
-	ng_rect_init(&m->fps, 30, 0, 10, 1);
+	this->version.init(0, 0, 25, 1);
+	this->fps.init(30, 0, 10, 1);
 }
 
-void fd_debugmenu_event (fdDebugMenu* m) {
-	ngEvent* e = &m->core->event;
+void fd::DebugMenu::event (GameState* gs) {
+	if (!this->events) {
+		return;
+	}
+	
 	// if key press f3, then toggle debugmenu
-	if (e->mode == NG_KEY_PRESS) {
-		int k = e->key.scancode;
+	if (gs->event.mode == ng::KeyPress) {
+		int k = gs->event.key.scancode;
 		
 		if (k == SDL_SCANCODE_F3) {
-			m->mode = !m->mode;
+			this->draws = !this->draws;
+			gs->event.consume();
 		}
 	}
 }
 
-void fd_debugmenu_draw (fdDebugMenu* m) {
-	if (!m->mode) {
+void fd::DebugMenu::draw (GameState* gs) {
+	if (!this->draws) {
 		return;
 	}
 	
-	fd_frame_draw_rect(&m->frame, m->core, m->screen, NULL);
-	fd_frame_draw_rect(&m->version, m->core, m->screen, &m->frame);
-	fd_frame_draw_rect(&m->fps, m->core, m->screen, &m->frame);
+	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->version, gs, &this->frame);
+	fd::frame_draw_rect(&this->fps, gs, &this->frame);
 }
 
 

@@ -24,9 +24,9 @@ void ng::Graphics::window_event (SDL_Event* const e) {
 }
 
 void ng::Mouse::init () {
-	this->left = ng::Release;
-	this->middle = ng::Release;
-	this->right = ng::Release;
+	this->left = false;
+	this->middle = false;
+	this->right = false;
 	this->x = 0;
 	this->y = 0;
 	this->dx = 0;
@@ -35,42 +35,54 @@ void ng::Mouse::init () {
 	this->scroll_y = 0;
 }
 
-void ng::Mouse::press (SDL_Event* const e) {
-	switch (e->button.button) {
-		case SDL_BUTTON_LEFT: {
-			this->left = ng::Press;
-			break;
-		} case SDL_BUTTON_MIDDLE: {
-			this->middle = ng::Press;
-			break;
-		} case SDL_BUTTON_RIGHT: {
-			this->right = ng::Press;
-			break;
-		}
-	}
+bool ng::Mouse::press (SDL_Event* const e) {
 	this->dx = e->button.x - this->x;
 	this->dy = e->button.y - this->y;
 	this->x = e->button.x;
 	this->y = e->button.y;
+	
+	bool first_press;
+	switch (e->button.button) {
+		case SDL_BUTTON_LEFT: {
+			first_press = !this->left;
+			this->left = true;
+			break;
+		} case SDL_BUTTON_MIDDLE: {
+			first_press = !this->middle;
+			this->middle = true;
+			break;
+		} case SDL_BUTTON_RIGHT: {
+			first_press = !this->right;
+			this->right = true;
+			break;
+		}
+	}
+	return first_press;
 }
 
-void ng::Mouse::release (SDL_Event* const e) {
-	switch (e->button.button) {
-		case SDL_BUTTON_LEFT: {
-			this->left = ng::Release;
-			break;
-		} case SDL_BUTTON_MIDDLE: {
-			this->middle = ng::Release;
-			break;
-		} case SDL_BUTTON_RIGHT: {
-			this->right = ng::Release;
-			break;
-		}
-	}
+bool ng::Mouse::release (SDL_Event* const e) {
 	this->dx = e->button.x - this->x;
 	this->dy = e->button.y - this->y;
 	this->x = e->button.x;
 	this->y = e->button.y;
+	
+	bool first_release;
+	switch (e->button.button) {
+		case SDL_BUTTON_LEFT: {
+			first_release = this->left;
+			this->left = false;
+			break;
+		} case SDL_BUTTON_MIDDLE: {
+			first_release = this->middle;
+			this->middle = false;
+			break;
+		} case SDL_BUTTON_RIGHT: {
+			first_release = this->right;
+			this->right = false;
+			break;
+		}
+	}
+	return first_release;
 }
 
 void ng::Mouse::move (SDL_Event* const e) {
@@ -90,13 +102,13 @@ void ng::Mouse::scroll (SDL_Event* const e) {
 }
 
 void ng::Key::init () {
-	this->lshift = ng::Release;
-	this->rshift = ng::Release;
-	this->lctrl = ng::Release;
-	this->rctrl = ng::Release;
-	this->lalt = ng::Release;
-	this->ralt = ng::Release;
-	this->caps = ng::Release;
+	this->lshift = false;
+	this->rshift = false;
+	this->lctrl = false;
+	this->rctrl = false;
+	this->lalt = false;
+	this->ralt = false;
+	this->caps = false;
 }
 
 void ng::Key::press (SDL_Event* const e) {
@@ -146,13 +158,23 @@ bool ng::Event::next () {
 				this->g->window_event(&this->event);
 				return true;
 			} case SDL_MOUSEBUTTONDOWN: {
-				this->mode = ng::MousePress;
-				this->mouse.press(&this->event);
-				return true;
+				// If mouse is held down, and produces many mouse presses,
+				// only the first one produces an ng::MousePress event.
+				if (this->mouse.press(&this->event)) {
+					this->mode = ng::MousePress;
+					return true;
+				} else {
+					this->mode = ng::None;
+				}
 			} case SDL_MOUSEBUTTONUP: {
-				this->mode = ng::MouseRelease;
-				this->mouse.release(&this->event);
-				return true;
+				// If the mouse is released, and produces many mouse releases,
+				// only the first one produces an ng::MouseRelease event.
+				if (this->mouse.release(&this->event)) {
+					this->mode = ng::MouseRelease;
+					return true;
+				} else {
+					this->mode = ng::None;
+				}
 			} case SDL_MOUSEMOTION: {
 				this->mode = ng::MouseMove;
 				this->mouse.move(&this->event);

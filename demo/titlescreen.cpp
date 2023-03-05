@@ -15,15 +15,15 @@ void fd::TitleScreen::init (GameState* gs) {
 void fd::TitleScreen::event (GameState* gs) {
 	// if mouse press start, then filescreen
 	// if mouse press quit, then quit
-	if (gs->event->mode == ng::MousePress) {
+	if (gs->event.mode == ng::MousePress) {
 		ng::Rect p;
 		fd::frame_mouse(&p, gs, &this->frame);
 		
 		if (this->start_btn.contains(p.x, p.y)) {
-			gs->screen_mode = fd::FileScreen;
+			gs->goto_screen(fd::ScreenFile);
 			gs->event.consume();
 		} else if (this->quit_btn.contains(p.x, p.y)) {
-			gs->screen_mode = fd::None;
+			gs->goto_screen(fd::None);
 			gs->event.consume();
 		}
 	}

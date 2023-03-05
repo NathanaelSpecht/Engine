@@ -2,13 +2,14 @@
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
 #include "firedays.h"
+#include <iostream>
 
 void fd::frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame) {
-	r.init(gs->event.mouse.x, gs->event.mouse.y, 0, 0);
-	r.portal(&gs->graphics.rect, &gs->rect);
+	r->init(gs->event.mouse.x, gs->event.mouse.y, 0, 0);
+	r->portal(&gs->graphics.rect, &gs->rect);
 	// frame uses grid coords, so give r grid coords before going relative to frame.
-	r.absolute_to_relative(NULL, &gs->tile_grid);
-	r.absolute_to_relative(frame, NULL);
+	r->absolute_to_relative(NULL, &gs->tile_grid);
+	r->absolute_to_relative(frame, NULL);
 }
 
 void fd::frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame) {
@@ -44,20 +45,17 @@ void fd::GameState::init () {
 	this->background_color.init(0, 0, 0);
 	this->draw_color.init(255, 255, 255);
 	
-	this->screen_mode = fd::ScreenTitle;
+	this->screen_mode = fd::None;
 	this->title_screen.init(this);
 	this->file_screen.init(this);
 	this->world_screen.init(this);
 	this->level_screen.init(this);
 	
-	this->hud_mode = fd::None;
 	this->hud_menu.init(this);
-	
-	this->pause_mode = fd::None;
 	this->pause_menu.init(this);
-	
-	this->debug_mode = fd::None;
 	this->debug_menu.init(this);
+	
+	this->goto_screen(fd::ScreenTitle);
 }
 
 void fd::GameState::loop () {
@@ -129,17 +127,9 @@ void fd::GameState::loop () {
 				}
 			}
 			
-			if (this->hud_mode) {
-				this->hud_menu.draw(this);
-			}
-			
-			if (this->pause_mode) {
-				this->pause_menu.draw(this);
-			}
-			
-			if (this->debug_mode) {
-				this->debug_menu.draw(this);
-			}
+			this->hud_menu.draw(this);
+			this->pause_menu.draw(this);
+			this->debug_menu.draw(this);
 			
 			this->graphics.draw();
 		}
@@ -161,6 +151,24 @@ void fd::GameState::loop () {
 void fd::GameState::quit () {
 	this->graphics.quit();
 	ng::quit();
+}
+
+void fd::GameState::goto_screen (int screen_mode) {
+	this->screen_mode = screen_mode;
+	
+	this->debug_menu.events = true;
+	//this->debug_menu.draws = false;
+	
+	this->pause_menu.events = true;
+	this->pause_menu.draws = false;
+	
+	if (screen_mode == fd::ScreenLevel) {
+		this->hud_menu.events = true;
+		this->hud_menu.draws = true;
+	} else {
+		this->hud_menu.events = false;
+		this->hud_menu.draws = false;
+	}
 }
 
 

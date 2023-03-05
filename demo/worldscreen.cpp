@@ -3,40 +3,31 @@
 
 #include "firedays.h"
 
-void fd_worldscreen_init (fdWorldScreen* s, fdScreen* screen, fdCore* core) {
-	s->core = core;
-	s->screen = screen;
+void fd::WorldScreen::init (GameState* gs) {
 	// tiles
-	ng_rect_init(&s->header, 5, 1, 30, 3);
-	ng_rect_init(&s->frame, 1, 5, 38, 24);
+	this->header.init(5, 1, 30, 3);
+	this->frame.init(1, 5, 38, 24);
 	// tiles in frame
-	ng_rect_init(&s->level1, 1, 1, 4, 3);
+	this->level1.init(1, 1, 4, 3);
 }
 
-void fd_worldscreen_event (fdWorldScreen* s) {
-	ngEvent* e = &s->core->event;
-	// if mouse press level1, then levelscreen
-	// if key press escape, then filescreen
-	if (e->mode == NG_MOUSE_PRESS) {
-		ngRect p;
-		fd_frame_mouse(&p, s->core, s->screen, &s->frame);
+void fd::WorldScreen::event (GameState* gs) {
+	// if mouse press level1, then goto levelscreen
+	if (gs->event.mode == ng::MousePress) {
+		ng::Rect p;
+		fd::frame_mouse(&p, gs, &this->frame);
 		
-		if (ng_rect_contains(&s->level1, p.x, p.y)) {
-			s->screen->mode = FD_LEVELSCREEN;
-		}
-	} else if (e->mode == NG_KEY_PRESS) {
-		int k = e->key.scancode;
-		
-		if (k == SDL_SCANCODE_ESCAPE) {
-			s->screen->mode = FD_FILESCREEN;
+		if (this->level1.contains(p.x, p.y)) {
+			gs->goto_screen(fd::ScreenLevel);
+			gs->event.consume();
 		}
 	}
 }
 
-void fd_worldscreen_draw (fdWorldScreen* s) {
-	fd_frame_draw_rect(&s->header, s->core, s->screen, NULL);
-	fd_frame_draw_rect(&s->frame, s->core, s->screen, NULL);
-	fd_frame_draw_rect(&s->level1, s->core, s->screen, &s->frame);
+void fd::WorldScreen::draw (GameState* gs) {
+	fd::frame_draw_rect(&this->header, gs, NULL);
+	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->level1, gs, &this->frame);
 }
 
 

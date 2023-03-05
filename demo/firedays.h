@@ -24,18 +24,6 @@ enum EnumScreen {
 	ScreenLevel = 4
 };
 
-enum EnumMenuHud {
-	MenuHud = 1
-};
-
-enum EnumMenuPause {
-	MenuPause = 1
-};
-
-enum EnumMenuDebug {
-	MenuDebug = 1
-};
-
 class GameState;
 class TitleScreen;
 class FileScreen;
@@ -47,39 +35,6 @@ class DebugMenu;
 
 void frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame);
 void frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame);
-
-class GameState {
-public:
-	ng::Time time;
-	ng::Graphics graphics;
-	//TODO audio & channels
-	ng::Event event;
-	
-	ng::Rect rect;
-	ng::Grid char_grid;
-	ng::Grid tile_grid;
-	ng::Color background_color;
-	ng::Color draw_color;
-	
-	int screen_mode;
-	TitleScreen title_screen;
-	FileScreen file_screen;
-	WorldScreen world_screen;
-	LevelScreen level_screen;
-	
-	int hud_mode;
-	HudMenu hud_menu;
-	
-	int pause_mode;
-	PauseMenu pause_menu;
-	
-	int debug_mode;
-	DebugMenu debug_menu;
-	
-	void init ();
-	void loop ();
-	void quit ();
-};
 
 class TitleScreen {
 public:
@@ -126,6 +81,8 @@ public:
 
 class HudMenu {
 public:
+	bool events;
+	bool draws;
 	ng::Rect frame;
 	ng::Rect temp;
 	ng::Rect heat;
@@ -138,6 +95,8 @@ public:
 
 class PauseMenu {
 public:
+	bool events;
+	bool draws;
 	ng::Rect header;
 	ng::Rect frame;
 	ng::Rect resume_btn;
@@ -150,6 +109,8 @@ public:
 
 class DebugMenu {
 public:
+	bool events;
+	bool draws;
 	ng::Rect frame;
 	ng::Rect version;
 	ng::Rect fps;
@@ -157,6 +118,36 @@ public:
 	void init (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
+};
+
+class GameState {
+public:
+	ng::Time time;
+	ng::Graphics graphics;
+	//TODO audio & channels
+	ng::Event event;
+	
+	ng::Rect rect;
+	ng::Grid char_grid;
+	ng::Grid tile_grid;
+	ng::Color background_color;
+	ng::Color draw_color;
+	
+	int screen_mode;
+	TitleScreen title_screen;
+	FileScreen file_screen;
+	WorldScreen world_screen;
+	LevelScreen level_screen;
+	
+	HudMenu hud_menu;
+	PauseMenu pause_menu;
+	DebugMenu debug_menu;
+	
+	void init ();
+	void loop ();
+	void quit ();
+	
+	void goto_screen (int screen_mode);
 };
 
 } // namespace fd
