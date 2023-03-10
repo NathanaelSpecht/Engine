@@ -13,9 +13,15 @@ networking, windowing, etc). It is a standard interface between programs
 and those libraries, a kind of software engine.
 
 Engie also has:
-- string and file functions that I find myself implementing frequently, and
 - integer approximations of some math functions, and
-- a particle physics model for games (NOT for science or engineering).
+- collision functions for game physics.
+
+# Version
+
+The release version is 0.0.2.
+The experimental/dev version is 0.0.3.
+
+More details are in the `CHANGELOG.md`.
 
 # Demo and Test
 
@@ -34,9 +40,6 @@ To use Engie, you must build it along with your project:
 
 Engie's API is `ng.h`. The comments are the documentation.
 
-`CHANGELOG.md` contains a list of changes - each with a date and description -
-that give a little more detail than `git log`.
-
 # Licensing
 
 The `LICENSE` file applies to:
@@ -45,11 +48,9 @@ The `LICENSE` file applies to:
 - Engie demo in the `demo/` folder, `demo.cpp` and `Makefile`.
 - Engie tests in the `test/` folder, `test.cpp` and `Makefile`.
 
-Engie is currently being ported from C to C++.
-The old C files from Engie version 0.0.1 are in
-the `demo-c/` folder and `demo-c.c`, and in
-the `test-c/` folder and `test-c.c`.
-The `LICENSE` file also applies to this old code.
+Engie has been ported from C to C++.
+The old C files from Engie version 0.0.1 are in the `archive/` folder.
+They have their own license.
 
 SDL2's files and license are in the `sdl/` folder, `README-SDL.txt`, and
 `SDL2.dll`.

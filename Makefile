@@ -5,9 +5,9 @@ NG_CPP = $(wildcard ng/*.cpp)
 DEMO_CPP = $(wildcard demo/*.cpp)
 TEST_CPP = $(wildcard test/*.cpp)
 
-NG_C = $(wildcard ng-c/*.c)
-DEMO_C = $(wildcard demo-c/*.c)
-TEST_C = $(wildcard test-c/*.c)
+NG_C = $(wildcard archive/ng-c/*.c)
+DEMO_C = $(wildcard archive/demo-c/*.c)
+TEST_C = $(wildcard archive/test-c/*.c)
 
 ifeq ($(OS),Windows_NT)
 MAKE = mingw32-make
@@ -30,10 +30,10 @@ test:
 	g++ $(FLAGS) test.cpp $(TEST_CPP) $(NG_CPP) -o app -Itest -Ing $(LIB_INCLUDE) $(LIB)
 
 c:
-	gcc $(FLAGS) demo-c.c $(DEMO_C) $(NG_C) -o app -Idemo-c -Ing-c $(LIB_INCLUDE) $(LIB)
+	gcc $(FLAGS) archive/demo-c.c $(DEMO_C) $(NG_C) -o app -Iarchive/demo-c -Iarchive/ng-c $(LIB_INCLUDE) $(LIB)
 
 testc:
-	gcc $(FLAGS) test-c.c $(TEST_C) $(NG_C) -o app -Itest-c -Ing-c $(LIB_INCLUDE) $(LIB)
+	gcc $(FLAGS) archive/test-c.c $(TEST_C) $(NG_C) -o app -Iarchive/test-c -Iarchive/ng-c $(LIB_INCLUDE) $(LIB)
 
 help:
 	@echo "Engie (ng)"

@@ -5,6 +5,9 @@
 
 ## 2023 March
 
+March 10:
+- Move C files to archive folder.
+
 March 05:
 - Use namespaces and classes for demo.
 - Still works on Windows.
