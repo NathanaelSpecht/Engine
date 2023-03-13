@@ -7,7 +7,7 @@
 int main (int argc, char** argv) {
 	ng::Time time;
 	ng::Graphics graphics;
-	//TODO audio & channels
+	ng::Audio audio;
 	ng::Event event;
 	
 	try {
@@ -15,7 +15,7 @@ int main (int argc, char** argv) {
 		
 		time.init();
 		graphics.init("Fire Days Demo", 640, 480);
-		//TODO audio & channels
+		audio.init();
 		event.init(&graphics);
 		
 	} catch (const std::exception& ex) {
@@ -29,6 +29,9 @@ int main (int argc, char** argv) {
 	draw_color.init(255, 255, 255);
 	ng::Rect rect;
 	rect.init(250, 200, 150, 100);
+	
+	ng::Channel channel;
+	channel.init();
 	
 	while (true) {
 		while (event.next()) {
@@ -54,12 +57,10 @@ int main (int argc, char** argv) {
 		}
 		
 		try {
-			/*
-			ng_audio_clear(&a);
-			ng_audio_mix_channel(&a, &music);
-			ng_audio_mix_channel(&a, &sound);
-			ng_audio_queue(&a);
-			*/
+			audio.clear(time.delta);
+			audio.mix_channel(&channel);
+			audio.play();
+			
 		} catch (const std::exception& ex) {
 			std::cout << NG_HERE << ": audio error: " << ex.what() << "\n";
 			exit(EXIT_FAILURE);
@@ -70,6 +71,8 @@ int main (int argc, char** argv) {
 
 quit:
 	graphics.quit();
+	channel.quit();
+	audio.quit();
 	ng::quit();
 	
 	return EXIT_SUCCESS;

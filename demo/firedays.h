@@ -124,7 +124,7 @@ class GameState {
 public:
 	ng::Time time;
 	ng::Graphics graphics;
-	//TODO audio & channels
+	ng::Audio audio;
 	ng::Event event;
 	
 	ng::Rect rect;
@@ -132,13 +132,14 @@ public:
 	ng::Grid tile_grid;
 	ng::Color background_color;
 	ng::Color draw_color;
+	ng::Channel music_channel;
+	ng::Channel sound_channel;
 	
 	int screen_mode;
 	TitleScreen title_screen;
 	FileScreen file_screen;
 	WorldScreen world_screen;
 	LevelScreen level_screen;
-	
 	HudMenu hud_menu;
 	PauseMenu pause_menu;
 	DebugMenu debug_menu;

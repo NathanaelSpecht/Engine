@@ -5,6 +5,9 @@
 
 ## 2023 March
 
+March 12:
+- Change audio from 8-bit to float32.
+
 March 10:
 - Move C files to archive folder.
 

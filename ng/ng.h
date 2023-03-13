@@ -73,11 +73,16 @@ class Audio;
 // Time
 class Time {
 public:
+	int64_t ticks; // Ticks since program start.
+	int delta; // Duration of this tick, in ms. Starts at 10.
+	int max; // Duration of longest tick since program start.
+	int tps; // Average ticks per second. Starts at 100.
+	
+	// Internal timestamps, to calculate delta.
 	uint32_t now;
 	uint32_t last;
-	int64_t ticks;
-	int delta;
-	int tps;
+	
+	// Internal counts, to calculate tps.
 	int count;
 	int ms;
 	
@@ -275,6 +280,8 @@ public:
 	*/
 
 // Event
+	// Internal. Called by event::next.
+	// Set this to window event from SDL.
 	void window_event (SDL_Event* const);
 };
 
@@ -290,10 +297,23 @@ public:
 	int scroll_x;
 	int scroll_y;
 	
+	// Internal. Called by event::init.
 	void init ();
+	
+	// Internal. Called by event::next.
+	// Set this to mouse press event from SDL.
 	bool press (SDL_Event* const);
+	
+	// Internal. Called by event::next.
+	// Set this to mouse release event from SDL.
 	bool release (SDL_Event* const);
+	
+	// Internal. Called by event::next.
+	// Set this to mouse move event from SDL.
 	void move (SDL_Event* const);
+	
+	// Internal. Called by event::next.
+	// Set this to mouse scroll event from SDL.
 	void scroll (SDL_Event* const);
 };
 
@@ -309,8 +329,15 @@ public:
 	bool ralt;
 	bool caps;
 	
+	// Internal. Called by event::init.
 	void init ();
+	
+	// Internal. Called by event::next.
+	// Set this to key press event from SDL.
 	void press (SDL_Event* const);
+	
+	// Internal. Called by event::next.
+	// Set this to key release event from SDL.
 	void release (SDL_Event* const);
 };
 
@@ -333,34 +360,65 @@ public:
 	int mode;
 	Mouse mouse;
 	Key key;
+	
+	// UTF-8 text. Always ends in '\0' (max input is 32, +1 for nul)
 	char text[NG_EVENT_TEXT]; // ARRAY! DO NOT FREE!
-	// ^ utf-8 text. always ends in '\0' (max input is 32, +1 for nul)
-	// ^ text input should play nice with international keyboards,
-	// ^ even if it can't process their inputs.
+	
+	// Internal.
+	// Pointer to graphics, so this can handle window events internally.
 	Graphics* g;
+	
+	// Internal SDL event.
 	SDL_Event event;
 	
+	// Initialize this and set mode = ng::None.
+	// Graphics pointer is for internal window events.
 	void init (Graphics* const);
+	
+	// Set this to next event and return true, or
+	// there are no events so set mode = ng::None and return false.
 	bool next ();
+	
+	// Set mode = ng::None.
 	void consume ();
+	
+	// Return mode != ng::None.
 	bool exists ();
+	
+	// Internal. Called by next.
+	// Set this to text input event from SDL.
 	void text_input (SDL_Event* const);
 };
 
 // Audio
 enum EnumSound {
-	SoundPlayOnce,
-	SoundLoop,
-	SoundComplete
+	SoundPlayOnce = 1,
+	SoundLoop = 2,
+	SoundComplete = 3
 };
+
+// Given volume [0, 1], produce dB [-inf, 0].
+float volume_to_dB (float);
+
+// Given dB [-inf, 0], produce volume [0, 1].
+float dB_to_volume (float);
+
+// Convert dB to volume, mix, then convert back to dB.
+float mix_dB (float, float);
+
+float dB_silence ();
+float volume_silence ();
 
 class Clip {
 public:
 	SDL_AudioSpec spec;
-	uint8_t* data;
-	uint32_t samples;
+	float* buffer;
+	int samples;
 	
+	// Load .wav file into buffer, with same spec as audio device.
 	void init (Audio*, const char* file);
+	
+	// Free buffer.
 	void quit ();
 };
 
@@ -370,43 +428,69 @@ public:
 	int sample;
 	int mode;
 	
-	// start sound at the beginning of a clip
+	// Internal. Called by channel::add_sound.
+	// Initialize a sound pointing to the start of clip, with EnumSound mode.
 	void init (Clip*, int mode);
 };
 
 class Channel {
 public:
-	Sound* data;
+	Sound* queue;
 	int sounds;
+	float* buffer;
+	int samples;
 	
+	// Initialize sound queue and sample buffer to 0.
 	void init ();
+	
+	// Free queue and buffer.
 	void quit ();
 	
-	void start_sound (Clip*, int mode); // add sound
-	void stop_sound (int sound); // remove sound
-	void stop (); // remove all sounds
+	// Queue a sound with EnumSound mode.
+	void play_sound (Clip*, int mode);
+	
+	// Internal. Called by mix.
+	// Remove queued sound.
+	void remove_sound (int sound);
+	
+	// Remove all queued sounds.
+	void stop ();
+	
+	// Internal. Called by audio::mix_channel.
+	// Allocate samples for buffer and fill with silence.
+	void clear (int samples);
+	
+	// Internal. Called by mix.
+	// Mix samples from sound clip into channel buffer.
+	int mix_sound (int sound);
+	
+	// Internal. Called by audio::mix_channel.
+	// Mix sounds into channel buffer.
+	void mix ();
 };
 
 class Audio {
 public:
-	SDL_AudioSpec spec;
 	SDL_AudioDeviceID device;
-	uint8_t* data;
-	uint32_t samples;
+	SDL_AudioSpec spec;
+	float* buffer;
+	int samples;
 	bool playing;
 	
+	// Open audio device in a paused state and set playing to false.
 	void init ();
-	void quit ();
-	void play (); // unpause audio device
-	void pause (); // pause audio device
-	void stop (); // clear queued audio
 	
-	// void ng_audio_update (ngAudio*); // mix all sounds and queue
-	void clear (); // fill queue with silence
-	int mix_sample (int a, int b) const; // add decibels
-	void mix_sound (Channel*, int sound); // add clip data to queue
+	// Free buffer and close audio device.
+	void quit ();
+	
+	// Allocate at least ms of samples for buffer and fill with silence.
+	void clear (int ms);
+	
+	// Clear channel, mix sounds, and mix channel buffer.
 	void mix_channel (Channel*);
-	void queue (); // queue audio
+	
+	// Send buffer to audio device and set playing to true.
+	void play ();
 };
 
 } // namespace ng

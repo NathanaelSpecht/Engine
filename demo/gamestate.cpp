@@ -31,7 +31,7 @@ void fd::GameState::init () {
 		ng::init();
 		this->time.init();
 		this->graphics.init("Fire Days Demo", w, h);
-		//TODO audio & channels
+		this->audio.init();
 		this->event.init(&this->graphics);
 		
 	} catch (const std::exception& ex) {
@@ -44,13 +44,14 @@ void fd::GameState::init () {
 	this->tile_grid.init(&this->rect, w/16, h/16); // 16x16 tiles
 	this->background_color.init(0, 0, 0);
 	this->draw_color.init(255, 255, 255);
+	this->music_channel.init();
+	this->sound_channel.init();
 	
 	this->screen_mode = fd::None;
 	this->title_screen.init(this);
 	this->file_screen.init(this);
 	this->world_screen.init(this);
 	this->level_screen.init(this);
-	
 	this->hud_menu.init(this);
 	this->pause_menu.init(this);
 	this->debug_menu.init(this);
@@ -134,22 +135,26 @@ void fd::GameState::loop () {
 			this->graphics.draw();
 		}
 		
-		{ //TODO audio
-			/*
-			ng_audio_clear(&a);
-			ng_audio_mix_channel(&a, &music);
-			ng_audio_mix_channel(&a, &sound);
-			ng_audio_queue(&a);
-			*/
+		{
+			this->audio.clear(this->time.delta);
+			
+			this->audio.mix_channel(&this->music_channel);
+			this->audio.mix_channel(&this->sound_channel);
+			
+			this->audio.play();
 		}
 		
 		this->time.tick();
-		// TODO time.tick(target_millis);
 	}
 }
 
 void fd::GameState::quit () {
 	this->graphics.quit();
+	
+	this->music_channel.quit();
+	this->sound_channel.quit();
+	this->audio.quit();
+	
 	ng::quit();
 }
 

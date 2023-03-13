@@ -8,6 +8,7 @@ void ng::Time::init () {
 	this->last = this->now;
 	this->ticks = 0;
 	this->delta = 10;
+	this->max = 10;
 	this->tps = 100;
 	this->count = 0;
 	this->ms = 0;
@@ -25,6 +26,9 @@ void ng::Time::tick () {
 		this->delta = (int)((int64_t)(this->now) - this->last);
 	} else {
 		this->delta = (int)(((int64_t)UINT32_MAX + this->now) - this->last);
+	}
+	if (this->delta > this->max) {
+		this->max = this->delta;
 	}
 	this->last = this->now;
 	this->ticks++;
