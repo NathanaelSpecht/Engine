@@ -48,12 +48,15 @@ The `LICENSE` file applies to:
 - Engie demo in the `demo/` folder, `demo.cpp` and `Makefile`.
 - Engie tests in the `test/` folder, `test.cpp` and `Makefile`.
 
-Engie has been ported from C to C++.
+Modern versions of Engie are written in C++.
 The old C files from Engie version 0.0.1 are in the `archive/` folder.
 They have their own license.
 
 SDL2's files and license are in the `sdl/` folder, `README-SDL.txt`, and
 `SDL2.dll`.
+
+Demo and test images, music, and data files are in the `game-data/` folder.
+They have their own license.
 
 Engie will always be free and open source.
 
