@@ -1,0 +1,5 @@
+
+WAV
+Mono, 22050Hz
+signed 16-bit PCM
+
