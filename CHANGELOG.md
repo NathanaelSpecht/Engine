@@ -10,6 +10,7 @@ March 14:
 - Handle events, draw image, and play music in test app.
 - Play music in demo.
 - Clarify file formats and license/attribution for game data.
+- Still works on Windows.
 
 March 12:
 - Change audio from 8-bit to float32.
