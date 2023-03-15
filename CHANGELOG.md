@@ -5,6 +5,9 @@
 
 ## 2023 March
 
+March 14:
+- Background music and music license.
+
 March 12:
 - Change audio from 8-bit to float32.
 
