@@ -29,13 +29,14 @@ void fd::GameState::init () {
 	
 	try {
 		ng::init();
-		this->time.init();
 		this->graphics.init("Fire Days Demo", w, h);
 		this->audio.init();
 		this->event.init(&this->graphics);
+		this->time.init();
 		
 	} catch (const std::exception& ex) {
-		std::cout << NG_HERE << ": can't init: " << ex.what();
+		std::cout << "error at startup:\n"
+			<< ex.what();
 		exit(EXIT_FAILURE);
 	}
 	
@@ -44,17 +45,37 @@ void fd::GameState::init () {
 	this->tile_grid.init(&this->rect, w/16, h/16); // 16x16 tiles
 	this->background_color.init(0, 0, 0);
 	this->draw_color.init(255, 255, 255);
+	
+	const char* file;
+	try {
+		this->crazy_music.init(&this->audio, file="game-data/Corncob.wav");
+		
+	} catch (const std::exception& ex) {
+		std::cout << "error loading \"" << file << "\":\n"
+			<< ex.what();
+		exit(EXIT_FAILURE);
+	}
+	
 	this->music_channel.init();
 	this->sound_channel.init();
 	
-	this->screen_mode = fd::None;
-	this->title_screen.init(this);
-	this->file_screen.init(this);
-	this->world_screen.init(this);
-	this->level_screen.init(this);
-	this->hud_menu.init(this);
-	this->pause_menu.init(this);
-	this->debug_menu.init(this);
+	try {
+		this->music_channel.play_sound(&this->crazy_music, ng::SoundLoop);
+		
+		this->screen_mode = fd::None;
+		this->title_screen.init(this);
+		this->file_screen.init(this);
+		this->world_screen.init(this);
+		this->level_screen.init(this);
+		this->hud_menu.init(this);
+		this->pause_menu.init(this);
+		this->debug_menu.init(this);
+		
+	} catch (const std::exception& ex) {
+		std::cout << "error configuring data:\n"
+			<< ex.what();
+		exit(EXIT_FAILURE);
+	}
 	
 	this->goto_screen(fd::ScreenTitle);
 }
@@ -105,7 +126,7 @@ void fd::GameState::loop () {
 			}
 		}
 		
-		{
+		try {
 			this->graphics.set_color(&this->background_color);
 			this->graphics.clear();
 			
@@ -133,15 +154,25 @@ void fd::GameState::loop () {
 			this->debug_menu.draw(this);
 			
 			this->graphics.draw();
+			
+		} catch (const std::exception& ex) {
+			std::cout << "error drawing graphics:\n"
+				<< ex.what();
+			return;
 		}
 		
-		{
+		try {
 			this->audio.clear(this->time.delta);
 			
 			this->audio.mix_channel(&this->music_channel);
 			this->audio.mix_channel(&this->sound_channel);
 			
 			this->audio.play();
+			
+		} catch (const std::exception& ex) {
+			std::cout << "error playing audio:\n"
+				<< ex.what();
+			return;
 		}
 		
 		this->time.tick();

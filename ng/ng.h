@@ -12,7 +12,7 @@
 #include "SDL.h"
 
 // Engie
-#define NG_HERE __FILE__ << ":" << __LINE__
+#define NG_HERE __func__ << ":" << __LINE__
 
 namespace ng {
 

@@ -7,6 +7,9 @@
 
 March 14:
 - Background music and music license.
+- Handle events, draw image, and play music in test app.
+- Play music in demo.
+- Clarify file formats and license/attribution for game data.
 
 March 12:
 - Change audio from 8-bit to float32.

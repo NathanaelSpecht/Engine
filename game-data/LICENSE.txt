@@ -1,11 +1,18 @@
 
-"Corncob"
-"Kool Kats"
-"Cool Vibes"
-Music by Kevin MacLeod
-Available under the Creative Commons Attribution 3.0 Unported license.
+	"text"
+	by Nathanael Specht
+	Licensed under Creative Commons: Attribution 4.0 International (CC BY 4.0)
 
-"George Street Shuffle"
-by Kevin MacLeod
-Creative Commons - Attribution 4.0 International - CC BY 4.0
+	"Corncob"
+	"Kool Kats"
+	"Cool Vibes"
+	by Kevin MacLeod (incompetech.com)
+	Licensed under Creative Commons: Attribution 3.0 Unported (CC BY 3.0)
+	https://creativecommons.org/licenses/by/3.0
+
+	"George Street Shuffle"
+	by Kevin MacLeod (incompetech.com)
+	Licensed under Creative Commons: Attribution 4.0 International (CC BY 4.0)
+	https://creativecommons.org/licenses/by/4.0
+
 

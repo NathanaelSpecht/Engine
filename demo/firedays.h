@@ -122,16 +122,18 @@ public:
 
 class GameState {
 public:
-	ng::Time time;
+	ng::Event event;
 	ng::Graphics graphics;
 	ng::Audio audio;
-	ng::Event event;
+	ng::Time time;
 	
 	ng::Rect rect;
 	ng::Grid char_grid;
 	ng::Grid tile_grid;
 	ng::Color background_color;
 	ng::Color draw_color;
+	
+	ng::Clip crazy_music;
 	ng::Channel music_channel;
 	ng::Channel sound_channel;
 	

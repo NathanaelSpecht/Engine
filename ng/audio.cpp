@@ -238,13 +238,13 @@ void ng::Audio::init () {
 	desired.freq = 44100;
 	desired.format = AUDIO_F32SYS;
 	desired.samples = 4096;
-	desired.channels = 1;
+	desired.channels = 2;
 	desired.callback = NULL;
-	//int allowed_changes =
-	//	static_cast<int>(SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) |
-	//	static_cast<int>(SDL_AUDIO_ALLOW_CHANNELS_CHANGE) |
-	//	static_cast<int>(SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
-	this->device = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained, 0);
+	int allowed_changes =
+		static_cast<int>(SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) |
+		static_cast<int>(SDL_AUDIO_ALLOW_CHANNELS_CHANGE) |
+		static_cast<int>(SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
+	this->device = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained, allowed_changes);
 	if (this->device == 0) {
 		throw std::runtime_error(SDL_GetError());
 	}

@@ -1,5 +1,12 @@
 
-WAV
-Mono, 22050Hz
-signed 16-bit PCM
+The included BMP files are rgb, 8 bits per channel, no alpha channel.
+They are the original versions.
+They were created using Aseprite.
+	https://www.aseprite.org
+
+The included WAV files are mono, 22050 Hz, signed 16-bit PCM.
+They are altered versions of the originals.
+They were converted from their original format (stereo, MP3) using Audacity.
+	https://www.audacityteam.org
+
 
