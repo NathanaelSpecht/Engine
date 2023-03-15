@@ -1,7 +1,237 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "ng.h"
+#include "nggraphics.h"
+#include "ngmath.h"
+
+void ng::Vec::init_2d (int x, int y) {
+	this->x = x;
+	this->y = y;
+	this->z = 0;
+	this->w = 1;
+}
+
+void ng::Vec::init_2d (int x, int y, int w) {
+	this->x = x;
+	this->y = y;
+	this->z = 0;
+	this->w = w;
+}
+
+void ng::Vec::init_3d (int x, int y, int z) {
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = 1;
+}
+
+void ng::Vec::init_3d (int x, int y, int z, int w) {
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = w;
+}
+
+void ng::Circle::init (int x, int y, int r) {
+	this->x = x;
+	this->y = y;
+	this->r = r;
+}
+
+int ng::Circle::contains (int x, int y) const {
+	// return true/edge/false if circle contains (x, y).
+	int64_t r2, d2;
+	r2 = ng::sq(this->r);
+	d2 = ng::distance_sq(this->x, this->y, x, y);
+	if (d2 > r2) {
+		return ng::False;
+	} else if (d2 == r2) {
+		return ng::Edge;
+	} else {
+		return ng::True;
+	}
+}
+
+int ng::Circle::overlaps (const Circle* b) const {
+	// return true/edge/false if circles overlap/touch.
+	int64_t ar2, br2, d2;
+	ar2 = ng::sq(this->r);
+	br2 = ng::sq(b->r);
+	d2 = ng::distance_sq(this->x, this->y, b->x, b->y);
+	if (d2 > ar2 + br2) {
+		return ng::False;
+	} else if (d2 == ar2 + br2) {
+		return ng::Edge;
+	} else {
+		return ng::True;
+	}
+}
+
+int ng::Circle::collide (Vec* const v, const Circle* b) {
+	// return true/edge/false if circle a collided with stationary circle b, and
+	// move circle a by the part of its vec v that gets it to collide, and
+	// reduce vec v to the remaining motion.
+	// edge means they will touch and not move any further.
+	// assumes circles are not overlapping.
+	// TODO
+	return ng::False;
+}
+
+void ng::Rect::init (int x, int y, int w, int h) {
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
+}
+
+void ng::Rect::get_SDL_Rect (SDL_Rect* const r) const {
+	r->x = this->x;
+	r->y = this->y;
+	r->w = this->w;
+	r->h = this->h;
+}
+
+int ng::Rect::contains (int x, int y) const {
+	int xc = ng::contains(this->x, this->w, x);
+	int yc = ng::contains(this->y, this->h, y);
+	if (!xc || !yc) {
+		return ng::False;
+	} else if (xc == ng::Edge || yc == ng::Edge) {
+		return ng::Edge;
+	} else {
+		return ng::True;
+	}
+}
+
+int ng::Rect::overlaps (const Rect* r2) const {
+	int xo = ng::overlaps(this->x, this->w, r2->x, r2->w);
+	int yo = ng::overlaps(this->y, this->h, r2->y, r2->h);
+	if (!xo || !yo) {
+		return ng::False;
+	} else if (xo == ng::Edge || yo == ng::Edge) {
+		return ng::Edge;
+	} else {
+		return ng::True;
+	}
+}
+
+void ng::Rect::absolute_to_relative (const Rect* rel_rect, const Grid* rel_grid) {
+	if (rel_rect != NULL) {
+		this->x = this->x - rel_rect->x;
+		this->y = this->y - rel_rect->y;
+	}
+	if (rel_grid != NULL) {
+		this->x = (int)(this->x / rel_grid->tile_w);
+		this->y = (int)(this->y / rel_grid->tile_h);
+		this->w = (int)(this->w / rel_grid->tile_w);
+		this->h = (int)(this->h / rel_grid->tile_h);
+	}
+}
+
+void ng::Rect::relative_to_absolute (const Rect* rel_rect, const Grid* rel_grid) {
+	if (rel_grid != NULL) {
+		this->x = (int)(this->x * rel_grid->tile_w);
+		this->y = (int)(this->y * rel_grid->tile_h);
+		this->w = (int)(this->w * rel_grid->tile_w);
+		this->h = (int)(this->h * rel_grid->tile_h);
+	}
+	if (rel_rect != NULL) {
+		this->x = this->x + rel_rect->x;
+		this->y = this->y + rel_rect->y;
+	}
+}
+
+void ng::Rect::portal (const Rect* src, const Rect* dest) {
+	this->absolute_to_relative(src, NULL);
+	// convert relative coord spaces: src to dest
+	// r.x' / r.x = dest.w / src.w --> r.x' = (dest.w / src.w) * r.x
+	float scale_x = (float)dest->w / src->w;
+	float scale_y = (float)dest->h / src->h;
+	this->x = (int)(scale_x * this->x);
+	this->y = (int)(scale_y * this->y);
+	this->w = (int)(scale_x * this->w);
+	this->h = (int)(scale_y * this->h);
+	this->relative_to_absolute(dest, NULL);
+}
+
+void ng::Rect::moveby (Vec* const v) {
+	// move rect by vec, consuming vec in the process (vec -> 0).
+	this->x += v->x;
+	this->y += v->y;
+	v->x = 0;
+	v->y = 0;
+}
+
+void ng::Rect::moveto (Vec* const v, int x, int y) {
+	// move rect to (x, y), and reduce vec to the remaining motion.
+	// assumes (x, y) is in the direction of vec.
+	int dx = x - this->x;
+	int dy = y - this->y;
+	this->x += dx;
+	this->y += dy;
+	v->x -= dx;
+	v->y -= dy;
+}
+
+int ng::Rect::collide (Vec* const v, const Rect* b) {
+	// return true/edge/false if rect a collided with stationary rect b, and
+	// move rect a by the part of its vec v that gets it to collide, and
+	// reduce vec v to the remaining motion.
+	// edge means they will touch and not move any further.
+	// assumes rects are not overlapping.
+	// where is a in relation to b?
+	bool right = b->x + b->w < this->x;
+	bool left = this->x + this->w < b->x;
+	bool below = b->y + b->h < this->y;
+	bool above = this->y + this->h < b->y;
+	// a moving away from b.
+	if ((right && v->x >= 0) || (left && v->x <= 0) ||
+	(below && v->y >= 0) || (above && v->y <= 0)) {
+		this->moveby(v);
+		return ng::False;
+	}
+	// a moving vaguely towards b, from right/left/below/above.
+	int x, y, result;
+	if (right && ng::intercepts(b->w, this->x, v->x)) {
+		x = b->w;
+		y = ng::yint(x, this->x, this->y, v->x, v->y);
+		result = ng::overlaps(b->y, b->h, y, this->h);
+		if (result) {
+			this->moveto(v, x, y);
+			return result;
+		}
+	}
+	if (left && ng::intercepts(b->x, this->x + this->w, v->x)) {
+		x = b->x;
+		y = ng::yint(x, this->x - this->w, this->y, v->x, v->y);
+		result = ng::overlaps(b->y, b->h, y, this->h);
+		if (result) {
+			this->moveto(v, x, y);
+			return result;
+		}
+	}
+	if (below && ng::intercepts(b->h, this->y, v->y)) {
+		y = b->h;
+		x = ng::xint(y, this->x, this->y, v->x, v->y);
+		result = ng::overlaps(b->x, b->w, x, this->w);
+		if (result) {
+			this->moveto(v, x, y);
+			return result;
+		}
+	}
+	if (above && ng::intercepts(b->y, this->y + this->h, v->y)) {
+		y = b->y;
+		x = ng::xint(y, this->x, this->y - this->h, v->x, v->y);
+		result = ng::overlaps(b->x, b->w, x, this->w);
+		if (result) {
+			this->moveto(v, x, y);
+			return result;
+		}
+	}
+	// rects miss, no collision.
+	this->moveby(v);
+	return ng::False;
+}
 
 void ng::Grid::init (const Rect* r, int columns, int rows) {
 	this->columns = columns;

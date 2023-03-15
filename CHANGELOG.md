@@ -5,6 +5,12 @@
 
 ## 2023 March
 
+March 15:
+- Split ng.h into different headers, and rename sections with ng:
+ngtime, nggraphics, ngaudio, ngevent.
+- Put includes, defines, types, init, and quit in ngcore.
+- Combine physics and math into ngmath.
+
 March 14:
 - Background music and music license.
 - Handle events, draw image, and play music in test app.

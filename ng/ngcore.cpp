@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "ng.h"
+#include "ngcore.h"
 
 void ng::init () {
 	int retval = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO);

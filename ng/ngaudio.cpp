@@ -1,51 +1,8 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "ng.h"
-
-// Given volume [0, 1], produce dB [-inf, 0].
-float ng::volume_to_dB (float volume) {
-	float dB;
-	if (volume > 0.0f) {
-		dB = 20.0f * std::log10(volume);
-	} else {
-		dB = -144.0f;
-		//dB = -98.0f; // 16-bit noise floor
-	}
-	return dB;
-}
-
-// Given dB [-inf, 0], produce volume [0, 1].
-float ng::dB_to_volume (float dB) {
-	float volume;
-	volume = std::pow(10.0f, dB/20.0f);
-	return volume;
-}
-
-// Convert dB to volume, mix, then convert back to dB.
-float ng::mix_dB (float dB1, float dB2) {
-	// O(time):
-	//     2 * pow(b,x) = 2 * x = 10 +/- 10
-	//     2 * div(x)   = 2 * 1 = 1
-	//         log10(x)       1 = 1
-	// Bottleneck is the dB conversion to volume.
-	// Would be 10x faster to convert to volume when clip loads, then
-	// only convert to dB when audio gets queued.
-	float volume1, volume2, volume_mix, dB_mix;
-	volume1 = dB_to_volume(dB1);
-	volume2 = dB_to_volume(dB2);
-	volume_mix = volume1 + volume2;
-	dB_mix = volume_to_dB(volume_mix);
-	return dB_mix;
-}
-
-float ng::dB_silence () {
-	return -144.0f;
-}
-
-float ng::volume_silence () {
-	return 0.0f;
-}
+#include "ngaudio.h"
+#include "ngmath.h"
 
 // Load .wav file into buffer, with same spec as audio device.
 void ng::Clip::init (Audio* a, const char* file) {

@@ -1,27 +1,7 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "ng.h"
-
-void ng::Graphics::window_event (SDL_Event* const e) {
-	switch (e->window.event) {
-		case SDL_WINDOWEVENT_RESIZED: {
-			this->rect.w = e->window.data1;
-			this->rect.h = e->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
-			this->rect.w = e->window.data1;
-			this->rect.h = e->window.data2;
-			break;
-		} case SDL_WINDOWEVENT_MAXIMIZED: {
-			SDL_GetWindowSize(this->window, &this->rect.w, &this->rect.h);
-			break;
-		} case SDL_WINDOWEVENT_RESTORED: {
-			SDL_GetWindowSize(this->window, &this->rect.w, &this->rect.h);
-			break;
-		}
-	}
-}
+#include "ngevent.h"
 
 void ng::Mouse::init () {
 	this->left = false;
@@ -144,7 +124,7 @@ void ng::Event::init (Graphics* const g) {
 	for (int i=0; i<NG_EVENT_TEXT; i++) {
 		this->text[i] = '\0';
 	}
-	this->g = g;
+	this->graphics = g;
 }
 
 bool ng::Event::next () {
@@ -152,10 +132,6 @@ bool ng::Event::next () {
 		switch (this->event.type) {
 			case SDL_QUIT: {
 				this->mode = ng::Quit;
-				return true;
-			} case SDL_WINDOWEVENT: {
-				this->mode = ng::WindowEvent;
-				this->g->window_event(&this->event);
 				return true;
 			} case SDL_MOUSEBUTTONDOWN: {
 				// If mouse is held down, and produces many mouse presses,
@@ -195,6 +171,10 @@ bool ng::Event::next () {
 				this->mode = ng::TextInput;
 				this->text_input(&this->event);
 				return true;
+			} case SDL_WINDOWEVENT: {
+				this->mode = ng::WindowEvent;
+				this->window_event(&this->event);
+				return true;
 			} default: {
 				this->mode = ng::None;
 			}
@@ -219,6 +199,30 @@ void ng::Event::text_input (SDL_Event* const e) {
 	}
 	for (; i<NG_EVENT_TEXT; i++) {
 		this->text[i] = '\0';
+	}
+}
+
+void ng::Event::window_event (SDL_Event* const e) {
+	switch (e->window.event) {
+		case SDL_WINDOWEVENT_RESIZED: {
+			this->graphics->rect.w = e->window.data1;
+			this->graphics->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
+			this->graphics->rect.w = e->window.data1;
+			this->graphics->rect.h = e->window.data2;
+			break;
+		} case SDL_WINDOWEVENT_MAXIMIZED: {
+			SDL_GetWindowSize(this->graphics->window,
+				&this->graphics->rect.w,
+				&this->graphics->rect.h);
+			break;
+		} case SDL_WINDOWEVENT_RESTORED: {
+			SDL_GetWindowSize(this->graphics->window,
+				&this->graphics->rect.w,
+				&this->graphics->rect.h);
+			break;
+		}
 	}
 }
 
