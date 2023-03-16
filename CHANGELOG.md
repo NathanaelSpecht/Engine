@@ -10,6 +10,7 @@ March 15:
 ngtime, nggraphics, ngaudio, ngevent.
 - Put includes, defines, types, init, and quit in ngcore.
 - Combine physics and math into ngmath.
+- Audio and channel volume.
 
 March 14:
 - Background music and music license.

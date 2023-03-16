@@ -55,17 +55,29 @@ namespace ng {
 	// euclidean/pythagorean distance.
 	int distance (int x1, int y1, int x2, int y2);
 	
-	// Given volume [0, 1], produce dB [-inf, 0].
-	float volume_to_dB (float);
+	// Given x in [x_min, x_max], produce y in [0, 1].
+	float normalize (float x, float x_min, float x_max);
 	
-	// Given dB [-inf, 0], produce volume [0, 1].
-	float dB_to_volume (float);
+	// Given x in [0, 1], produce y in [y_min, y_max].
+	float denormalize (float x, float y_min, float y_max);
 	
-	// Convert dB to volume, mix, then convert back to dB.
+	// Force x into the range [x_min, x_max].
+	float clamp (float x, float x_min, float x_max);
+	
+	// Given amplitude [0, 1], produce decibels [-inf, 0].
+	float amp_to_dB (float);
+	
+	// Given decibels [-inf, 0], produce amplitude [0, 1].
+	float dB_to_amp (float);
+	
+	// Convert decibels to amplitude, mix, then convert back to decibels.
 	float mix_dB (float, float);
 	
+	// Given linear volume x [0, 1], produce exponential volume y [0, 1].
+	// Multiply decibels by y to apply volume x.
+	float dB_volume (float);
+	
 	float dB_silence ();
-	float volume_silence ();
 
 }
 

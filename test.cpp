@@ -15,6 +15,7 @@ int main (int argc, char** argv) {
 		event.init(&graphics);
 		graphics.init("Fire Days Demo", 640, 480);
 		audio.init();
+		audio.volume = 1.0f;
 		time.init();
 	} catch (const std::exception& ex) {
 		std::cout << "error at startup:\n"
@@ -46,6 +47,7 @@ int main (int argc, char** argv) {
 	
 	ng::Channel channel;
 	channel.init();
+	channel.volume = 1.0f;
 	
 	try {
 		channel.play_sound(&clip, ng::SoundLoop);
@@ -96,6 +98,18 @@ int main (int argc, char** argv) {
 							break;
 						case SDL_SCANCODE_D:
 							right = 1;
+							break;
+						case SDL_SCANCODE_PERIOD:
+							channel.volume = ng::clamp(channel.volume + 0.05f, 0.0f, 1.0f);
+							break;
+						case SDL_SCANCODE_COMMA:
+							channel.volume = ng::clamp(channel.volume - 0.05f, 0.0f, 1.0f);
+							break;
+						case SDL_SCANCODE_M:
+							audio.volume = ng::clamp(audio.volume + 0.05f, 0.0f, 1.0f);
+							break;
+						case SDL_SCANCODE_N:
+							audio.volume = ng::clamp(audio.volume - 0.05f, 0.0f, 1.0f);
 							break;
 						default: {}
 					}

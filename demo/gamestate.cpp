@@ -57,7 +57,9 @@ void fd::GameState::init () {
 	}
 	
 	this->music_channel.init();
+	this->music_channel.volume = 0.75;
 	this->sound_channel.init();
+	this->sound_channel.volume = 0.75;
 	
 	try {
 		this->music_channel.play_sound(&this->crazy_music, ng::SoundLoop);

@@ -75,6 +75,7 @@ void ng::Channel::init () {
 	this->sounds = 0;
 	this->buffer = NULL;
 	this->samples = 0;
+	this->volume = 1.0;
 }
 
 // Free queue and buffer.
@@ -176,7 +177,7 @@ int ng::Channel::mix_sound (int sound) {
 
 // Mix sounds into channel buffer.
 void ng::Channel::mix () {
-	for (int i=0; i < sounds;) {
+	for (int i=0; i < this->sounds;) {
 		if (this->mix_sound(i) == ng::SoundComplete) {
 			this->remove_sound(i);
 		} else {
@@ -189,6 +190,7 @@ void ng::Channel::mix () {
 void ng::Audio::init () {
 	this->buffer = NULL;
 	this->samples = 0;
+	this->volume = 1.0;
 	this->playing = false;
 	
 	SDL_AudioSpec desired, obtained;
@@ -272,8 +274,11 @@ void ng::Audio::mix_channel (Channel* c) {
 	
 	c->clear(this->samples); // Channel samples = samples.
 	c->mix();
+	
+	float dv = ng::dB_volume(c->volume);
 	for (int i=0; i < this->samples; i++) {
-		this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i]);
+		c->buffer[i] *= dv;
+		this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i] * dv);
 	}
 }
 
@@ -291,10 +296,11 @@ void ng::Audio::play () {
 	chunks = this->samples / chunk_samples;
 	chunk_bytes = chunk_samples * sizeof(float);
 	
+	float dv = ng::dB_volume(this->volume);
 	float* chunk = static_cast<float*>(std::malloc(chunk_bytes));
 	for (int i=0; i < chunks; i++) {
 		for (int f=0; f < chunk_samples; f++) {
-			chunk[f] = this->buffer[(i * chunk_samples) + f];
+			chunk[f] = this->buffer[(i * chunk_samples) + f] * dv;
 		}
 		int result = SDL_QueueAudio(this->device, chunk, static_cast<uint32_t>(chunk_bytes));
 		if (result != 0) {

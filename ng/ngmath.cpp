@@ -149,48 +149,64 @@ int ng::distance (int x1, int y1, int x2, int y2) {
 	return ng::sqrt(ng::distance_sq(x1, y1, x2, y2));
 }
 
-// Given volume [0, 1], produce dB [-inf, 0].
-float ng::volume_to_dB (float volume) {
-	float dB;
-	if (volume > 0.0f) {
-		dB = 20.0f * std::log10(volume);
+// Given x in [x_min, x_max], produce y in [0, 1].
+float ng::normalize (float x, float x_min, float x_max) {
+	float y;
+	y = (x - x_min) / (x_max - x_min);
+	return y;
+}
+
+// Given x in [0, 1], produce y in [y_min, y_max].
+float ng::denormalize (float x, float y_min, float y_max) {
+	float y;
+	y = (x * (y_max - y_min)) + y_min;
+	return y;
+}
+
+// Force x into the range [x_min, x_max].
+float ng::clamp (float x, float x_min, float x_max) {
+	float y;
+	if (x < x_min) {
+		y = x_min;
+	} else if (x > x_max) {
+		y = x_max;
 	} else {
-		dB = -144.0f;
-		//dB = -98.0f; // 16-bit noise floor
+		y = x;
 	}
+	return y;
+}
+
+// Given amplitude [0, 1], produce decibels [-inf, 0].
+float ng::amp_to_dB (float amp) {
+	float dB;
+	dB = 20.0f * std::log10(amp);
 	return dB;
 }
 
-// Given dB [-inf, 0], produce volume [0, 1].
-float ng::dB_to_volume (float dB) {
-	float volume;
-	volume = std::pow(10.0f, dB/20.0f);
-	return volume;
+// Given decibels [-inf, 0], produce amplitude [0, 1].
+float ng::dB_to_amp (float dB) {
+	float amp;
+	amp = std::pow(10.0f, dB/20.0f);
+	return amp;
 }
 
-// Convert dB to volume, mix, then convert back to dB.
+// Convert decibels to amplitude, mix, then convert back to decibels.
 float ng::mix_dB (float dB1, float dB2) {
-	// O(time):
-	//     2 * pow(b,x) = 2 * x = 10 +/- 10
-	//     2 * div(x)   = 2 * 1 = 1
-	//         log10(x)       1 = 1
-	// Bottleneck is the dB conversion to volume.
-	// Would be 10x faster to convert to volume when clip loads, then
-	// only convert to dB when audio gets queued.
-	float volume1, volume2, volume_mix, dB_mix;
-	volume1 = dB_to_volume(dB1);
-	volume2 = dB_to_volume(dB2);
-	volume_mix = volume1 + volume2;
-	dB_mix = volume_to_dB(volume_mix);
-	return dB_mix;
+	float y;
+	y = ng::amp_to_dB(ng::dB_to_amp(dB1) + ng::dB_to_amp(dB2));
+	return y;
+}
+
+// Given linear volume x [0, 1], produce exponential volume y [0, 1].
+// Multiply decibels by y to apply volume x.
+float ng::dB_volume (float x) {
+	float y;
+	y = ng::normalize(std::exp(x) - 1.0f, 0.0f, 2.719f - 1.0f);
+	return y;
 }
 
 float ng::dB_silence () {
 	return -144.0f;
-}
-
-float ng::volume_silence () {
-	return 0.0f;
 }
 
 

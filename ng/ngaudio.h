@@ -44,6 +44,7 @@ namespace ng {
 		int sounds;
 		float* buffer;
 		int samples;
+		float volume;
 		
 		// Initialize sound queue and sample buffer to 0.
 		void init ();
@@ -80,6 +81,7 @@ namespace ng {
 		SDL_AudioSpec spec;
 		float* buffer;
 		int samples;
+		float volume;
 		bool playing;
 		
 		// Open audio device in a paused state and set playing to false.
