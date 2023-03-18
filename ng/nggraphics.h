@@ -92,6 +92,10 @@ public:
 	float tile_w;
 	float tile_h;
 	
+	// float multiply is 10x speed of divide, so multiply by inverse instead of dividing.
+	float tile_w_inv; // 1 / tile_w
+	float tile_h_inv; // 1 / tile_h
+	
 	void init (const Rect*, int columns, int rows);
 	void portal (const Rect* src, const Rect* dest);
 };
@@ -123,6 +127,17 @@ public:
 	void set_angle (double angle);
 };
 
+class Tileset {
+public:
+	Image* image;
+	Rect rect;
+	Grid grid;
+	int column_offset;
+	int row_offset;
+	
+	void init (Image*, const Rect*, int columns, int rows);
+};
+
 class Graphics {
 public:
 	SDL_Window* window;
@@ -141,6 +156,9 @@ public:
 	void draw_rect (const Rect*, int draw);
 	void draw_line (int x1, int y1, int x2, int y2);
 	void draw_point (int x, int y);
+	
+	void draw_tile (Tileset* const, const Rect*, const Rect*);
+	void draw_text (Tileset* const, const char*, const Rect*, const Grid*);
 	
 	/*
 	void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame,

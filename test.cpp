@@ -26,9 +26,12 @@ int main (int argc, char** argv) {
 	ng::Color background_color;
 	background_color.init(0, 0, 0);
 	ng::Color draw_color;
-	draw_color.init(255, 255, 255);
+	draw_color.init(32, 32, 32);
 	ng::Color color_key;
 	color_key.init(0, 0, 0);
+	
+	ng::Color rect_color;
+	rect_color.init(64, 16, 0);
 	ng::Rect rect;
 	rect.init((graphics.rect.w/2)-256, (graphics.rect.h/2)-80, 256*2, 80*2);
 	
@@ -62,6 +65,18 @@ int main (int argc, char** argv) {
 	down = 0;
 	left = 0;
 	right = 0;
+	
+	ng::Tileset tileset;
+	tileset.init(&image, &image.rect, 32, 6);
+	tileset.row_offset = -1;
+	
+	int line_w, line_h;
+	line_w = 8;
+	line_h = 16;
+	ng::Rect text_rect;
+	text_rect.init(line_w, line_h, graphics.rect.w-(line_w*2), graphics.rect.h-(line_h*2));
+	ng::Grid text_grid;
+	text_grid.init(&text_rect, text_rect.w/line_w, text_rect.h/line_h);
 	
 	while (true) {
 		while (event.next()) {
@@ -137,15 +152,31 @@ int main (int argc, char** argv) {
 			}
 		}
 		
-		rect.x += right - left;
-		rect.y += down - up;
+		rect.x += (right - left) * 3;
+		rect.y += (down - up) * 3;
 		
 		try {
 			graphics.set_color(&background_color);
 			graphics.clear();
 			
 			graphics.set_color(&draw_color);
-			graphics.draw_image(&image, &image.rect, &rect);
+			graphics.draw_rect(&text_rect, ng::DrawFill);
+			
+			graphics.set_color(&rect_color);
+			graphics.draw_rect(&rect, ng::DrawFill);
+			
+			graphics.draw_text(&tileset,
+				"My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
+				"Sleep well to-night. At three to-morrow the diligence will start for "
+				"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
+				"will await you and will bring you to me. I trust that your journey from "
+				"London has been a happy one, and that you will enjoy your stay in my "
+				"beautiful land.\n"
+				"                                                        Your friend,\n"
+				"                                                        Dracula.",
+				&text_rect, &text_grid);
+			
+			//graphics.draw_image(&image, &image.rect, &rect);
 			
 			graphics.draw();
 			

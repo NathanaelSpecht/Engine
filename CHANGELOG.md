@@ -5,6 +5,9 @@
 
 ## 2023 March
 
+March 17:
+- Tileset and text-drawing code.
+
 March 15:
 - Split ng.h into different headers, and rename sections with ng:
 ngtime, nggraphics, ngaudio, ngevent.

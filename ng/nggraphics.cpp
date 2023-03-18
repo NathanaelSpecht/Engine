@@ -121,19 +121,19 @@ void ng::Rect::absolute_to_relative (const Rect* rel_rect, const Grid* rel_grid)
 		this->y = this->y - rel_rect->y;
 	}
 	if (rel_grid != NULL) {
-		this->x = (int)(this->x / rel_grid->tile_w);
-		this->y = (int)(this->y / rel_grid->tile_h);
-		this->w = (int)(this->w / rel_grid->tile_w);
-		this->h = (int)(this->h / rel_grid->tile_h);
+		this->x = (int)((float)this->x * rel_grid->tile_w_inv);
+		this->y = (int)((float)this->y * rel_grid->tile_h_inv);
+		this->w = (int)((float)this->w * rel_grid->tile_w_inv);
+		this->h = (int)((float)this->h * rel_grid->tile_h_inv);
 	}
 }
 
 void ng::Rect::relative_to_absolute (const Rect* rel_rect, const Grid* rel_grid) {
 	if (rel_grid != NULL) {
-		this->x = (int)(this->x * rel_grid->tile_w);
-		this->y = (int)(this->y * rel_grid->tile_h);
-		this->w = (int)(this->w * rel_grid->tile_w);
-		this->h = (int)(this->h * rel_grid->tile_h);
+		this->x = (int)((float)this->x * rel_grid->tile_w);
+		this->y = (int)((float)this->y * rel_grid->tile_h);
+		this->w = (int)((float)this->w * rel_grid->tile_w);
+		this->h = (int)((float)this->h * rel_grid->tile_h);
 	}
 	if (rel_rect != NULL) {
 		this->x = this->x + rel_rect->x;
@@ -145,12 +145,12 @@ void ng::Rect::portal (const Rect* src, const Rect* dest) {
 	this->absolute_to_relative(src, NULL);
 	// convert relative coord spaces: src to dest
 	// r.x' / r.x = dest.w / src.w --> r.x' = (dest.w / src.w) * r.x
-	float scale_x = (float)dest->w / src->w;
-	float scale_y = (float)dest->h / src->h;
-	this->x = (int)(scale_x * this->x);
-	this->y = (int)(scale_y * this->y);
-	this->w = (int)(scale_x * this->w);
-	this->h = (int)(scale_y * this->h);
+	float scale_x = (float)dest->w / (float)src->w;
+	float scale_y = (float)dest->h / (float)src->h;
+	this->x = (int)(scale_x * (float)this->x);
+	this->y = (int)(scale_y * (float)this->y);
+	this->w = (int)(scale_x * (float)this->w);
+	this->h = (int)(scale_y * (float)this->h);
 	this->relative_to_absolute(dest, NULL);
 }
 
@@ -236,18 +236,22 @@ int ng::Rect::collide (Vec* const v, const Rect* b) {
 void ng::Grid::init (const Rect* r, int columns, int rows) {
 	this->columns = columns;
 	this->rows = rows;
-	this->tile_w = (float)r->w / columns;
-	this->tile_h = (float)r->h / rows;
+	this->tile_w = (float)r->w / (float)columns;
+	this->tile_h = (float)r->h / (float)rows;
+	this->tile_w_inv = (float)columns / (float)r->w;
+	this->tile_h_inv = (float)rows / (float)r->h;
 }
 
 void ng::Grid::portal (const Rect* src, const Rect* dest) {
 	// convert relative coord spaces: src to dest
 	// g.tile_w' / g.tile_w = dest.w / src.w
 	// --> g.tile_w' = (dest.w / src.w) * g.tile_w
-	float scale_x = (float)dest->w / src->w;
-	float scale_y = (float)dest->h / src->h;
+	float scale_x = (float)dest->w / (float)src->w;
+	float scale_y = (float)dest->h / (float)src->h;
 	this->tile_w = scale_x * this->tile_w;
 	this->tile_h = scale_y * this->tile_h;
+	this->tile_w_inv = 1.0f / this->tile_w;
+	this->tile_h_inv = 1.0f / this->tile_h;
 }
 
 void ng::Color::init (int r, int g, int b) {
@@ -323,6 +327,14 @@ void ng::Image::set_flip (int flip) {
 
 void ng::Image::set_angle (double angle) {
 	this->angle = angle;
+}
+
+void ng::Tileset::init (Image* image, const Rect* rect, int columns, int rows) {
+	this->image = image;
+	this->rect = *rect;
+	this->grid.init(rect, columns, rows);
+	this->column_offset = 0;
+	this->row_offset = 0;
 }
 
 void ng::Graphics::init (const char* title, int w, int h) {
@@ -466,6 +478,49 @@ void ng::Graphics::draw_line (int x1, int y1, int x2, int y2) {
 void ng::Graphics::draw_point (int x, int y) {
 	if (SDL_RenderDrawPoint(this->renderer, x, y) != 0) {
 		throw std::runtime_error(SDL_GetError());
+	}
+}
+
+void ng::Graphics::draw_tile (Tileset* const tileset, const Rect* src, const Rect* dest) {
+	Rect tile = *src;
+	tile.x += tileset->column_offset;
+	tile.y += tileset->row_offset;
+	tile.relative_to_absolute(&tileset->rect, &tileset->grid);
+	this->draw_image(tileset->image, &tile, dest);
+}
+
+void ng::Graphics::draw_text (Tileset* const tileset, const char* str,
+const Rect* rect, const Grid* grid) {
+	Rect src, tile, dest;
+	src.init(0, 0, 1, 1);
+	tile.init(0, 0, 1, 1);
+	
+	int c;
+	for (int i=0; str[i] != '\0'; i++) {
+		if (str[i] == '\n') {
+			tile.x = 0;
+			tile.y += 1;
+			if (tile.y >= grid->rows) {
+				return;
+			}
+			continue;
+		}
+	
+		c = static_cast<int>(str[i]);
+		src.x = c % tileset->grid.columns;
+		src.y = c / tileset->grid.columns;
+		dest = tile;
+		dest.relative_to_absolute(rect, grid);
+		this->draw_tile(tileset, &src, &dest);
+		
+		tile.x += 1;
+		if (tile.x >= grid->columns) {
+			tile.x = 0;
+			tile.y += 1;
+			if (tile.y >= grid->rows) {
+				return;
+			}
+		}
 	}
 }
 
