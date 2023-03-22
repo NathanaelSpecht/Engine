@@ -25,8 +25,8 @@ void fd::WorldScreen::event (GameState* gs) {
 }
 
 void fd::WorldScreen::draw (GameState* gs) {
-	fd::frame_draw_rect(&this->header, gs, NULL);
-	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->header, gs);
+	fd::frame_draw_rect(&this->frame, gs);
 	fd::frame_draw_rect(&this->level1, gs, &this->frame);
 }
 

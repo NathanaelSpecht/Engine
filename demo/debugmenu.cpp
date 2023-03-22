@@ -34,7 +34,7 @@ void fd::DebugMenu::draw (GameState* gs) {
 		return;
 	}
 	
-	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->frame, gs);
 	fd::frame_draw_rect(&this->version, gs, &this->frame);
 	fd::frame_draw_rect(&this->fps, gs, &this->frame);
 }

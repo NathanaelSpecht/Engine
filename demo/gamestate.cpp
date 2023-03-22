@@ -8,15 +8,23 @@ void fd::frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame) {
 	r->init(gs->event.mouse.x, gs->event.mouse.y, 0, 0);
 	r->portal(&gs->graphics.rect, &gs->rect);
 	// frame uses grid coords, so give r grid coords before going relative to frame.
-	r->absolute_to_relative(NULL, &gs->tile_grid);
-	r->absolute_to_relative(frame, NULL);
+	r->absolute_to_relative(&gs->tile_grid);
+	r->absolute_to_relative(frame);
+}
+
+void fd::frame_draw_rect(const ng::Rect* r, GameState* gs) {
+	ng::Rect r2 = *r;
+	r2.relative_to_absolute(&gs->tile_grid);
+	
+	r2.portal(&gs->rect, &gs->graphics.rect);
+	gs->graphics.draw_rect(&r2, ng::DrawFrame);
 }
 
 void fd::frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame) {
 	ng::Rect r2 = *r;
 	// frame uses grid coords, so go absolute before removing grid coords.
-	r2.relative_to_absolute(frame, NULL);
-	r2.relative_to_absolute(NULL, &gs->tile_grid);
+	r2.relative_to_absolute(frame);
+	r2.relative_to_absolute(&gs->tile_grid);
 	
 	r2.portal(&gs->rect, &gs->graphics.rect);
 	gs->graphics.draw_rect(&r2, ng::DrawFrame);

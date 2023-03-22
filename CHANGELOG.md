@@ -5,6 +5,11 @@
 
 ## 2023 March
 
+March 21:
+- Refactor ngtime.
+- Replaced NULL function parameters with overloaded functions
+that don't take those parameters.
+
 March 17:
 - Tileset and text-drawing code.
 

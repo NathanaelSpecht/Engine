@@ -73,7 +73,11 @@ int ng::Circle::collide (Vec* const v, const Circle* b) {
 	// reduce vec v to the remaining motion.
 	// edge means they will touch and not move any further.
 	// assumes circles are not overlapping.
+	
 	// TODO
+	// a collides with b when (a.x, a.y) is within a.r + b.r of (b.x, b.y).
+	// -> when (a.x, a.y) intersects circle c (b.x, b.y, a.r + b.r).
+	
 	return ng::False;
 }
 
@@ -82,13 +86,6 @@ void ng::Rect::init (int x, int y, int w, int h) {
 	this->y = y;
 	this->w = w;
 	this->h = h;
-}
-
-void ng::Rect::get_SDL_Rect (SDL_Rect* const r) const {
-	r->x = this->x;
-	r->y = this->y;
-	r->w = this->w;
-	r->h = this->h;
 }
 
 int ng::Rect::contains (int x, int y) const {
@@ -115,43 +112,51 @@ int ng::Rect::overlaps (const Rect* r2) const {
 	}
 }
 
+void ng::Rect::absolute_to_relative (const Rect* rel_rect) {
+	this->x = this->x - rel_rect->x;
+	this->y = this->y - rel_rect->y;
+}
+
+void ng::Rect::absolute_to_relative (const Grid* rel_grid) {
+	this->x = static_cast<int>(static_cast<float>(this->x) * rel_grid->tile_w_inv);
+	this->y = static_cast<int>(static_cast<float>(this->y) * rel_grid->tile_h_inv);
+	this->w = static_cast<int>(static_cast<float>(this->w) * rel_grid->tile_w_inv);
+	this->h = static_cast<int>(static_cast<float>(this->h) * rel_grid->tile_h_inv);
+}
+
 void ng::Rect::absolute_to_relative (const Rect* rel_rect, const Grid* rel_grid) {
-	if (rel_rect != NULL) {
-		this->x = this->x - rel_rect->x;
-		this->y = this->y - rel_rect->y;
-	}
-	if (rel_grid != NULL) {
-		this->x = (int)((float)this->x * rel_grid->tile_w_inv);
-		this->y = (int)((float)this->y * rel_grid->tile_h_inv);
-		this->w = (int)((float)this->w * rel_grid->tile_w_inv);
-		this->h = (int)((float)this->h * rel_grid->tile_h_inv);
-	}
+	this->absolute_to_relative(rel_rect);
+	this->absolute_to_relative(rel_grid);
+}
+
+void ng::Rect::relative_to_absolute (const Rect* rel_rect) {
+	this->x = this->x + rel_rect->x;
+	this->y = this->y + rel_rect->y;
+}
+
+void ng::Rect::relative_to_absolute (const Grid* rel_grid) {
+	this->x = static_cast<int>(static_cast<float>(this->x) * rel_grid->tile_w);
+	this->y = static_cast<int>(static_cast<float>(this->y) * rel_grid->tile_h);
+	this->w = static_cast<int>(static_cast<float>(this->w) * rel_grid->tile_w);
+	this->h = static_cast<int>(static_cast<float>(this->h) * rel_grid->tile_h);
 }
 
 void ng::Rect::relative_to_absolute (const Rect* rel_rect, const Grid* rel_grid) {
-	if (rel_grid != NULL) {
-		this->x = (int)((float)this->x * rel_grid->tile_w);
-		this->y = (int)((float)this->y * rel_grid->tile_h);
-		this->w = (int)((float)this->w * rel_grid->tile_w);
-		this->h = (int)((float)this->h * rel_grid->tile_h);
-	}
-	if (rel_rect != NULL) {
-		this->x = this->x + rel_rect->x;
-		this->y = this->y + rel_rect->y;
-	}
+	this->relative_to_absolute(rel_grid);
+	this->relative_to_absolute(rel_rect);
 }
 
 void ng::Rect::portal (const Rect* src, const Rect* dest) {
-	this->absolute_to_relative(src, NULL);
+	this->absolute_to_relative(src);
 	// convert relative coord spaces: src to dest
 	// r.x' / r.x = dest.w / src.w --> r.x' = (dest.w / src.w) * r.x
-	float scale_x = (float)dest->w / (float)src->w;
-	float scale_y = (float)dest->h / (float)src->h;
-	this->x = (int)(scale_x * (float)this->x);
-	this->y = (int)(scale_y * (float)this->y);
-	this->w = (int)(scale_x * (float)this->w);
-	this->h = (int)(scale_y * (float)this->h);
-	this->relative_to_absolute(dest, NULL);
+	float scale_x = static_cast<float>(dest->w) / static_cast<float>(src->w);
+	float scale_y = static_cast<float>(dest->h) / static_cast<float>(src->h);
+	this->x = static_cast<int>(scale_x * static_cast<float>(this->x));
+	this->y = static_cast<int>(scale_y * static_cast<float>(this->y));
+	this->w = static_cast<int>(scale_x * static_cast<float>(this->w));
+	this->h = static_cast<int>(scale_y * static_cast<float>(this->h));
+	this->relative_to_absolute(dest);
 }
 
 void ng::Rect::moveby (Vec* const v) {
@@ -236,18 +241,18 @@ int ng::Rect::collide (Vec* const v, const Rect* b) {
 void ng::Grid::init (const Rect* r, int columns, int rows) {
 	this->columns = columns;
 	this->rows = rows;
-	this->tile_w = (float)r->w / (float)columns;
-	this->tile_h = (float)r->h / (float)rows;
-	this->tile_w_inv = (float)columns / (float)r->w;
-	this->tile_h_inv = (float)rows / (float)r->h;
+	this->tile_w = static_cast<float>(r->w) / static_cast<float>(columns);
+	this->tile_h = static_cast<float>(r->h) / static_cast<float>(rows);
+	this->tile_w_inv = static_cast<float>(columns) / static_cast<float>(r->w);
+	this->tile_h_inv = static_cast<float>(rows) / static_cast<float>(r->h);
 }
 
 void ng::Grid::portal (const Rect* src, const Rect* dest) {
 	// convert relative coord spaces: src to dest
 	// g.tile_w' / g.tile_w = dest.w / src.w
 	// --> g.tile_w' = (dest.w / src.w) * g.tile_w
-	float scale_x = (float)dest->w / (float)src->w;
-	float scale_y = (float)dest->h / (float)src->h;
+	float scale_x = static_cast<float>(dest->w) / static_cast<float>(src->w);
+	float scale_y = static_cast<float>(dest->h) / static_cast<float>(src->h);
 	this->tile_w = scale_x * this->tile_w;
 	this->tile_h = scale_y * this->tile_h;
 	this->tile_w_inv = 1.0f / this->tile_w;
@@ -400,24 +405,22 @@ void ng::Graphics::draw () {
 	SDL_RenderPresent(this->renderer);
 }
 
-void ng::Graphics::draw_image (Image* const image, const Rect* s, const Rect* d) {
-	if (image == NULL || image->texture == NULL) {
-		this->draw_rect(d, true);
-	}
-	SDL_Rect src;
-	if (s != NULL) {
-		s->get_SDL_Rect(&src);
-	} else {
-		image->rect.get_SDL_Rect(&src);
-	}
-	SDL_Rect dest;
-	if (d != NULL) {
-		d->get_SDL_Rect(&dest);
-	} else {
-		this->rect.get_SDL_Rect(&dest);
-	}
+// Draw whole image to whole window.
+void ng::Graphics::draw_image (Image* const image) {
+	this->draw_image(image, &image->rect, &this->rect);
+}
+
+// Draw whole image to part of window.
+void ng::Graphics::draw_image (Image* const image, const Rect* dest) {
+	this->draw_image(image, &image->rect, dest);
+}
+
+// Draw part of image to part of window.
+void ng::Graphics::draw_image (Image* const image, const Rect* src, const Rect* dest) {
+	SDL_Rect src_sdl = {src->x, src->y, src->w, src->h};
+	SDL_Rect dest_sdl = {dest->x, dest->y, dest->w, dest->h};
 	if (image->flip == ng::None && image->angle == 0.0) {
-		if (SDL_RenderCopy(this->renderer, image->texture, &src, &dest) != 0) {
+		if (SDL_RenderCopy(this->renderer, image->texture, &src_sdl, &dest_sdl) != 0) {
 			throw std::runtime_error(SDL_GetError());
 		}
 	} else {
@@ -432,39 +435,36 @@ void ng::Graphics::draw_image (Image* const image, const Rect* s, const Rect* d)
 			} case ng::FlipY: {
 				flip = SDL_FLIP_VERTICAL;
 				break;
-			} default: {
+			} case ng::FlipXY: {
 				flip = static_cast<SDL_RendererFlip>(
 					static_cast<int>(SDL_FLIP_HORIZONTAL) |
 					static_cast<int>(SDL_FLIP_VERTICAL));
+			} default: {
+				throw std::logic_error("unsupported flip mode");
 			}
 		}
-		if (SDL_RenderCopyEx(this->renderer, image->texture, &src, &dest,
+		if (SDL_RenderCopyEx(this->renderer, image->texture, &src_sdl, &dest_sdl,
 		image->angle, NULL, flip) != 0) {
 			throw std::runtime_error(SDL_GetError());
 		}
 	}
 }
 
-void ng::Graphics::draw_rect (const Rect* r, int draw) {
-	SDL_Rect dest;
-	if (r != NULL) {
-		r->get_SDL_Rect(&dest);
-	} else {
-		this->rect.get_SDL_Rect(&dest);
-	}
+void ng::Graphics::draw_rect (const Rect* dest, int draw) {
+	SDL_Rect dest_sdl = {dest->x, dest->y, dest->w, dest->h};
 	switch (draw) {
 		case ng::DrawFill: {
-			if (SDL_RenderFillRect(this->renderer, &dest) != 0) {
+			if (SDL_RenderFillRect(this->renderer, &dest_sdl) != 0) {
 				throw std::runtime_error(SDL_GetError());
 			}
 			break;
 		} case ng::DrawFrame: {
-			if (SDL_RenderDrawRect(this->renderer, &dest) != 0) {
+			if (SDL_RenderDrawRect(this->renderer, &dest_sdl) != 0) {
 				throw std::runtime_error(SDL_GetError());
 			}
 			break;
 		} default: {
-			throw std::logic_error("unsupported draw format");
+			throw std::logic_error("unsupported draw mode");
 		}
 	}
 }
@@ -490,7 +490,7 @@ void ng::Graphics::draw_tile (Tileset* const tileset, const Rect* src, const Rec
 }
 
 void ng::Graphics::draw_text (Tileset* const tileset, const char* str,
-const Rect* rect, const Grid* grid) {
+const Rect* textbox, const Grid* textgrid) {
 	Rect src, tile, dest;
 	src.init(0, 0, 1, 1);
 	tile.init(0, 0, 1, 1);
@@ -500,7 +500,7 @@ const Rect* rect, const Grid* grid) {
 		if (str[i] == '\n') {
 			tile.x = 0;
 			tile.y += 1;
-			if (tile.y >= grid->rows) {
+			if (tile.y >= textgrid->rows) {
 				return;
 			}
 			continue;
@@ -510,74 +510,18 @@ const Rect* rect, const Grid* grid) {
 		src.x = c % tileset->grid.columns;
 		src.y = c / tileset->grid.columns;
 		dest = tile;
-		dest.relative_to_absolute(rect, grid);
+		dest.relative_to_absolute(textbox, textgrid);
 		this->draw_tile(tileset, &src, &dest);
 		
 		tile.x += 1;
-		if (tile.x >= grid->columns) {
+		if (tile.x >= textgrid->columns) {
 			tile.x = 0;
 			tile.y += 1;
-			if (tile.y >= grid->rows) {
+			if (tile.y >= textgrid->rows) {
 				return;
 			}
 		}
 	}
 }
 
-/*
-void ng_graphics_render_text (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames,
-const char* str, int di) {
-	ngFrame cframe = *frame;
-	int columns = g->images[frame->image].columns;
-	int i, c;
-	for (int y = 0; y < h_frames; y++) {
-		for (int x = 0; x < w_frames; x++) {
-			i = x + (y * w_frames);
-			c = str[i];
-			if (c == '\0') {
-				return;
-			}
-			c += di;
-			if (c < 0) {
-				c = 0;
-			}
-			cframe.column = c % columns;
-			cframe.row = c / columns;
-			cframe.x = frame->x + (x * frame->w);
-			cframe.y = frame->y + (y * frame->h);
-			ng_graphics_render_frame(g, &cframe);
-		}
-	}
-}
-
-void ng_graphics_render_tile (ngGraphics* g, const ngFrame* frame, int w_frames, int h_frames) {
-	int columns = g->images[frame->image].columns;
-	int rows = g->images[frame->image].rows;
-	if (columns < 3 || rows < 3) {
-		return; // spritesheet must be at least 3x3
-	}
-	ngFrame tframe = *frame;
-	for (int y = 0; y < h_frames; y++) {
-		for (int x = 0; x < w_frames; x++) {
-			if (y == 0) {
-				tframe.row = 0;
-			} else if (y < h_frames - 1) {
-				tframe.row = 1;
-			} else {
-				tframe.row = 2;
-			}
-			if (x == 0) {
-				tframe.column = 0;
-			} else if (x < w_frames - 1) {
-				tframe.column = 1;
-			} else {
-				tframe.column = 2;
-			}
-			tframe.x = frame->x + (x * frame->w);
-			tframe.y = frame->y + (y * frame->h);
-			ng_graphics_render_frame(g, &tframe);
-		}
-	}
-}
-*/
 

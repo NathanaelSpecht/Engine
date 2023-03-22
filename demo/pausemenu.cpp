@@ -65,8 +65,8 @@ void fd::PauseMenu::draw (GameState* gs) {
 		return;
 	}
 	
-	fd::frame_draw_rect(&this->header, gs, NULL);
-	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->header, gs);
+	fd::frame_draw_rect(&this->frame, gs);
 	fd::frame_draw_rect(&this->resume_btn, gs, &this->frame);
 	fd::frame_draw_rect(&this->quit_btn, gs, &this->frame);
 }

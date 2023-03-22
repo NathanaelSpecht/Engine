@@ -12,7 +12,7 @@ void fd::LevelScreen::event (GameState* gs) {
 }
 
 void fd::LevelScreen::draw (GameState* gs) {
-	fd::frame_draw_rect(&this->frame, gs, NULL);
+	fd::frame_draw_rect(&this->frame, gs);
 }
 
 
