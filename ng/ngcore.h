@@ -55,9 +55,12 @@ class Event;
 class Vec;
 class Circle;
 class Rect;
+class Scale;
 class Grid;
 class Color;
 class Image;
+class Tileset;
+class Canvas;
 class Graphics;
 
 class Clip;

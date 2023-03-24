@@ -33,55 +33,6 @@ class HudMenu;
 class PauseMenu;
 class DebugMenu;
 
-/*
-// TODO add to ng:
-class Canvas;
-
-class Canvas {
-public:
-	Graphics* graphics;
-	Canvas* parent;
-	
-	// Rect is edge of canvas.
-	// May either be relative to parent (default), or a portal to parent.
-	bool portal;
-	Rect rect;
-	
-	// Grid applies to get_mouse(), and text, tile, image, and rect draw().
-	bool use_grid;
-	Grid grid;
-	
-	// Root canvas is graphics!
-	// Root has neither parent nor grid. Uses graphics rect.
-	void init (Graphics*);
-	
-	// Child canvas uses parent graphics, and might use grid.
-	void init (Canvas*, const Rect*);
-	void init (Canvas*, const Rect*, const Grid*);
-	void init_portal (Canvas*, const Rect*);
-	void init_portal (Canvas*, const Rect*, const Grid*);
-	
-	// Given event mouse point on root canvas, find mouse point on this canvas.
-	// Returns false if mouse point is outside this canvas.
-	bool get_mouse (Event*, Rect*);
-	
-	// Draw this->rect on parent.
-	// Clearing root canvas calls graphics clear().
-	void clear ();
-	
-	// Given shape on this canvas, draw on parent canvas.
-	// Drawing to root canvas draws on graphics.
-	void draw_text (const Tileset*, const char*, const Rect*, const Grid*);
-	void draw_tile (const Tileset*, const Rect*, const Rect*);
-	void draw_image (const Image*);
-	void draw_image (const Image*, const Rect*);
-	void draw_image (const Image*, const Rect*, const Rect*);
-	void draw_rect (Rect*, int);
-	void draw_line (int, int, int, int);
-	void draw_point (int, int);
-};
-*/
-
 void frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame);
 void frame_draw_rect(const ng::Rect* r, GameState* gs);
 void frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame);
