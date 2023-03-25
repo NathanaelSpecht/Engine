@@ -7,18 +7,14 @@
 #include "ngcore.h"
 
 namespace ng {
-
-	int contains (int x, int w, int p);
-	int overlaps (int x1, int w1, int x2, int w2);
 	
-	// return true/edge/false if x + d crosses axis.
-	int intercepts (int axis, int x, int d);
+	// if (x, y) + (dx, dy) intercepts py axis, find (px, py) and return true.
+	// else return false.
+	bool xint (int x, int y, int dx, int dy, int* const px, int py);
 	
-	// y-intercept along axis. assumes dx != 0.
-	int yint (int axis, int x, int y, int dx, int dy);
-	
-	// x-intercept along axis. assumes dy != 0.
-	int xint (int axis, int x, int y, int dx, int dy);
+	// if (x, y) + (dx, dy) intercepts px axis, find (px, py) and return true.
+	// else return false.
+	bool yint (int x, int y, int dx, int dy, int px, int* const py);
 	
 	// given x (-inf, inf) and m [1, inf), produces [0, m).
 	// unlike % modulo, does not have strange behavior for x < 0.
@@ -78,7 +74,24 @@ namespace ng {
 	float dB_volume (float);
 	
 	float dB_silence ();
-
+	
+	class Range {
+	public:
+		// after init, a <= b
+		int a;
+		int b;
+		
+		void init (int p, int q);
+		bool contains (int x) const;
+		bool overlaps (const Range*) const;
+		
+		// true if the vector crosses either edge of this.
+		bool intersects (int x, int dx) const;
+		
+		// true if this crosses either edge of range.
+		bool intersects (const Range*) const;
+	};
+	
 }
 
 #endif

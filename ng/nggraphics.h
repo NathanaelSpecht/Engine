@@ -89,6 +89,7 @@ namespace ng {
 		void relative_to_absolute (const Grid*);
 		void relative_to_absolute (const Rect*, const Grid*);
 		void portal (const Rect* src, const Rect* dest);
+		bool contains (int x, int y) const;
 	};
 	
 	class Grid {

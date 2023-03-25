@@ -6,9 +6,9 @@
 ## 2023 March
 
 March 24:
-- Canvas and scale code.
-- Move canvas into nggui.
+- Canvas, scale, nggui.
 - Still works on Windows.
+- Hitbox and range.
 
 March 21:
 - Refactor ngtime.

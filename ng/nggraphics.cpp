@@ -201,6 +201,13 @@ void ng::Rect::portal (const Rect* src, const Rect* dest) {
 	this->relative_to_absolute(dest);
 }
 
+bool ng::Rect::contains (int x, int y) const {
+	Range rx, ry;
+	rx.init(this->x, this->x + this->w);
+	ry.init(this->y, this->y + this->h);
+	return (rx.contains(x) && ry.contains(y));
+}
+
 void ng::Grid::set_tile (const Scale* s) {
 	this->tile_w = s->x;
 	this->tile_h = s->y;

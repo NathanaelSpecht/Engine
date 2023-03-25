@@ -4,161 +4,311 @@
 #include "nggui.h"
 #include "ngmath.h"
 
-/*
-void ng::Circle::init (int x, int y, int r) {
+void ng::Hitbox::init (int x, int y, int a, int b) {
 	this->x = x;
 	this->y = y;
-	this->r = r;
+	this->a = a;
+	this->b = b;
+	this->shape = ng::ShapeRect;
 }
 
-int ng::Circle::contains (int x, int y) const {
-	// return true/edge/false if circle contains (x, y).
-	int64_t r2, d2;
-	r2 = ng::sq(this->r);
-	d2 = ng::distance_sq(this->x, this->y, x, y);
-	if (d2 > r2) {
-		return ng::False;
-	} else if (d2 == r2) {
-		return ng::Edge;
+void ng::Hitbox::init (const Rect* rect) {
+	this->a = rect->w / 2;
+	this->b = rect->h / 2;
+	this->x = rect->x + this->a;
+	this->y = rect->y + this->b;
+	this->shape = ng::ShapeRect;
+}
+
+void ng::Hitbox::init (const Rect* rect, const Grid* grid, int column, int row) {
+	this->a = static_cast<int>(grid->tile_w);
+	this->b = static_cast<int>(grid->tile_h);
+	this->x = (rect->x + (column * this->a * 2)) + this->a;
+	this->y = (rect->y + (row * this->b * 2)) + this->b;
+	this->shape = ng::ShapeRect;
+}
+
+int ng::Hitbox::major () const {
+	if (this->a >= this->b) {
+		return this->a;
 	} else {
-		return ng::True;
+		return this->b;
 	}
 }
 
-int ng::Circle::overlaps (const Circle* b) const {
-	// return true/edge/false if circles overlap/touch.
-	int64_t ar2, br2, d2;
-	ar2 = ng::sq(this->r);
-	br2 = ng::sq(b->r);
-	d2 = ng::distance_sq(this->x, this->y, b->x, b->y);
-	if (d2 > ar2 + br2) {
-		return ng::False;
-	} else if (d2 == ar2 + br2) {
-		return ng::Edge;
+int ng::Hitbox::minor () const {
+	if (this->a >= this->b) {
+		return this->b;
 	} else {
-		return ng::True;
+		return this->a;
 	}
 }
 
-int ng::Circle::collide (Vec* const v, const Circle* b) {
-	// return true/edge/false if circle a collided with stationary circle b, and
-	// move circle a by the part of its vec v that gets it to collide, and
-	// reduce vec v to the remaining motion.
-	// edge means they will touch and not move any further.
-	// assumes circles are not overlapping.
+// get a graphics rect for drawing this hitbox.
+void ng::Hitbox::get_rect (Rect* const rect) const {
+	rect->x = this->x - this->a;
+	rect->y = this->y - this->b;
+	rect->w = this->a * 2;
+	rect->h = this->b * 2;
+}
+
+void ng::Hitbox::scale (const Scale* s) {
+	this->x *= s->x;
+	this->y *= s->y;
+	this->a *= s->x;
+	this->b *= s->y;
+}
+
+void ng::Hitbox::scale_inv (const Scale* s) {
+	this->x *= s->x_inv;
+	this->y *= s->y_inv;
+	this->a *= s->x_inv;
+	this->b *= s->y_inv;
+}
+
+// Generic Hitbox:
+// If shapes are the same, it will use the correct collider.
+// If shapes are different, it uses the collider for the larger shape.
+int ng::Hitbox::get_shape (const Hitbox* h) const {
+	int shape;
+	if (this->shape == h->shape) {
+		shape = this->shape;
+	} else {
+		int tsize, hsize;
+		tsize = this->a * this->b * 4;
+		hsize = h->a * h->b * 4;
+		if (tsize >= hsize) {
+			shape = this->shape;
+		} else {
+			shape = h->shape;
+		}
+	}
+	return shape;
+}
+
+// true if this contains (x, y).
+bool ng::Hitbox::contains (int x, int y) const {
+	switch (this->shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_contains(x, y));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_contains(x, y));
+		}
+	}
+}
+
+// true if this overlaps h.
+bool ng::Hitbox::overlaps (const Hitbox* h) const {
+	int shape = this->get_shape(h);
+	switch (shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_overlaps(h));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_overlaps(h));
+		}
+	}
+}
+
+// true if this will collide with h as a result of movement by v.
+bool ng::Hitbox::collides (const Vec* v, const Hitbox* h) const {
+	int shape = this->get_shape(h);
+	switch (shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_collides(v, h));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_collides(v, h));
+		}
+	}
+}
+
+// collide this with h, and reduce v to remaining motion.
+// true if this collides with h.
+bool ng::Hitbox::collide (Vec* const v, const Hitbox* h) {
+	int shape = this->get_shape(h);
+	switch (shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_collide(v, h));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_collide(v, h));
+		}
+	}
+}
+
+// true if the point vector (this.x, this.y, v.x, v.y) intersects h.
+bool ng::Hitbox::intersects (const Vec* v, const Hitbox* h) const {
+	int shape = this->get_shape(h);
+	switch (shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_intersects(v, h));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_intersects(v, h));
+		}
+	}
+}
+
+// intersect this with h (as defined above), and reduce v to remaining motion.
+// true if this intersects h.
+bool ng::Hitbox::intersect (Vec* const v, const Hitbox* h) {
+	int shape = this->get_shape(h);
+	switch (shape) {
+		case ng::ShapeEllipse: {
+			return (this->ellipse_intersect(v, h));
+			break;
+		} case ng::ShapeRect: default: {
+			return (this->rect_intersect(v, h));
+		}
+	}
+}
+
+bool ng::Hitbox::rect_contains (int x, int y) const {
+	if (x < this->x - this->a || x > this->x + this->a ||
+	y < this->y - this->b || y > this->y + this->b) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+bool ng::Hitbox::rect_overlaps (const Hitbox* h) const {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return k.rect_contains(this->x, this->y);
+}
+
+bool ng::Hitbox::rect_collides (const Vec* v, const Hitbox* h) const {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return (this->rect_intersects(v, &k));
+}
+
+bool ng::Hitbox::rect_collide (Vec* const v, const Hitbox* h) {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return (this->rect_intersect(v, &k));
+}
+
+bool ng::Hitbox::rect_intersects (const Vec* v, const Hitbox* h) const {
+	// point vector intersects box if:
+	// - point vector overlaps box (x and y range overlap), and
+	// - point vector crosses any edge (x or y range intersect).
+	Range rx, ry, hx, hy;
+	rx.init(this->x, this->x + v->x);
+	ry.init(this->y, this->y + v->y);
+	hx.init(h->x - h->a, h->x + h->a);
+	hy.init(h->y - h->b, h->y + h->b);
+	return ((rx.overlaps(&hx) && ry.overlaps(&hy)) &&
+		(rx.intersects(&hx) || ry.intersects(&hy)));
+}
+
+bool ng::Hitbox::rect_intersect (Vec* const v, const Hitbox* h) {
+	int x, y;
+	x = this->x;
+	y = this->y;
+
+	Range hx, hy;
+	hx.init(h->x - h->a, h->x + h->a);
+	hy.init(h->y - h->b, h->y + h->b);
 	
-	// TODO
-	// a collides with b when (a.x, a.y) is within a.r + b.r of (b.x, b.y).
-	// -> when (a.x, a.y) intersects circle c (b.x, b.y, a.r + b.r).
+	bool i = false; // intersection
+	Vec p, p1, p2, p3, p4;
 	
-	return ng::False;
-}
-*/
-
-/*
-int ng::Rect::contains (int x, int y) const {
-	int xc = ng::contains(this->x, this->w, x);
-	int yc = ng::contains(this->y, this->h, y);
-	if (!xc || !yc) {
-		return ng::False;
-	} else if (xc == ng::Edge || yc == ng::Edge) {
-		return ng::Edge;
-	} else {
-		return ng::True;
+	// Find closest intersection point.
+	p1.y = h->y - h->b;
+	if (ng::xint(x, y, v->x, v->y, &p1.x, p1.y) && hx.contains(p1.x) &&
+	(!i || ng::distance_sq(x, y, p1.x, p1.y) < ng::distance_sq(x, y, p.x, p.y))) {
+		i = true;
+		p = p1;
 	}
-}
-
-int ng::Rect::overlaps (const Rect* r2) const {
-	int xo = ng::overlaps(this->x, this->w, r2->x, r2->w);
-	int yo = ng::overlaps(this->y, this->h, r2->y, r2->h);
-	if (!xo || !yo) {
-		return ng::False;
-	} else if (xo == ng::Edge || yo == ng::Edge) {
-		return ng::Edge;
-	} else {
-		return ng::True;
+	p2.y = h->y + h->b;
+	if (ng::xint(x, y, v->x, v->y, &p2.x, p2.y) && hx.contains(p2.x) &&
+	(!i || ng::distance_sq(x, y, p2.x, p2.y) < ng::distance_sq(x, y, p.x, p.y))) {
+		i = true;
+		p = p2;
 	}
+	p3.x = h->x - h->a;
+	if (ng::yint(x, y, v->x, v->y, p3.x, &p3.y) && hy.contains(p3.y) &&
+	(!i || ng::distance_sq(x, y, p3.x, p3.y) < ng::distance_sq(x, y, p.x, p.y))) {
+		i = true;
+		p = p3;
+	}
+	p4.x = h->x + h->a;
+	if (ng::yint(x, y, v->x, v->y, p4.x, &p4.y) && hy.contains(p4.y) &&
+	(!i || ng::distance_sq(x, y, p4.x, p4.x) < ng::distance_sq(x, y, p.x, p.y))) {
+		i = true;
+		p = p4;
+	}
+	
+	if (i) { // intersection
+		this->moveto(v, p.x, p.y);
+	} else { // no intersection
+		this->moveby(v);
+	}
+	return i;
 }
 
-void ng::Rect::moveby (Vec* const v) {
-	// move rect by vec, consuming vec in the process (vec -> 0).
+bool ng::Hitbox::ellipse_contains (int x, int y) const {
+	//TODO
+	return false;
+}
+
+bool ng::Hitbox::ellipse_overlaps (const Hitbox* h) const {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return k.ellipse_contains(this->x, this->y);
+}
+
+bool ng::Hitbox::ellipse_collides (const Vec* v, const Hitbox* h) const {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return (this->ellipse_intersects(v, &k));
+}
+
+bool ng::Hitbox::ellipse_collide (Vec* const v, const Hitbox* h) {
+	Hitbox k = *h;
+	k.a += this->a;
+	k.b += this->b;
+	return (this->ellipse_intersect(v, &k));
+}
+
+bool ng::Hitbox::ellipse_intersects (const Vec* v, const Hitbox* h) const {
+	//TODO
+	return false;
+}
+
+bool ng::Hitbox::ellipse_intersect (Vec* const v, const Hitbox* h) {
+	//TODO
+	this->moveby(v);
+	return false;
+}
+
+// move this by v, and reduce v to 0.
+void ng::Hitbox::moveby (Vec* const v) {
 	this->x += v->x;
 	this->y += v->y;
 	v->x = 0;
 	v->y = 0;
 }
 
-void ng::Rect::moveto (Vec* const v, int x, int y) {
-	// move rect to (x, y), and reduce vec to the remaining motion.
-	// assumes (x, y) is in the direction of vec.
-	int dx = x - this->x;
-	int dy = y - this->y;
-	this->x += dx;
-	this->y += dy;
+// move this to (x, y), and reduce v to remaining motion.
+void ng::Hitbox::moveto (Vec* const v, int x, int y) {
+	int dx, dy;
+	dx = x - this->x;
+	dy = y - this->y;
+	this->x = x;
+	this->y = y;
 	v->x -= dx;
 	v->y -= dy;
 }
-
-int ng::Rect::collide (Vec* const v, const Rect* b) {
-	// return true/edge/false if rect a collided with stationary rect b, and
-	// move rect a by the part of its vec v that gets it to collide, and
-	// reduce vec v to the remaining motion.
-	// edge means they will touch and not move any further.
-	// assumes rects are not overlapping.
-	// where is a in relation to b?
-	bool right = b->x + b->w < this->x;
-	bool left = this->x + this->w < b->x;
-	bool below = b->y + b->h < this->y;
-	bool above = this->y + this->h < b->y;
-	// a moving away from b.
-	if ((right && v->x >= 0) || (left && v->x <= 0) ||
-	(below && v->y >= 0) || (above && v->y <= 0)) {
-		this->moveby(v);
-		return ng::False;
-	}
-	// a moving vaguely towards b, from right/left/below/above.
-	int x, y, result;
-	if (right && ng::intercepts(b->w, this->x, v->x)) {
-		x = b->w;
-		y = ng::yint(x, this->x, this->y, v->x, v->y);
-		result = ng::overlaps(b->y, b->h, y, this->h);
-		if (result) {
-			this->moveto(v, x, y);
-			return result;
-		}
-	}
-	if (left && ng::intercepts(b->x, this->x + this->w, v->x)) {
-		x = b->x;
-		y = ng::yint(x, this->x - this->w, this->y, v->x, v->y);
-		result = ng::overlaps(b->y, b->h, y, this->h);
-		if (result) {
-			this->moveto(v, x, y);
-			return result;
-		}
-	}
-	if (below && ng::intercepts(b->h, this->y, v->y)) {
-		y = b->h;
-		x = ng::xint(y, this->x, this->y, v->x, v->y);
-		result = ng::overlaps(b->x, b->w, x, this->w);
-		if (result) {
-			this->moveto(v, x, y);
-			return result;
-		}
-	}
-	if (above && ng::intercepts(b->y, this->y + this->h, v->y)) {
-		y = b->y;
-		x = ng::xint(y, this->x, this->y - this->h, v->x, v->y);
-		result = ng::overlaps(b->x, b->w, x, this->w);
-		if (result) {
-			this->moveto(v, x, y);
-			return result;
-		}
-	}
-	// rects miss, no collision.
-	this->moveby(v);
-	return ng::False;
-}
-*/
 
 void ng::Canvas::init_root (Graphics* graphics) {
 	this->graphics = graphics;

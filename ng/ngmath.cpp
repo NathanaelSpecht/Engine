@@ -3,64 +3,54 @@
 
 #include "ngmath.h"
 
-int ng::contains (int x, int w, int p) {
-	if (p < x || x + w < p) {
-		return ng::False;
-	} else if (p == x || x + w == p) {
-		return ng::Edge;
+// if (x, y) + (dx, dy) intercepts py axis, find (px, py) and return true.
+// else return false.
+bool ng::xint (int x, int y, int dx, int dy, int* const px, int py) {
+	if ((y < py && y + dy < py) || (y > py && y + dy > py)) {
+		return false;
+	} else if (y == py) {
+		*px = x;
+		return true;
 	} else {
-		return ng::True;
+		double x1, y1, dx1, dy1, b1;
+		x1 = static_cast<double>(x);
+		y1 = static_cast<double>(y - py);
+		dx1 = static_cast<double>(dx);
+		dy1 = static_cast<double>(dy);
+		
+		// x = my + b
+		// m = dx/dy
+		// b = x-intercept = x - my
+		b1 = x1 - ((dx1/dy1) * y1);
+		
+		*px = static_cast<int>(b1);
+		return true;
 	}
 }
 
-int ng::overlaps (int x1, int w1, int x2, int w2) {
-	if ((x1 + w1 < x2) || (x2 + w2 < x1)) {
-		return ng::False;
-	} else if ((x1 + w1 == x2) || (x2 + w2 == x1)) {
-		return ng::Edge;
+// if (x, y) + (dx, dy) intercepts px axis, find (px, py) and return true.
+// else return false.
+bool ng::yint (int x, int y, int dx, int dy, int px, int* const py) {
+	if ((x < px && x + dx < px) || (x > px && x + dx > px)) {
+		return false;
+	} else if (x == px) {
+		*py = y;
+		return true;
 	} else {
-		return ng::True;
+		double x1, y1, dx1, dy1, b1;
+		x1 = static_cast<double>(x - px);
+		y1 = static_cast<double>(y);
+		dx1 = static_cast<double>(dx);
+		dy1 = static_cast<double>(dy);
+		
+		// y = mx + b
+		// m = dy/dx
+		// b = y-intercept = y - mx
+		b1 = y1 - ((dy1/dx1) * x1);
+		
+		*py = static_cast<int>(b1);
+		return true;
 	}
-}
-
-int ng::intercepts (int axis, int x, int d) {
-	if ((x > axis && x + d < axis) || (x < axis && x + d > axis)) {
-		return ng::True;
-	} else if (x + d == axis) {
-		return ng::Edge;
-	} else {
-		return ng::False;
-	}
-}
-
-int ng::yint (int axis, int x, int y, int dx, int dy) {
-	// y = mx + b
-	// m = dy/dx
-	// b = y-intercept = y - mx
-	// cast to int64 to avoid overflow for large x or dy
-	int64_t x1, y1, mx;
-	int result;
-	x1 = static_cast<int64_t>(x - axis);
-	y1 = static_cast<int64_t>(y);
-	mx = (static_cast<int64_t>(dy) * static_cast<int64_t>(x1)) /
-		static_cast<int64_t>(dx);
-	result = static_cast<int>(y1 - mx);
-	return result;
-}
-
-int ng::xint (int axis, int x, int y, int dx, int dy) {
-	// x = my + b
-	// m = dx/dy
-	// b = x-intercept = x - my
-	// cast to int64 to avoid overflow for large y or dx
-	int64_t x1, y1, my;
-	int result;
-	x1 = static_cast<int64_t>(x);
-	y1 = static_cast<int64_t>(y - axis);
-	my = (static_cast<int64_t>(dx) * static_cast<int64_t>(y1)) /
-		static_cast<int64_t>(dy);
-	result = static_cast<int>(x1 - my);
-	return result;
 }
 
 int ng::wrap (int x, int m) {
@@ -207,6 +197,36 @@ float ng::dB_volume (float x) {
 
 float ng::dB_silence () {
 	return -144.0f;
+}
+
+void ng::Range::init (int p, int q) {
+	if (p <= q) {
+		this->a = p;
+		this->b = q;
+	} else {
+		this->a = q;
+		this->b = p;
+	}
+}
+
+bool ng::Range::contains (int x) const {
+	return (x >= this->a && x <= this->b);
+}
+
+bool ng::Range::overlaps (const Range* range) const {
+	return (range->a <= this->b && range->b >= this->a);
+}
+
+// true if the vector crosses either edge of this.
+bool ng::Range::intersects (int x, int dx) const {
+	Range r;
+	r.init(x, x+dx);
+	return (r.contains(this->a) || r.contains(this->b));
+}
+
+// true if this crosses either edge of range.
+bool ng::Range::intersects (const Range* range) const {
+	return (this->contains(range->a) || this->contains(range->b));
 }
 
 
