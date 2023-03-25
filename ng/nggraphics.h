@@ -19,137 +19,6 @@ namespace ng {
 		DrawFill = 1
 	};
 	
-	// Vec may represent a vector or point.
-	class Vec {
-	public:
-		int x;
-		int y;
-		// int z; // todo
-		
-		void init (int x, int y);
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		void absolute_to_relative (const Rect*);
-		void absolute_to_relative (const Grid*);
-		void absolute_to_relative (const Rect*, const Grid*);
-		void relative_to_absolute (const Rect*);
-		void relative_to_absolute (const Grid*);
-		void relative_to_absolute (const Rect*, const Grid*);
-		void portal (const Rect* src, const Rect* dest);
-	};
-	
-	/*
-	// TODO
-	// Replace Circle with Hitbox.
-	// Remove Rect collision functions -> move to Hitbox.
-	
-	class Hitbox {
-	public:
-		int shape; // EnumShape {Square, Circle}
-		// center point
-		int x;
-		int y;
-		// int z; // todo
-		// axis/radius from center. a==b means Square/Circle. a!=b means Rect/Ellipse.
-		int a;
-		int b;
-		// int c;
-		
-		void init (int shape, int x, int y, int r); // Sets symmetry to Radius
-		void init (int shape, int x, int y, int a, int b); // Sets symmetry to Axis
-		
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		
-		// true if this contains (x, y).
-		bool contains (int x, int y) const;
-		
-		// true if this overlaps h.
-		bool overlaps (const Hitbox* h) const;
-		
-		// true if this will collide with h as a result of movement by v.
-		// assumes this is same shape as h.
-		bool collides (const Vec* v, const Hitbox* h) const;
-		
-		// collide this with h, and reduce v to remaining motion.
-		// assumes this collides with, and is the same shape as, h.
-		void collide (Vec* const v, const Hitbox* h);
-		
-		// true if the ray (this.x, this.y, in the direction of v) intersects h.
-		bool intersects (const Vec* v, const Hitbox* h) const;
-		
-		// intersect this with h (as defined above), and reduce v to remaining motion.
-		// assumes this intersects h.
-		void intersect (Vec* const v, const Hitbox* h);
-		
-		// move this by v, and reduce v to 0.
-		void moveby (Vec* const v);
-		
-		// move this to (x, y), and reduce v to remaining motion.
-		void moveto (Vec* const v, int x, int y);
-	};
-	*/
-	
-	class Circle {
-	public:
-		int x;
-		int y;
-		// int z; // todo
-		int r;
-		
-		void init (int x, int y, int r);
-		
-		// return true/edge/false if circle contains (x, y).
-		int contains (int x, int y) const;
-		
-		// return true/edge/false if circles overlap/touch.
-		int overlaps (const Circle*) const;
-		
-		// return true/edge/false if circle a collided with stationary circle b, and
-		// move circle a by the part of its vec v that gets it to collide, and
-		// reduce vec v to the remaining motion.
-		// edge means they will touch and not move any further.
-		// assumes circles are not overlapping.
-		int collide (Vec* const v, const Circle* b);
-	};
-	
-	class Rect {
-	public:
-		int x;
-		int y;
-		// int z; // todo
-		int w;
-		int h;
-		// int d;
-		
-		void init (int x, int y, int w, int h);
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		int contains (int x, int y) const;
-		int overlaps (const Rect*) const;
-		void absolute_to_relative (const Rect*);
-		void absolute_to_relative (const Grid*);
-		void absolute_to_relative (const Rect*, const Grid*);
-		void relative_to_absolute (const Rect*);
-		void relative_to_absolute (const Grid*);
-		void relative_to_absolute (const Rect*, const Grid*);
-		void portal (const Rect* src, const Rect* dest);
-		
-		// move rect by vec, consuming vec in the process (vec -> 0). 2d.
-		void moveby (Vec* const);
-		
-		// move rect to (x, y), and reduce vec to the remaining motion. 2d.
-		// assumes (x, y) is in the direction of vec.
-		void moveto (Vec* const, int x, int y);
-		
-		// return true/edge/false if rect a collided with stationary rect b, and
-		// move rect a by the part of its vec v that gets it to collide, and
-		// reduce vec v to the remaining motion.
-		// edge means they will touch and not move any further.
-		// assumes rects are not overlapping.
-		int collide (Vec* const v, const Rect* b);
-	};
-	
 	class Scale {
 	public:
 		float x;
@@ -179,6 +48,46 @@ namespace ng {
 		void scale_inv (const Scale*);
 		void relative_to_absolute (const Scale*);
 		void absolute_to_relative (const Scale*);
+		void portal (const Rect* src, const Rect* dest);
+	};
+	
+	// Vec may represent a vector or point.
+	class Vec {
+	public:
+		int x;
+		int y;
+		// int z; // todo
+		
+		void init (int x, int y);
+		void scale (const Scale*);
+		void scale_inv (const Scale*);
+		void absolute_to_relative (const Rect*);
+		void absolute_to_relative (const Grid*);
+		void absolute_to_relative (const Rect*, const Grid*);
+		void relative_to_absolute (const Rect*);
+		void relative_to_absolute (const Grid*);
+		void relative_to_absolute (const Rect*, const Grid*);
+		void portal (const Rect* src, const Rect* dest);
+	};
+	
+	class Rect {
+	public:
+		int x;
+		int y;
+		// int z; // todo
+		int w;
+		int h;
+		// int d;
+		
+		void init (int x, int y, int w, int h);
+		void scale (const Scale*);
+		void scale_inv (const Scale*);
+		void absolute_to_relative (const Rect*);
+		void absolute_to_relative (const Grid*);
+		void absolute_to_relative (const Rect*, const Grid*);
+		void relative_to_absolute (const Rect*);
+		void relative_to_absolute (const Grid*);
+		void relative_to_absolute (const Rect*, const Grid*);
 		void portal (const Rect* src, const Rect* dest);
 	};
 	
