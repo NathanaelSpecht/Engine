@@ -23,18 +23,8 @@ int main (int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	
-	ng::Color background_color;
-	background_color.init(0, 0, 0);
-	ng::Color draw_color;
-	draw_color.init(32, 32, 32);
 	ng::Color color_key;
 	color_key.init(0, 0, 0);
-	
-	ng::Color rect_color;
-	rect_color.init(64, 16, 0);
-	ng::Rect rect;
-	rect.init((graphics.rect.w/2)-256, (graphics.rect.h/2)-80, 256*2, 80*2);
-	
 	ng::Image image;
 	ng::Clip clip;
 	
@@ -70,11 +60,27 @@ int main (int argc, char** argv) {
 	tileset.init(&image, &image.rect, 32, 6);
 	tileset.row_offset = -1;
 	
+	ng::Canvas window;
+	window.init_root(&graphics);
+	ng::Canvas viewport;
+	viewport.init_scale(&window, &graphics.rect);
+	
+	ng::Color background_color;
+	background_color.init(0, 0, 0);
+	ng::Color draw_color;
+	draw_color.init(32, 32, 32);
+	ng::Color rect_color;
+	rect_color.init(64, 16, 0);
+	ng::Color text_color;
+	text_color.init(196, 128, 0);
+	ng::Rect rect;
+	rect.init((viewport.rect.w/2)-256, (viewport.rect.h/2)-80, 256*2, 80*2);
+	
 	int line_w, line_h;
-	line_w = 8;
-	line_h = 16;
+	line_w = 12;
+	line_h = 24;
 	ng::Rect text_rect;
-	text_rect.init(line_w, line_h, graphics.rect.w-(line_w*2), graphics.rect.h-(line_h*2));
+	text_rect.init(line_w, line_h, viewport.rect.w-(line_w*2), viewport.rect.h-(line_h*2));
 	ng::Grid text_grid;
 	text_grid.init(&text_rect, text_rect.w/line_w, text_rect.h/line_h);
 	
@@ -89,14 +95,14 @@ int main (int argc, char** argv) {
 					goto quit;
 					break;
 				case ng::WindowEvent:
-					rect.x = (graphics.rect.w/2)-(rect.w/2);
-					rect.y = (graphics.rect.h/2)-(rect.h/2);
+					rect.x = (viewport.rect.w/2)-(rect.w/2);
+					rect.y = (viewport.rect.h/2)-(rect.h/2);
 					break;
 				case ng::KeyPress: {
 					switch (event.key.scancode) {
 						case SDL_SCANCODE_SPACE:
-							rect.x = (graphics.rect.w/2)-(rect.w/2);
-							rect.y = (graphics.rect.h/2)-(rect.h/2);
+							rect.x = (viewport.rect.w/2)-(rect.w/2);
+							rect.y = (viewport.rect.h/2)-(rect.h/2);
 							up = 0;
 							down = 0;
 							left = 0;
@@ -152,20 +158,23 @@ int main (int argc, char** argv) {
 			}
 		}
 		
-		rect.x += (right - left) * 3;
-		rect.y += (down - up) * 3;
+		rect.x += (right - left) * 2;
+		rect.y += (down - up) * 2;
 		
 		try {
 			graphics.set_color(&background_color);
-			graphics.clear();
+			window.clear();
 			
 			graphics.set_color(&draw_color);
-			graphics.draw_rect(&text_rect, ng::DrawFill);
+			viewport.draw_rect(&text_rect, ng::DrawFill);
 			
 			graphics.set_color(&rect_color);
-			graphics.draw_rect(&rect, ng::DrawFill);
+			viewport.draw_rect(&rect, ng::DrawFill);
 			
-			graphics.draw_text(&tileset,
+			tileset.image->set_color(&text_color);
+			tileset.image->set_angle(10.0);
+			//graphics.draw_text(&tileset, "Hello, World!", &text_rect, &text_grid);
+			viewport.draw_text(&tileset,
 				"My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
 				"Sleep well to-night. At three to-morrow the diligence will start for "
 				"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
@@ -173,12 +182,12 @@ int main (int argc, char** argv) {
 				"London has been a happy one, and that you will enjoy your stay in my "
 				"beautiful land.\n"
 				"                                                        Your friend,\n"
-				"                                                        Dracula.",
+				"                                                        DRACULA.",
 				&text_rect, &text_grid);
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
 			
-			graphics.draw();
+			window.draw();
 			
 		} catch (const std::exception& ex) {
 			std::cout << "error drawing graphics:\n"

@@ -5,6 +5,10 @@
 
 ## 2023 March
 
+March 24:
+- Canvas and scale code.
+- Move canvas into nggui.
+
 March 21:
 - Refactor ngtime.
 - Replaced NULL function parameters with overloaded functions

@@ -117,16 +117,16 @@ void ng::Rect::init (int x, int y, int w, int h) {
 
 void ng::Rect::scale (const Scale* s) {
 	this->x = static_cast<int>(static_cast<float>(this->x) * s->x);
-	this->y = static_cast<int>(static_cast<float>(this->x) * s->y);
-	this->w = static_cast<int>(static_cast<float>(this->x) * s->x);
-	this->h = static_cast<int>(static_cast<float>(this->x) * s->y);
+	this->y = static_cast<int>(static_cast<float>(this->y) * s->y);
+	this->w = static_cast<int>(static_cast<float>(this->w) * s->x);
+	this->h = static_cast<int>(static_cast<float>(this->h) * s->y);
 }
 
 void ng::Rect::scale_inv (const Scale* s) {
 	this->x = static_cast<int>(static_cast<float>(this->x) * s->x_inv);
-	this->y = static_cast<int>(static_cast<float>(this->x) * s->y_inv);
-	this->w = static_cast<int>(static_cast<float>(this->x) * s->x_inv);
-	this->h = static_cast<int>(static_cast<float>(this->x) * s->y_inv);
+	this->y = static_cast<int>(static_cast<float>(this->y) * s->y_inv);
+	this->w = static_cast<int>(static_cast<float>(this->w) * s->x_inv);
+	this->h = static_cast<int>(static_cast<float>(this->h) * s->y_inv);
 }
 
 int ng::Rect::contains (int x, int y) const {
@@ -378,14 +378,14 @@ void ng::Grid::init (const Rect* r, int columns, int rows) {
 
 void ng::Grid::scale (const Scale* s) {
 	Scale t;
-	t.init(this->tile_w, this->tile_h, this->tile_w_inv, this->tile_h_inv);
+	t.init(this);
 	t.scale(s);
 	this->set_tile(&t);
 }
 
 void ng::Grid::scale_inv (const Scale* s) {
 	Scale t;
-	t.init(this->tile_w, this->tile_h, this->tile_w_inv, this->tile_h_inv);
+	t.init(this);
 	t.scale_inv(s);
 	this->set_tile(&t);
 }
@@ -395,8 +395,8 @@ void ng::Grid::absolute_to_relative (const Grid* rel_grid) {
 	// want g in units of rel
 	// scale by 1 / rel.w
 	Scale s, rel;
-	s.init(this->tile_w, this->tile_h, this->tile_w_inv, this->tile_h_inv);
-	rel.init(rel_grid->tile_w, rel_grid->tile_h, rel_grid->tile_w_inv, rel_grid->tile_h_inv);
+	s.init(this);
+	rel.init(rel_grid);
 	s.absolute_to_relative(&rel);
 	this->set_tile(&s);
 }
@@ -406,8 +406,8 @@ void ng::Grid::relative_to_absolute (const Grid* rel_grid) {
 	// want g in same units as rel
 	// scale by rel.w
 	Scale s, rel;
-	s.init(this->tile_w, this->tile_h, this->tile_w_inv, this->tile_h_inv);
-	rel.init(rel_grid->tile_w, rel_grid->tile_h, rel_grid->tile_w_inv, rel_grid->tile_h_inv);
+	s.init(this);
+	rel.init(rel_grid);
 	s.relative_to_absolute(&rel);
 	this->set_tile(&s);
 }
@@ -508,236 +508,6 @@ void ng::Tileset::init (Image* image, const Rect* rect, int columns, int rows) {
 	this->grid.init(rect, columns, rows);
 	this->column_offset = 0;
 	this->row_offset = 0;
-}
-
-void ng::Canvas::init (Graphics* graphics) {
-	this->graphics = graphics;
-	this->parent = NULL;
-	this->use_grid = false;
-	this->use_scale = false;
-	this->root = true;
-	this->rect = graphics->rect;
-	this->grid.init(&graphics->rect);
-	this->scale.init();
-}
-
-void ng::Canvas::init (Canvas* canvas, const Rect* rect) {
-	this->graphics = canvas->graphics;
-	this->parent = canvas;
-	this->use_grid = false;
-	this->use_scale = false;
-	this->root = false;
-	this->rect = *rect;
-	this->grid.init(rect);
-	this->scale.init();
-}
-
-void ng::Canvas::set_grid (const Grid* grid) {
-	this->use_grid = true;
-	this->grid = *grid;
-}
-
-void ng::Canvas::set_scale (const Scale* s) {
-	this->use_scale = true;
-	this->scale = *s;
-}
-
-void ng::Canvas::remove_grid () {
-	this->use_grid = false;
-}
-
-void ng::Canvas::remove_scale () {
-	this->use_scale = false;
-}
-
-// re-calculate scale between this rect and parent rect.
-void ng::Canvas::rescale () {
-	if (this->root) {
-		this->use_scale = false;
-	} else {
-		this->use_scale = true;
-		if (this->parent->root) {
-			this->scale.init(&this->rect, &this->graphics->rect);
-		} else {
-			this->scale.init(&this->rect, &this->parent->rect);
-		}
-	}
-}
-
-// Given event mouse point on root canvas, find mouse point on this canvas.
-void ng::Canvas::get_mouse (const Vec* mouse, Vec* const p) {
-	if (this->root) {
-		*p = *mouse;
-	} else {
-		this->parent->get_mouse(mouse, p);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				p->portal(&this->graphics->rect, &this->rect);
-			} else {
-				p->portal(&this->parent->rect, &this->rect);
-			}
-		}
-		p->absolute_to_relative(&this->rect);
-		if (this->use_grid) {
-			p->absolute_to_relative(&this->grid);
-		}
-	}
-}
-
-// Draw this->rect on parent.
-// Clearing root canvas calls graphics clear().
-void ng::Canvas::clear (int draw) {
-	if (this->root) {
-		this->graphics->clear();
-	} else {
-		this->parent->draw_rect(&this->rect, draw);
-	}
-}
-
-// Given shape on this canvas, draw on parent canvas.
-// Drawing to root canvas draws on graphics.
-void ng::Canvas::draw_text (Tileset* const tileset, const char* str,
-const Rect* textbox, const Grid* textgrid) {
-	if (this->root) {
-		this->graphics->draw_text(tileset, str, textbox, textgrid);
-	} else {
-		Rect tb = *textbox;
-		Grid g = *textgrid;
-		if (this->use_grid) {
-			tb.relative_to_absolute(&this->grid);
-			g.relative_to_absolute(&this->grid);
-		}
-		tb.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				tb.portal(&this->rect, &this->graphics->rect);
-				g.portal(&this->rect, &this->graphics->rect);
-			} else {
-				tb.portal(&this->rect, &this->parent->rect);
-				g.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_text(tileset, str, &tb, &g);
-	}
-}
-
-void ng::Canvas::draw_tile (Tileset* const tileset, const Rect* src, const Rect* dest) {
-	if (this->root) {
-		this->graphics->draw_tile(tileset, src, dest);
-	} else {
-		Rect d = *dest;
-		if (this->use_grid) {
-			d.relative_to_absolute(&this->grid);
-		}
-		d.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				d.portal(&this->rect, &this->graphics->rect);
-			} else {
-				d.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_tile(tileset, src, &d);
-	}
-}
-
-void ng::Canvas::draw_image (Image* const image) {
-	if (this->root) {
-		this->draw_image(image, &image->rect, &this->graphics->rect);
-	} else {
-		this->draw_image(image, &image->rect, &this->rect);
-	}
-}
-
-void ng::Canvas::draw_image (Image* const image, const Rect* dest) {
-	this->draw_image(image, &image->rect, dest);
-}
-
-void ng::Canvas::draw_image (Image* const image, const Rect* src, const Rect* dest) {
-	if (this->root) {
-		this->graphics->draw_image(image, src, dest);
-	} else {
-		Rect d = *dest;
-		if (this->use_grid) {
-			d.relative_to_absolute(&this->grid);
-		}
-		d.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				d.portal(&this->rect, &this->graphics->rect);
-			} else {
-				d.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_image(image, src, &d);
-	}
-}
-
-void ng::Canvas::draw_rect (const Rect* dest, int draw) {
-	if (this->root) {
-		this->graphics->draw_rect(dest, draw);
-	} else {
-		Rect d = *dest;
-		if (this->use_grid) {
-			d.relative_to_absolute(&this->grid);
-		}
-		d.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				d.portal(&this->rect, &this->graphics->rect);
-			} else {
-				d.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_rect(&d, draw);
-	}
-}
-
-void ng::Canvas::draw_line (int x1, int y1, int x2, int y2) {
-	if (this->root) {
-		this->graphics->draw_line(x1, y1, x2, y2);
-	} else {
-		Vec v1, v2;
-		v1.init(x1, y1);
-		v2.init(x2, y2);
-		if (this->use_grid) {
-			v1.relative_to_absolute(&this->grid);
-			v2.relative_to_absolute(&this->grid);
-		}
-		v1.relative_to_absolute(&this->rect);
-		v2.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				v1.portal(&this->rect, &this->graphics->rect);
-				v2.portal(&this->rect, &this->graphics->rect);
-			} else {
-				v1.portal(&this->rect, &this->parent->rect);
-				v2.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_line(v1.x, v1.y, v2.x, v2.y);
-	}
-}
-
-void ng::Canvas::draw_point (int x, int y) {
-	if (this->root) {
-		this->graphics->draw_point(x, y);
-	} else {
-		Vec v;
-		v.init(x, y);
-		if (this->use_grid) {
-			v.relative_to_absolute(&this->grid);
-		}
-		v.relative_to_absolute(&this->rect);
-		if (this->use_scale) {
-			if (this->parent->root) {
-				v.portal(&this->rect, &this->graphics->rect);
-			} else {
-				v.portal(&this->rect, &this->parent->rect);
-			}
-		}
-		this->parent->draw_point(v.x, v.y);
-	}
 }
 
 void ng::Graphics::init (const char* title, int w, int h) {

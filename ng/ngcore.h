@@ -60,8 +60,9 @@ class Grid;
 class Color;
 class Image;
 class Tileset;
-class Canvas;
 class Graphics;
+
+class Canvas;
 
 class Clip;
 class Sound;

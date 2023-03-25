@@ -19,12 +19,6 @@ namespace ng {
 		DrawFill = 1
 	};
 	
-	enum EnumCanvasMode {
-		CanvasRelative = 0,
-		CanvasPortal = 1,
-		CanvasRoot = 2
-	};
-	
 	// Vec may represent a vector or point.
 	class Vec {
 	public:
@@ -250,57 +244,6 @@ namespace ng {
 		int row_offset;
 		
 		void init (Image*, const Rect*, int columns, int rows);
-	};
-	
-	class Canvas {
-	public:
-		// These are set internally by member functions.
-		// They may be viewed from outside the class.
-		Graphics* graphics;
-		Canvas* parent;
-		// Rect defines a relative origin and boundary.
-		// Grid defines relative units for each axis, and boundary in terms of these units.
-		// Scale defines scale factor between this rect and parent.
-		bool use_grid;
-		bool use_scale;
-		// Root canvases are special:
-		// - use graphics rect. All other canvases use rect.
-		// - cannot scale.
-		// - draw to graphics. All other canvases draw to parent.
-		bool root;
-		
-		// These are public.
-		Rect rect;
-		Grid grid;
-		Scale scale;
-		
-		void init (Graphics*);
-		void init (Canvas*, const Rect*);
-		void set_grid (const Grid*);
-		void set_scale (const Scale*);
-		void remove_grid ();
-		void remove_scale ();
-		
-		// re-calculate scale between this rect and parent rect.
-		void rescale ();
-		
-		// Given event mouse point on root canvas, find mouse point on this canvas.
-		void get_mouse (const Vec*, Vec* const);
-		
-		// Draw this rect on parent.
-		// Clearing root canvas calls graphics clear().
-		void clear (int draw);
-		
-		// Given shape on this canvas, draw on parent canvas.
-		// Drawing to root canvas draws on graphics.
-		void draw_text (Tileset* const, const char*, const Rect*, const Grid*);
-		void draw_tile (Tileset* const, const Rect*, const Rect*);
-		void draw_image (Image* const);
-		void draw_image (Image* const, const Rect*);
-		void draw_image (Image* const, const Rect*, const Rect*);
-		void draw_rect (const Rect*, int draw);
-		void draw_line (int x1, int y1, int x2, int y2);
-		void draw_point (int x, int y);
 	};
 	
 	class Graphics {

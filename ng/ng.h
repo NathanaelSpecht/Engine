@@ -8,6 +8,7 @@
 #include "ngmath.h"
 #include "ngtime.h"
 #include "nggraphics.h"
+#include "nggui.h"
 #include "ngaudio.h"
 #include "ngevent.h"
 // Use <string> and <sstream> for string.
