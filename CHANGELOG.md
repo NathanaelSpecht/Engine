@@ -8,6 +8,7 @@
 March 24:
 - Canvas and scale code.
 - Move canvas into nggui.
+- Still works on Windows.
 
 March 21:
 - Refactor ngtime.
