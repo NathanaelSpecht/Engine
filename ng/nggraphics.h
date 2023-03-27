@@ -5,6 +5,7 @@
 #define NGGRAPHICS_H
 
 #include "ngcore.h"
+#include "ngmath.h"
 
 namespace ng {
 
@@ -19,6 +20,7 @@ namespace ng {
 		DrawFill = 1
 	};
 	
+	/*
 	class Scale {
 	public:
 		float x;
@@ -50,26 +52,9 @@ namespace ng {
 		void absolute_to_relative (const Scale*);
 		void portal (const Rect* src, const Rect* dest);
 	};
+	*/
 	
-	// Vec may represent a vector or point.
-	class Vec {
-	public:
-		int x;
-		int y;
-		// int z; // todo
-		
-		void init (int x, int y);
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		void absolute_to_relative (const Rect*);
-		void absolute_to_relative (const Grid*);
-		void absolute_to_relative (const Rect*, const Grid*);
-		void relative_to_absolute (const Rect*);
-		void relative_to_absolute (const Grid*);
-		void relative_to_absolute (const Rect*, const Grid*);
-		void portal (const Rect* src, const Rect* dest);
-	};
-	
+	/*
 	class Rect {
 	public:
 		int x;
@@ -91,32 +76,7 @@ namespace ng {
 		void portal (const Rect* src, const Rect* dest);
 		bool contains (int x, int y) const;
 	};
-	
-	class Grid {
-	public:
-		int columns;
-		int rows;
-		// Note: there is no standard term for "depth column".
-		// Terms often used are: aisle, layer, page, sheet, and slice.
-		// int layers; // todo
-		float tile_w;
-		float tile_h;
-		// float tile_d;
-		// float multiply is 10x speed of divide, so multiply by inverse instead of dividing.
-		float tile_w_inv; // 1 / tile_w
-		float tile_h_inv; // 1 / tile_h
-		// float tile_d_inv; // 1 / tile_d
-		
-		void set_tile (const Scale*);
-		void init (const Rect*);
-		void init (const Rect*, int columns, int rows);
-		
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		void absolute_to_relative (const Grid*);
-		void relative_to_absolute (const Grid*);
-		void portal (const Rect* src, const Rect* dest);
-	};
+	*/
 	
 	class Color {
 	public:
@@ -145,17 +105,6 @@ namespace ng {
 		void set_angle (double angle);
 	};
 	
-	class Tileset {
-	public:
-		Image* image;
-		Rect rect;
-		Grid grid;
-		int column_offset;
-		int row_offset;
-		
-		void init (Image*, const Rect*, int columns, int rows);
-	};
-	
 	class Graphics {
 	public:
 		SDL_Window* window;
@@ -170,8 +119,10 @@ namespace ng {
 		void clear ();
 		void draw ();
 		
+		/*
 		void draw_text (Tileset* const, const char*, const Rect*, const Grid*);
 		void draw_tile (Tileset* const, const Rect*, const Rect*);
+		*/
 		
 		// Draw whole image to whole window.
 		void draw_image (Image* const);

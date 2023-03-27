@@ -4,6 +4,63 @@
 #include "nggui.h"
 #include "ngmath.h"
 
+/*
+void ng::Vec::init (int x, int y) {
+	this->x = x;
+	this->y = y;
+}
+
+void ng::Vec::scale (const Scale* s) {
+	this->x = static_cast<int>(static_cast<float>(this->x) * s->x);
+	this->y = static_cast<int>(static_cast<float>(this->y) * s->y);
+}
+
+void ng::Vec::scale_inv (const Scale* s) {
+	this->x = static_cast<int>(static_cast<float>(this->x) * s->x_inv);
+	this->y = static_cast<int>(static_cast<float>(this->y) * s->y_inv);
+}
+
+void ng::Vec::absolute_to_relative (const Rect* rel_rect) {
+	this->x = this->x - rel_rect->x;
+	this->y = this->y - rel_rect->y;
+}
+
+void ng::Vec::absolute_to_relative (const Grid* rel_grid) {
+	Scale rel;
+	rel.init(rel_grid);
+	this->scale_inv(&rel);
+}
+
+void ng::Vec::absolute_to_relative (const Rect* rel_rect, const Grid* rel_grid) {
+	this->absolute_to_relative(rel_rect);
+	this->absolute_to_relative(rel_grid);
+}
+
+void ng::Vec::relative_to_absolute (const Rect* rel_rect) {
+	this->x = this->x + rel_rect->x;
+	this->y = this->y + rel_rect->y;
+}
+
+void ng::Vec::relative_to_absolute (const Grid* rel_grid) {
+	Scale rel;
+	rel.init(rel_grid);
+	this->scale(&rel);
+}
+
+void ng::Vec::relative_to_absolute (const Rect* rel_rect, const Grid* rel_grid) {
+	this->relative_to_absolute(rel_grid);
+	this->relative_to_absolute(rel_rect);
+}
+
+void ng::Vec::portal (const Rect* src, const Rect* dest) {
+	this->absolute_to_relative(src);
+	Scale s;
+	s.init(src, dest);
+	this->scale(&s);
+	this->relative_to_absolute(dest);
+}
+*/
+
 void ng::Hitbox::init (int x, int y, int a, int b) {
 	this->x = x;
 	this->y = y;
@@ -310,6 +367,84 @@ void ng::Hitbox::moveto (Vec* const v, int x, int y) {
 	v->y -= dy;
 }
 
+/*
+void ng::Grid::set_tile (const Scale* s) {
+	this->tile_w = s->x;
+	this->tile_h = s->y;
+	this->tile_w_inv = s->x_inv;
+	this->tile_h_inv = s->y_inv;
+}
+
+void ng::Grid::init (const Rect* r) {
+	this->columns = r->w;
+	this->rows = r->h;
+	Scale s;
+	s.init();
+	this->set_tile(&s);
+}
+
+void ng::Grid::init (const Rect* r, int columns, int rows) {
+	this->columns = columns;
+	this->rows = rows;
+	Scale s;
+	s.init(r, columns, rows);
+	this->set_tile(&s);
+}
+
+void ng::Grid::scale (const Scale* s) {
+	Scale t;
+	t.init(this);
+	t.scale(s);
+	this->set_tile(&t);
+}
+
+void ng::Grid::scale_inv (const Scale* s) {
+	Scale t;
+	t.init(this);
+	t.scale_inv(s);
+	this->set_tile(&t);
+}
+
+void ng::Grid::absolute_to_relative (const Grid* rel_grid) {
+	// g is same units as rel
+	// want g in units of rel
+	// scale by 1 / rel.w
+	Scale s, rel;
+	s.init(this);
+	rel.init(rel_grid);
+	s.absolute_to_relative(&rel);
+	this->set_tile(&s);
+}
+
+void ng::Grid::relative_to_absolute (const Grid* rel_grid) {
+	// g is in units of rel
+	// want g in same units as rel
+	// scale by rel.w
+	Scale s, rel;
+	s.init(this);
+	rel.init(rel_grid);
+	s.relative_to_absolute(&rel);
+	this->set_tile(&s);
+}
+
+void ng::Grid::portal (const Rect* src, const Rect* dest) {
+	// scale g by dest / src
+	Scale s;
+	s.init(src, dest);
+	this->scale(&s);
+}
+*/
+
+/*
+void ng::Tileset::init (Image* image, const Rect* rect, int columns, int rows) {
+	this->image = image;
+	this->rect = *rect;
+	this->grid.init(rect, columns, rows);
+	this->column_offset = 0;
+	this->row_offset = 0;
+}
+*/
+
 void ng::Canvas::init_root (Graphics* graphics) {
 	this->graphics = graphics;
 	this->parent = NULL;
@@ -458,11 +593,56 @@ void ng::Canvas::draw () {
 	}
 }
 
+/*
+void ng::Graphics::draw_text (Tileset* const tileset, const char* str,
+const Rect* textbox, const Grid* textgrid) {
+	Rect src, tile, dest;
+	src.init(0, 0, 1, 1);
+	tile.init(0, 0, 1, 1);
+	
+	int c;
+	for (int i=0; str[i] != '\0'; i++) {
+		if (str[i] == '\n') {
+			tile.x = 0;
+			tile.y += 1;
+			if (tile.y >= textgrid->rows) {
+				return;
+			}
+			continue;
+		}
+	
+		c = static_cast<int>(str[i]);
+		src.x = c % tileset->grid.columns;
+		src.y = c / tileset->grid.columns;
+		dest = tile;
+		dest.relative_to_absolute(textbox, textgrid);
+		this->draw_tile(tileset, &src, &dest);
+		
+		tile.x += 1;
+		if (tile.x >= textgrid->columns) {
+			tile.x = 0;
+			tile.y += 1;
+			if (tile.y >= textgrid->rows) {
+				return;
+			}
+		}
+	}
+}
+
+void ng::Graphics::draw_tile (Tileset* const tileset, const Rect* src, const Rect* dest) {
+	Rect tile = *src;
+	tile.x += tileset->column_offset;
+	tile.y += tileset->row_offset;
+	tile.relative_to_absolute(&tileset->rect, &tileset->grid);
+	this->draw_image(tileset->image, &tile, dest);
+}
+*/
+
 void ng::Canvas::draw_text (Tileset* const tileset, const char* str,
 const Rect* textbox, const Grid* textgrid) {
 	switch (this->mode) {
 		case ng::CanvasRoot: {
-			this->graphics->draw_text(tileset, str, textbox, textgrid);
+			//this->graphics->draw_text(tileset, str, textbox, textgrid);
 			break;
 			
 		} case ng::CanvasScale: {
@@ -496,7 +676,7 @@ const Rect* textbox, const Grid* textgrid) {
 void ng::Canvas::draw_tile (Tileset* const tileset, const Rect* src, const Rect* dest) {
 	switch (this->mode) {
 		case ng::CanvasRoot: {
-			this->graphics->draw_tile(tileset, src, dest);
+			//this->graphics->draw_tile(tileset, src, dest);
 			break;
 			
 		} case ng::CanvasScale: {

@@ -21,6 +21,27 @@ namespace ng {
 		CanvasScale = 3 // scale relative to rect.
 	};
 	
+	/*
+	// Vec may represent a vector or point.
+	class Vec {
+	public:
+		int x;
+		int y;
+		// int z; // todo
+		
+		void init (int x, int y);
+		void scale (const Scale*);
+		void scale_inv (const Scale*);
+		void absolute_to_relative (const Rect*);
+		void absolute_to_relative (const Grid*);
+		void absolute_to_relative (const Rect*, const Grid*);
+		void relative_to_absolute (const Rect*);
+		void relative_to_absolute (const Grid*);
+		void relative_to_absolute (const Rect*, const Grid*);
+		void portal (const Rect* src, const Rect* dest);
+	};
+	*/
+	
 	class Hitbox {
 	public:
 		// center point
@@ -94,6 +115,47 @@ namespace ng {
 		// move this to (x, y), and reduce v to remaining motion.
 		void moveto (Vec* const v, int x, int y);
 	};
+	
+	/*
+	class Grid {
+	public:
+		int columns;
+		int rows;
+		// Note: there is no standard term for "depth column".
+		// Terms often used are: aisle, layer, page, sheet, and slice.
+		// int layers; // todo
+		float tile_w;
+		float tile_h;
+		// float tile_d;
+		// float multiply is 10x speed of divide, so multiply by inverse instead of dividing.
+		float tile_w_inv; // 1 / tile_w
+		float tile_h_inv; // 1 / tile_h
+		// float tile_d_inv; // 1 / tile_d
+		
+		void set_tile (const Scale*);
+		void init (const Rect*);
+		void init (const Rect*, int columns, int rows);
+		
+		void scale (const Scale*);
+		void scale_inv (const Scale*);
+		void absolute_to_relative (const Grid*);
+		void relative_to_absolute (const Grid*);
+		void portal (const Rect* src, const Rect* dest);
+	};
+	*/
+	
+	/*
+	class Tileset {
+	public:
+		Image* image;
+		Rect rect;
+		Grid grid;
+		int column_offset;
+		int row_offset;
+		
+		void init (Image*, const Rect*, int columns, int rows);
+	};
+	*/
 	
 	class Canvas {
 	public:
