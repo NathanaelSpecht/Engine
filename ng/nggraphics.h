@@ -20,64 +20,6 @@ namespace ng {
 		DrawFill = 1
 	};
 	
-	/*
-	class Scale {
-	public:
-		float x;
-		float y;
-		// float z; // todo
-		float x_inv; // 1 / x
-		float y_inv; // 1 / y
-		// float z_inv; // 1 / z
-		
-		// No scale.
-		void init ();
-		
-		// Compute x_inv and y_inv scales from x and y.
-		void init (float x, float y);
-		
-		void init (float x, float y, float x_inv, float y_inv);
-		void init (const Grid*);
-		
-		// Compute scale of grid tiles from columns.
-		void init (const Rect* r, int columns, int rows);
-		
-		// Compute scale between two rects.
-		void init (const Rect* src, const Rect* dest);
-		
-		void inverse ();
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		void relative_to_absolute (const Scale*);
-		void absolute_to_relative (const Scale*);
-		void portal (const Rect* src, const Rect* dest);
-	};
-	*/
-	
-	/*
-	class Rect {
-	public:
-		int x;
-		int y;
-		// int z; // todo
-		int w;
-		int h;
-		// int d;
-		
-		void init (int x, int y, int w, int h);
-		void scale (const Scale*);
-		void scale_inv (const Scale*);
-		void absolute_to_relative (const Rect*);
-		void absolute_to_relative (const Grid*);
-		void absolute_to_relative (const Rect*, const Grid*);
-		void relative_to_absolute (const Rect*);
-		void relative_to_absolute (const Grid*);
-		void relative_to_absolute (const Rect*, const Grid*);
-		void portal (const Rect* src, const Rect* dest);
-		bool contains (int x, int y) const;
-	};
-	*/
-	
 	class Color {
 	public:
 		int r;
@@ -118,11 +60,6 @@ namespace ng {
 		void set_alpha (const Color*);
 		void clear ();
 		void draw ();
-		
-		/*
-		void draw_text (Tileset* const, const char*, const Rect*, const Grid*);
-		void draw_tile (Tileset* const, const Rect*, const Rect*);
-		*/
 		
 		// Draw whole image to whole window.
 		void draw_image (Image* const);

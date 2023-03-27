@@ -8,15 +8,8 @@
 
 namespace ng {
 	
-	// if (x, y) + (dx, dy) intercepts py axis, find (px, py) and return true.
-	// else return false.
-	bool xint (int x, int y, int dx, int dy, int* const px, int py);
-	bool xint (double x, double y, double dx, double dy, double* const px, double py);
-	
-	// if (x, y) + (dx, dy) intercepts px axis, find (px, py) and return true.
-	// else return false.
-	bool yint (int x, int y, int dx, int dy, int px, int* const py);
-	bool yint (double x, double y, double dx, double dy, double px, double* const py);
+	bool intersects (int x, int dx, int axis);
+	bool intersects (double x, double dx, double axis);
 	
 	// given x (-inf, inf) and m [1, inf), produces [0, m).
 	// unlike mod(x, m), does NOT mirror x over y-axis.
@@ -56,16 +49,16 @@ namespace ng {
 	int64_t sq (int x);
 	
 	// L1 distance, taxicab distance, or manhattan distance.
-	int distance_l1 (int x1, int y1, int x2, int y2);
-	double distance_l1 (double x1, double y1, double x2, double y2);
+	int distance_l1 (const Vec* p1, const Vec* p2);
+	double distance_l1 (const Vec* p1, const Vec* p2);
 	
 	// squared euclidean/pythagorean distance.
-	int64_t distance_sq (int x1, int y1, int x2, int y2);
-	double distance_sq (double x1, double y1, double x2, double y2);
+	int distance_sq (const Vec* p1, const Vec* p2);
+	double distance_sq (const Vec* p1, const Vec* p2);
 	
 	// euclidean/pythagorean distance.
-	int distance (int x1, int y1, int x2, int y2);
-	double distance (double x1, double y1, double x2, double y2);
+	int distance (const Vec* p1, const Vec* p2);
+	double distance (const Vec* p1, const Vec* p2);
 	
 	// Given x in [x_min, x_max], produce y in [0, 1].
 	float normalize (float x, float x_min, float x_max);
@@ -109,10 +102,12 @@ namespace ng {
 		// a*=s, b*=s
 		void scale (double s);
 		
+		void absolute_to_relative (const Axis*);
+		void relative_to_absolute (const Axis*);
+		
 		bool contains (int x) const;
 		bool contains (double x) const;
 		bool overlaps (const Range*) const;
-		bool overlaps (const Axis*) const;
 		
 		// true if the vector crosses either edge of this.
 		bool intersects (int x, int dx) const;
@@ -120,14 +115,9 @@ namespace ng {
 		
 		// true if this crosses either edge of range.
 		bool intersects (const Range*) const;
-		bool intersects (const Axis*) const;
-		
-		void absolute_to_relative (const Range*);
-		void absolute_to_relative (const Axis*);
-		void relative_to_absolute (const Range*);
-		void relative_to_absolute (const Axis*);
 	};
 	
+	// range containing a relative coordinate axis
 	class Axis {
 	public:
 		// absolute a inclusive to b exclusive [a, b), b-a=n*u
@@ -155,25 +145,159 @@ namespace ng {
 		// scale u, keeping n constant. a*=s, b*=s, u*=s
 		void scale_u (double s);
 		
+		void absolute_to_relative_n (const Axis*);
+		void absolute_to_relative_u (const Axis*);
+		void relative_to_absolute_n (const Axis*);
+		void relative_to_absolute_u (const Axis*);
+	};
+	
+	// range with center and radius
+	class Diameter {
+	public:
+		double p;
+		double r;
+		
+		void init (int p, int r);
+		void init (double p, double r);
+		
+		// p*=s, r*=s
+		void scale (double s);
+		
+		void absolute_to_relative (const Axis*);
+		void relative_to_absolute (const Axis*);
+		
 		bool contains (int x) const;
 		bool contains (double x) const;
-		bool overlaps (const Range*) const;
-		bool overlaps (const Axis*) const;
+		bool overlaps (const Diameter*) const;
 		
 		// true if the vector crosses either edge of this.
 		bool intersects (int x, int dx) const;
 		bool intersects (double x, double dx) const;
 		
-		// true if this crosses either edge of range.
-		bool intersects (const Range*) const;
-		bool intersects (const Axis*) const;
+		// true if this crosses either edge of diameter.
+		bool intersects (const Diameter*) const;
+	};
+	
+	// vector in R2 and R3
+	class Vec {
+	public:
+		double x;
+		double y;
+		//double z; //todo
 		
-		void absolute_to_relative (const Range*);
-		void absolute_to_relative_n (const Axis*);
-		void absolute_to_relative_u (const Axis*);
-		void relative_to_absolute (const Range*);
-		void relative_to_absolute_n (const Axis*);
-		void relative_to_absolute_u (const Axis*);
+		void init2 (int x, int y);
+		void init2 (double x, double y);
+		
+		void scale2 (double s);
+		void scale2 (double x, double y);
+		void absolute_to_relative2 (const Space*);
+		void relative_to_absolute2 (const Space*);
+		
+		// if p + v intercepts y axis in R2, find this and return true.
+		// else return false.
+		bool xint2 (const Vec* p, const Vec* v);
+		
+		// if p + v intercepts x axis in R2, find this and return true.
+		// else return false.
+		bool yint2 (const Vec* p, const Vec* v);
+		
+		// L1/taxicab/manhattan distance in R2.
+		int len2_l1 () const;
+		double len2_l1 () const;
+		
+		// squared distance in R2.
+		int64_t len2_sq () const;
+		double len2_sq () const;
+		
+		// distance in R2.
+		int len2 () const;
+		double len2 () const;
+	};
+	
+	// rect in R2 and R3
+	class Rect {
+	public:
+		Range x;
+		Range y;
+		//Range z; //todo
+		
+		void init2 (int x1, int y1, int x2, int y2);
+		void init2 (double x1, double y1, double x2, double y2);
+		void init2 (const Range* x, const Range* y);
+		
+		void scale2 (double s);
+		void scale2 (double x, double y);
+		void absolute_to_relative2 (const Space*);
+		void relative_to_absolute2 (const Space*);
+		
+		bool contains2 (int x, int y) const;
+		bool contains2 (double x, double y) const;
+	};
+	
+	// rect containing a relative coordinate space in R2 and R3
+	class Space {
+	public:
+		Axis x;
+		Axis y;
+		//Axis z; //todo
+		
+		void init2 (int x1, int y1, int x2, int y2);
+		void init2 (double x1, double y1, double x2, double y2);
+		void init2_n (const Rect*, double n);
+		void init2_n (const Rect*, double nx, double ny);
+		void init2_u (const Rect*, double u);
+		void init2_u (const Rect*, double ux, double uy);
+		void init2 (const Axis* x, const Axis* y);
+		
+		void scale2_n (double s);
+		void scale2_n (double x, double y);
+		void scale2_u (double s);
+		void scale2_u (double x, double y);
+		void absolute_to_relative2_n (const Space*);
+		void absolute_to_relative2_u (const Space*);
+		void relative_to_absolute2_n (const Space*);
+		void relative_to_absolute2_u (const Space*);
+	};
+	
+	// box with center and radius in R2 or R3
+	class Box {
+	public:
+		Diameter x;
+		Diameter y;
+		//Diameter z; //todo
+		
+		void init2 (int x, int y, int a, int b);
+		void init2 (double x, double y, double a, double b);
+		void init2 (const Rect*);
+		
+		// get a rect for drawing this box.
+		void get_rect2 (Rect* const) const;
+		
+		void scale2 (double s);
+		void scale2 (double x, double y);
+		
+		// move this by v, and reduce v to 0.
+		void moveby2 (Vec* const v);
+		
+		// move this to p, and reduce v to remaining motion.
+		void moveto2 (Vec* const v, const Vec* p);
+		
+		bool contains2_rect (double x, double y) const;
+		bool overlaps2_rect (const Box* b) const;
+		
+		// true if this will collide with b as a result of movement by v.
+		bool collides2_rect (const Vec* v, const Box* b) const;
+		
+		// collide this with b, and reduce v to remaining motion.
+		// true if this collides with b.
+		bool collide2_rect (Vec* const v, const Box* b);
+		
+		// true if the point vector (this.x, this.y, v.x, v.y) intersects b.
+		bool intersects2_rect (const Vec* v, const Box* b) const;
+		
+		// intersect this with b (as defined above), and reduce v to remaining motion.
+		// true if this intersects b.
+		bool intersect2_rect (Vec* const v, const Box* b);
 	};
 	
 }

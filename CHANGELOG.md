@@ -5,17 +5,20 @@
 
 ## 2023 March
 
-March 27:
+TODO:
 - Change nggraphics from int to double. (WIP)
-	- Change rect to use range math. (WIP)
-	- Change grid to space, and use axis math. (WIP)
-	- Change graphics and image to use range math. (WIP)
+	- Change graphics and image to use range. (WIP)
 - Change nggui from int to double. (WIP)
-	- Change canvas to use space, and use axis math. (WIP)
-	- Move vec, grid, tileset, and text-drawing code to nggui. (WIP)
+	- Move tileset, and text-drawing code to nggui. (WIP)
+	- Change canvas to use space. (WIP)
 
-March 26:
+March 27:
 - Change ngmath from int to double.
+	- Move vec, rect, grid, and hitbox to ngmath.
+	- Alternate range: diameter with center and radius (p-r, p+r).
+	- Change rect to use range.
+	- Change grid to space, and use axis.
+	- Change hitbox to box, use diameter.
 
 March 24:
 - Canvas, Hitbox, Scale, Range, and nggui.
