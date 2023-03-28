@@ -8,9 +8,6 @@
 
 namespace ng {
 	
-	bool intersects (int x, int dx, int axis);
-	bool intersects (double x, double dx, double axis);
-	
 	// given x (-inf, inf) and m [1, inf), produces [0, m).
 	// unlike mod(x, m), does NOT mirror x over y-axis.
 	// eg: for m=360, wrap(-359)=1, wrap(-1)=359, wrap(1)=1, wrap(359)=359.
@@ -84,171 +81,55 @@ namespace ng {
 	
 	float dB_silence ();
 	
-	double scale (const Range* src, const Range* dest);
-	double scale (const Range* src, const Axis* dest);
-	double scale (const Axis* src, const Range* dest);
-	double scale (const Axis* src, const Axis* dest);
-	
-	class Range {
-	public:
-		// a inclusive to b exclusive [a, b), b-a=length
-		// after init, a <= b
-		double a;
-		double b;
-		
-		void init (int p, int q);
-		void init (double p, double q);
-		
-		// a*=s, b*=s
-		void scale (double s);
-		
-		void absolute_to_relative (const Axis*);
-		void relative_to_absolute (const Axis*);
-		
-		bool contains (int x) const;
-		bool contains (double x) const;
-		bool overlaps (const Range*) const;
-		
-		// true if the vector crosses either edge of this.
-		bool intersects (int x, int dx) const;
-		bool intersects (double x, double dx) const;
-		
-		// true if this crosses either edge of range.
-		bool intersects (const Range*) const;
-	};
-	
-	// range containing a relative coordinate axis
-	class Axis {
-	public:
-		// absolute a inclusive to b exclusive [a, b), b-a=n*u
-		// relative number of units n, absolute size of unit u
-		// after init, a <= b
-		double a;
-		double b;
-		double n;
-		double u;
-		
-		// n=b-a, u=1
-		void init (int p, int q);
-		void init (double p, double q);
-		
-		// u=(b-a)/n
-		void init_n (double p, double q, double n);
-		
-		// n=(b-a)/u
-		void init_u (double p, double q, double u);
-		
-		// 2 ways to scale axis such that (b-a)*s = (n*u)*s
-		// scale n, keeping u constant. a*=s, b*=s, n*=s
-		void scale_n (double s);
-		
-		// scale u, keeping n constant. a*=s, b*=s, u*=s
-		void scale_u (double s);
-		
-		void absolute_to_relative_n (const Axis*);
-		void absolute_to_relative_u (const Axis*);
-		void relative_to_absolute_n (const Axis*);
-		void relative_to_absolute_u (const Axis*);
-	};
-	
-	// range with center and radius
-	class Diameter {
-	public:
-		double p;
-		double r;
-		
-		void init (int p, int r);
-		void init (double p, double r);
-		
-		// p*=s, r*=s
-		void scale (double s);
-		
-		void absolute_to_relative (const Axis*);
-		void relative_to_absolute (const Axis*);
-		
-		bool contains (int x) const;
-		bool contains (double x) const;
-		bool overlaps (const Diameter*) const;
-		
-		// true if the vector crosses either edge of this.
-		bool intersects (int x, int dx) const;
-		bool intersects (double x, double dx) const;
-		
-		// true if this crosses either edge of diameter.
-		bool intersects (const Diameter*) const;
-	};
-	
-	// vector in R2 and R3
+	// vector in R2 or R3
 	class Vec {
 	public:
 		double x;
 		double y;
 		//double z; //todo
 		
-		void init2 (int x, int y);
 		void init2 (double x, double y);
-		
 		void scale2 (double s);
 		void scale2 (double x, double y);
 		void absolute_to_relative2 (const Space*);
 		void relative_to_absolute2 (const Space*);
-		
-		// if p + v intercepts y axis in R2, find this and return true.
-		// else return false.
-		bool xint2 (const Vec* p, const Vec* v);
-		
-		// if p + v intercepts x axis in R2, find this and return true.
-		// else return false.
-		bool yint2 (const Vec* p, const Vec* v);
-		
-		// L1/taxicab/manhattan distance in R2.
-		int len2_l1 () const;
-		double len2_l1 () const;
-		
-		// squared distance in R2.
-		int64_t len2_sq () const;
-		double len2_sq () const;
-		
-		// distance in R2.
-		int len2 () const;
-		double len2 () const;
 	};
 	
-	// rect in R2 and R3
+	// rectangular area in R2 or volume in R3
 	class Rect {
 	public:
-		Range x;
-		Range y;
-		//Range z; //todo
+		double x;
+		double y;
+		//double z; //todo
+		double w;
+		double h;
+		//double d; //todo
 		
-		void init2 (int x1, int y1, int x2, int y2);
-		void init2 (double x1, double y1, double x2, double y2);
-		void init2 (const Range* x, const Range* y);
-		
+		void init2 (double x, double y, double w, double h);
 		void scale2 (double s);
 		void scale2 (double x, double y);
 		void absolute_to_relative2 (const Space*);
 		void relative_to_absolute2 (const Space*);
-		
-		bool contains2 (int x, int y) const;
 		bool contains2 (double x, double y) const;
+		bool overlaps2 (const Rect*) const;
 	};
 	
-	// rect containing a relative coordinate space in R2 and R3
+	// relative coordinate space parallel to R2 or R3
 	class Space {
 	public:
-		Axis x;
-		Axis y;
-		//Axis z; //todo
+		// w=c*i, h=r*j, d=l*k
+		Rect rect;
+		// n columns/rows/layers along x/y/z axis
+		double c;
+		double r;
+		//double l; //todo
+		// u units i/j/k along x/y/z axis
+		double i;
+		double j;
+		//double k; //todo
 		
-		void init2 (int x1, int y1, int x2, int y2);
-		void init2 (double x1, double y1, double x2, double y2);
-		void init2_n (const Rect*, double n);
-		void init2_n (const Rect*, double nx, double ny);
-		void init2_u (const Rect*, double u);
-		void init2_u (const Rect*, double ux, double uy);
-		void init2 (const Axis* x, const Axis* y);
-		
+		void init2_n (const Rect*, double c, double r);
+		void init2_u (const Rect*, double i, double j);
 		void scale2_n (double s);
 		void scale2_n (double x, double y);
 		void scale2_u (double s);
@@ -259,45 +140,27 @@ namespace ng {
 		void relative_to_absolute2_u (const Space*);
 	};
 	
-	// box with center and radius in R2 or R3
-	class Box {
+	// mass in R2 or R3
+	class Mass {
 	public:
-		Diameter x;
-		Diameter y;
-		//Diameter z; //todo
+		Rect rect;
+		Vec vec;
+		double m;
 		
-		void init2 (int x, int y, int a, int b);
-		void init2 (double x, double y, double a, double b);
-		void init2 (const Rect*);
+		void init2 (const Rect*, double m);
+		void init2 (const Rect*, const Vec*, double m);
+		void move2 ();
+		void move2 (const Vec*);
 		
-		// get a rect for drawing this box.
-		void get_rect2 (Rect* const) const;
+		// if this collides with rect, returns true and vec to collision.
+		// else, returns false.
+		bool collides2 (const Rect*, Vec* const);
 		
-		void scale2 (double s);
-		void scale2 (double x, double y);
+		// inelastic collision
+		void collide2 (const Rect*);
 		
-		// move this by v, and reduce v to 0.
-		void moveby2 (Vec* const v);
-		
-		// move this to p, and reduce v to remaining motion.
-		void moveto2 (Vec* const v, const Vec* p);
-		
-		bool contains2_rect (double x, double y) const;
-		bool overlaps2_rect (const Box* b) const;
-		
-		// true if this will collide with b as a result of movement by v.
-		bool collides2_rect (const Vec* v, const Box* b) const;
-		
-		// collide this with b, and reduce v to remaining motion.
-		// true if this collides with b.
-		bool collide2_rect (Vec* const v, const Box* b);
-		
-		// true if the point vector (this.x, this.y, v.x, v.y) intersects b.
-		bool intersects2_rect (const Vec* v, const Box* b) const;
-		
-		// intersect this with b (as defined above), and reduce v to remaining motion.
-		// true if this intersects b.
-		bool intersect2_rect (Vec* const v, const Box* b);
+		// inelastic collision with momentum transfer
+		void collide2 (Mass* const);
 	};
 	
 }

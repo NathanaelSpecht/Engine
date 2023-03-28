@@ -5,20 +5,16 @@
 
 ## 2023 March
 
-TODO:
-- Change nggraphics from int to double. (WIP)
-	- Change graphics and image to use range. (WIP)
-- Change nggui from int to double. (WIP)
-	- Move tileset, and text-drawing code to nggui. (WIP)
-	- Change canvas to use space. (WIP)
-
 March 27:
+- Join grid with rect into space, and remove grid.
+- Split hitbox into rect and mass, and remove hitbox.
+- Move vec, rect, space, and mass to ngmath.
+- Remove range, axis, and scale.
 - Change ngmath from int to double.
-	- Move vec, rect, grid, and hitbox to ngmath.
-	- Alternate range: diameter with center and radius (p-r, p+r).
-	- Change rect to use range.
-	- Change grid to space, and use axis.
-	- Change hitbox to box, use diameter.
+- Remove unused code in ngmath.
+
+March 26:
+- Move tileset and text-drawing code to nggui.
 
 March 24:
 - Canvas, Hitbox, Scale, Range, and nggui.

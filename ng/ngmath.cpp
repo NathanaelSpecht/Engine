@@ -3,14 +3,6 @@
 
 #include "ngmath.h"
 
-bool intersects (int x, int dx, int axis) {
-	return !((x < axis && x + dx < axis) || (x > axis && x + dx > axis));
-}
-
-bool intersects (double x, double dx, double axis) {
-	return !((x < axis && x + dx < axis) || (x > axis && x + dx > axis));
-}
-
 // given x (-inf, inf) and m [1, inf), produces [0, m).
 // unlike mod(x, m), does NOT mirror x over y-axis.
 // eg: for m=360, wrap(-359)=1, wrap(-1)=359, wrap(1)=1, wrap(359)=359.
@@ -116,41 +108,41 @@ int64_t ng::sq (int x) {
 }
 
 // L1 distance, taxicab distance, or manhattan distance.
-int ng::distance_l1 (const Vec* p1, const Vec* p2) {
+int ng::distance_l1 (const Vec* a, const Vec* a) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len_l1();
 }
 
-double ng::distance_l1 (const Vec* p1, const Vec* p2) {
+double ng::distance_l1 (const Vec* a, const Vec* b) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len_l1();
 }
 
 // squared euclidean/pythagorean distance.
-int ng::distance_sq (const Vec* p1, const Vec* p2) {
+int ng::distance_sq (const Vec* a, const Vec* b) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len_sq();
 }
 
-double ng::distance_sq (const Vec* p1, const Vec* p2) {
+double ng::distance_sq (const Vec* a, const Vec* b) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len_sq();
 }
 
 // euclidean/pythagorean distance.
-int ng::distance (const Vec* p1, const Vec* p2) {
+int ng::distance (const Vec* a, const Vec* b) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len();
 }
 
-double ng::distance (const Vec* p1, const Vec* p2) {
+double ng::distance (const Vec* a, const Vec* b) {
 	Vec d;
-	d.init(p2->x - p1->x, p2->y - p1->y);
+	d.init(b->x - a->x, b->y - a->y);
 	return d.len();
 }
 
@@ -214,238 +206,6 @@ float ng::dB_silence () {
 	return -144.0f;
 }
 
-double ng::scale (const Range* src, const Range* dest) {
-	return (dest->b - dest->a) / (src->b - src->a);
-}
-
-double ng::scale (const Range* src, const Axis* dest) {
-	return dest->n / (src->b - src->a);
-}
-
-double ng::scale (const Axis* src, const Range* dest) {
-	return (dest->b - dest->a) / src->n;
-}
-
-double ng::scale (const Axis* src, const Axis* dest) {
-	return dest->n / src->n;
-}
-
-void ng::Range::init (int p, int q) {
-	if (p <= q) {
-		this->a = static_cast<double>(p);
-		this->b = static_cast<double>(q);
-	} else {
-		this->a = static_cast<double>(q);
-		this->b = static_cast<double>(p);
-	}
-}
-
-void ng::Range::init (double p, double q) {
-	if (p <= q) {
-		this->a = p;
-		this->b = q;
-	} else {
-		this->a = q;
-		this->b = p;
-	}
-}
-
-// a*=s, b*=s
-void ng::Range::scale (double s) {
-	this->a *= s;
-	this->b *= s;
-}
-
-void ng::Range::absolute_to_relative (const Axis* axis) {
-	this->a -= axis->a;
-	this->b -= axis->a;
-	this->scale(1.0/axis->u);
-}
-
-void ng::Range::relative_to_absolute (const Axis* axis) {
-	this->scale(axis->u);
-	this->a += axis->a;
-	this->b += axis->a;
-}
-
-bool ng::Range::contains (int x) const {
-	return (this->a <= static_cast<double>(x) && static_cast<double>(x) < this->b);
-}
-
-bool ng::Range::contains (double x) const {
-	return (this->a <= x && x < this->b);
-}
-
-bool ng::Range::overlaps (const Range* range) const {
-	return (range->a < this->b && range->b > this->a);
-}
-
-// true if the vector crosses either edge of this.
-bool ng::Range::intersects (int x, int dx) const {
-	Range r;
-	r.init(x, x+dx);
-	return (r.contains(this->a) || r.contains(this->b));
-}
-
-bool ng::Range::intersects (double x, double dx) const {
-	Range r;
-	r.init(x, x+dx);
-	return (r.contains(this->a) || r.contains(this->b));
-}
-
-// true if this crosses either edge of range.
-bool ng::Range::intersects (const Range* range) const {
-	return (this->contains(range->a) || this->contains(range->b));
-}
-
-// n=b-a, u=1
-void ng::Axis::init (int p, int q) {
-	if (p <= q) {
-		this->a = static_cast<double>(p);
-		this->b = static_cast<double>(q);
-	} else {
-		this->a = static_cast<double>(q);
-		this->b = static_cast<double>(p);
-	}
-	this->n = this->b - this->a;
-	this->u = 1.0;
-}
-
-void ng::Axis::init (double p, double q) {
-	if (p <= q) {
-		this->a = p;
-		this->b = q;
-	} else {
-		this->a = q;
-		this->b = p;
-	}
-	this->n = this->b - this->a;
-	this->u = 1.0;
-}
-
-// u=(b-a)/n
-void ng::Axis::init_n (double p, double q, double n) {
-	if (p <= q) {
-		this->a = p;
-		this->b = q;
-	} else {
-		this->a = q;
-		this->b = p;
-	}
-	this->n = n;
-	this->u = (this->b - this->a) / n;
-}
-
-// n=(b-a)/u
-void ng::Axis::init_u (double p, double q, double u) {
-	if (p <= q) {
-		this->a = p;
-		this->b = q;
-	} else {
-		this->a = q;
-		this->b = p;
-	}
-	this->n = (this->b - this->a) / u;
-	this->u = u;
-}
-
-// 2 ways to scale axis such that (b-a)*s = (n*u)*s
-// scale n, keeping u constant. a*=s, b*=s, n*=s
-void ng::Axis::scale_n (double s) {
-	this->a *= s;
-	this->b *= s;
-	this->n *= s;
-}
-
-// scale u, keeping n constant. a*=s, b*=s, u*=s
-void ng::Axis::scale_u (double s) {
-	this->a *= s;
-	this->b *= s;
-	this->u *= s;
-}
-
-void ng::Axis::absolute_to_relative_n (const Axis* axis) {
-	this->a -= axis->a;
-	this->b -= axis->a;
-	this->scale_n(1.0/axis->u);
-}
-
-void ng::Axis::absolute_to_relative_u (const Axis* axis) {
-	this->a -= axis->a;
-	this->b -= axis->a;
-	this->scale_u(1.0/axis->u);
-}
-
-void ng::Axis::relative_to_absolute_n (const Axis* axis) {
-	this->scale_n(axis->u);
-	this->a += axis->a;
-	this->b += axis->a;
-}
-
-void ng::Axis::relative_to_absolute_u (const Axis* axis) {
-	this->scale_u(axis->u);
-	this->a += axis->a;
-	this->b += axis->a;
-}
-
-void ng::Diameter::init (int p, int r) {
-	this->p = p;
-	this->r = std::abs(r);
-}
-
-void ng::Diameter::init (double p, double r) {
-	this->p = p;
-	this->r = std::abs(r);
-}
-
-// p*=s, r*=s
-void ng::Diameter::scale (double s) {
-	this->p *= s;
-	this->r *= s;
-}
-
-void ng::Diameter::absolute_to_relative (const Axis*) {
-	this->p -= axis->a;
-	this->scale(1.0/axis->u);
-}
-
-void ng::Diameter::relative_to_absolute (const Axis*) {
-	this->scale(axis->u);
-	this->p += axis->a;
-}
-
-bool ng::Diameter::contains (int x) const {
-	return (std::abs(static_cast<double>(x) - this->p) < this->r);
-}
-
-bool ng::Diameter::contains (double x) const {
-	return (std::abs(x - this->p) < this->r);
-}
-
-bool ng::Diameter::overlaps (const Diameter* dia) const {
-	return (std::abs(dia->p - this->p) < this->r + dia->r);
-}
-
-// true if the vector crosses either edge of this.
-bool ng::Diameter::intersects (int x, int dx) const {
-	return (ng::intersects(x, dx, static_cast<int>(this->p - this->r)) ||
-		ng::intersects(x, dx, static_cast<int>(this->p + this->r)));
-}
-
-bool ng::Diameter::intersects (double x, double dx) const {
-	return (ng::intersects(x, dx, this->p - this->r) || ng::intersects(x, d, this->p + this->r));
-}
-
-// true if this crosses either edge of diameter.
-bool ng::Diameter::intersects (const Diameter* d) const {
-	return (this->contains(d->p - d->r) || this->contains(d->p + d->r));
-}
-
-void ng::Vec::init2 (int x, int y) {
-	this->x = static_cast<double>(x);
-	this->y = static_cast<double>(y);
-}
-
 void ng::Vec::init2 (double x, double y) {
 	this->x = x;
 	this->y = y;
@@ -461,337 +221,166 @@ void ng::Vec::scale2 (double x, double y) {
 	this->y *= y;
 }
 
-void ng::Vec::absolute_to_relative2 (const Space* space) {
-	this->x -= space->x.a;
-	this->y -= space->y.a;
-	this->scale2(1.0/space->x.u, 1.0/space->y.u);
+void ng::Vec::absolute_to_relative2 (const Space* s) {
+	this->x -= s->rect.x;
+	this->y -= s->rect.y;
+	this->scale2(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Vec::relative_to_absolute2 (const Space* space) {
-	this->scale2(space->x.u, space->y.u);
-	this->x += space->x.a;
-	this->y += space->y.a;
+void ng::Vec::relative_to_absolute2 (const Space* s) {
+	this->scale2(s->i, s->j);
+	this->x += s->rect.x;
+	this->y += s->rect.y;
 }
 
-// if p + v intercepts y axis in R2, find this and return true.
-// else return false.
-bool ng::Vec::xint2 (const Vec* p, const Vec* v) {
-	if ((p->y < this->y && p->y + v->y < this->y) || (p->y > this->y && p->y + v->y > this->y)) {
-		return false;
-	} else if (p->y == this->y) {
-		this->x = p->x;
-		return true;
-	} else {
-		// x = my + b
-		// m = dx/dy
-		// b = x-intercept = x - my
-		this->x = p->x - ((v->x * (p->y - this->y))/v->y);
-		return true;
-	}
-}
-
-// if p + v intercepts x axis in R2, find this and return true.
-// else return false.
-bool ng::Vec::yint2 (const Vec* p, const Vec* v) {
-	if ((p->x < this->x && p->x + v->x < this->x) || (p->x > this->x && p->x + v->x > this->x)) {
-		return false;
-	} else if (p->x == this->x) {
-		this->y = p->y;
-		return true;
-	} else {
-		// y = mx + b
-		// m = dy/dx
-		// b = y-intercept = y - mx
-		this->y = p->y - ((v->y * (p->x - this->x))/v->x);
-		return true;
-	}
-}
-
-// L1/taxicab/manhattan distance in R2.
-int ng::Vec::len2_l1 () const {
-	return static_cast<int>(std::abs(this->x) + std::abs(this->y));
-}
-
-double ng::Vec::len2_l1 () const {
-	return std::abs(this->x) + std::abs(this->y);
-}
-
-// squared distance in R2.
-int64_t ng::Vec::len2_sq () const {
-	return static_cast<int>((this->x * this->x) + (this->y * this->y));
-}
-
-double ng::Vec::len2_sq () const {
-	return (this->x * this->x) + (this->y * this->y);
-}
-
-// distance in R2.
-int ng::Vec::len2 () const {
-	return static_cast<int>(std::hypot(this->x, this->y));
-}
-
-double ng::Vec::len2 () const {
-	return std::hypot(this->x, this->y);
-}
-
-void ng::Rect::init2 (int x1, int y1, int x2, int y2) {
-	this->x.init(x1, x2);
-	this->y.init(y1, y2);
-}
-
-void ng::Rect::init2 (double x1, double y1, double x2, double y2) {
-	this->x.init(x1, x2);
-	this->y.init(y1, y2);
-}
-
-void ng::Rect::init2 (const Range* x, const Range* y) {
-	this->x = *x;
-	this->y = *y;
+void ng::Rect::init2 (double x, double y, double w, double h) {
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
 }
 
 void ng::Rect::scale2 (double s) {
-	this->x.scale(s);
-	this->y.scale(s);
+	this->x *= s;
+	this->y *= s;
+	this->w *= s;
+	this->h *= s;
 }
 
 void ng::Rect::scale2 (double x, double y) {
-	this->x.scale(x);
-	this->y.scale(y);
+	this->x *= x;
+	this->y *= y;
+	this->w *= x;
+	this->h *= y;
 }
 
-void ng::Rect::absolute_to_relative2 (const Space* space) {
-	this->x.absolute_to_relative(&space->x);
-	this->y.absolute_to_relative(&space->y);
+void ng::Rect::absolute_to_relative2 (const Space* s) {
+	this->x -= s->rect.x;
+	this->y -= s->rect.y;
+	this->scale2(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Rect::relative_to_absolute2 (const Space* space) {
-	this->x.relative_to_absolute(&space->x);
-	this->y.relative_to_absolute(&space->y);
-}
-
-bool ng::Rect::contains2 (int x, int y) const {
-	return (this->x.contains(x) && this->y.contains(y));
+void ng::Rect::relative_to_absolute2 (const Space* s) {
+	this->scale2(s->i, s->j);
+	this->x += s->rect.x;
+	this->y += s->rect.y;
 }
 
 bool ng::Rect::contains2 (double x, double y) const {
-	return (this->x.contains(x) && this->y.contains(y));
+	return ((this->x < x && x < this->x + this->w) &&
+		(this->y < y && y < this->y + this->h));
 }
 
-void ng::Space::init2 (int x1, int y1, int x2, int y2) {
-	this->x.init(x1, x2);
-	this->y.init(y1, y2);
+bool ng::Rect::overlaps2 (const Rect* r) const {
+	double a, b;
+	a = r->w * 0.5;
+	b = r->h * 0.5;
+	Rect s;
+	s.init2(this->x - a, this->y - b, this->w + r->w, this->h + r->h);
+	return s.contains2(r->x + a, r->y + b);
 }
 
-void ng::Space::init2 (double x1, double y1, double x2, double y2) {
-	this->x.init(x1, x2);
-	this->y.init(y1, y2);
+void ng::Space::init2_n (const Rect* rect, double c, double r) {
+	this->rect = *rect;
+	this->c = c;
+	this->r = r;
+	this->i = rect->w / c;
+	this->j = rect->h / r;
 }
 
-void ng::Space::init2_n (const Rect* rect, double n) {
-	this->x.init_n(rect->x.a, rect->x.b, n);
-	this->y.init_n(rect->y.a, rect->y.b, n);
-}
-
-void ng::Space::init2_n (const Rect* rect, double nx, double ny) {
-	this->x.init_n(rect->x.a, rect->x.b, nx);
-	this->y.init_n(rect->y.a, rect->y.b, ny);
-}
-
-void ng::Space::init2_u (const Rect* rect, double u) {
-	this->x.init_u(box->x.a, rect->x.b, u);
-	this->y.init_u(box->y.a, rect->y.b, u);
-}
-
-void ng::Space::init2_u (const Rect* rect, double ux, double uy) {
-	this->x.init_u(rect->x.a, rect->x.b, ux);
-	this->y.init_u(rect->y.a, rect->y.b, uy);
-}
-
-void ng::Space::init2 (const Axis* x, const Axis* y) {
-	this->x = *x;
-	this->y = *y;
+void ng::Space::init2_u (const Rect* rect, double i, double j) {
+	this->rect = *rect;
+	this->c = rect->w / i;
+	this->r = rect->h / j;
+	this->i = i;
+	this->j = j;
 }
 
 void ng::Space::scale2_n (double s) {
-	this->x.scale_n(s);
-	this->y.scale_n(s);
+	this->rect.scale2(s);
+	this->c *= s;
+	this->r *= s;
 }
 
 void ng::Space::scale2_n (double x, double y) {
-	this->x.scale_n(x);
-	this->y.scale_n(y);
+	this->rect.scale2(x, y);
+	this->c *= x;
+	this->r *= y;
 }
 
 void ng::Space::scale2_u (double s) {
-	this->x.scale_u(s);
-	this->y.scale_u(s);
+	this->rect.scale2(s);
+	this->i *= s;
+	this->j *= s;
 }
 
 void ng::Space::scale2_u (double x, double y) {
-	this->x.scale_u(x);
-	this->y.scale_u(y);
+	this->rect.scale2(x, y);
+	this->i *= x;
+	this->j *= y;
 }
 
-void ng::Space::absolute_to_relative2_n (const Space* space) {
-	this->x.absolute_to_relative_n(&space->x);
-	this->y.absolute_to_relative_n(&space->y);
+void ng::Space::absolute_to_relative2_n (const Space* s) {
+	this->rect.x -= s->rect.x;
+	this->rect.y -= s->rect.y;
+	this->scale2_n(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Space::absolute_to_relative2_u (const Space* space) {
-	this->x.absolute_to_relative_u(&space->x);
-	this->y.absolute_to_relative_u(&space->y);
+void ng::Space::absolute_to_relative2_u (const Space* s) {
+	this->rect.x -= s->rect.x;
+	this->rect.y -= s->rect.y;
+	this->scale2_u(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Space::relative_to_absolute2_n (const Space* space) {
-	this->x.relative_to_absolute_n(&space->x);
-	this->y.relative_to_absolute_n(&space->y);
+void ng::Space::relative_to_absolute2_n (const Space* s) {
+	this->scale2_n(s->i, s->j);
+	this->rect.x += s->rect.x;
+	this->rect.y += s->rect.y;
 }
 
-void ng::Space::relative_to_absolute2_u (const Space* space) {
-	this->x.relative_to_absolute_u(&space->x);
-	this->y.relative_to_absolute_u(&space->y);
+void ng::Space::relative_to_absolute2_u (const Space* s) {
+	this->scale2_u(s->i, s->j);
+	this->rect.x += s->rect.x;
+	this->rect.y += s->rect.y;
 }
 
-void ng::Box::init2 (int x, int y, int a, int b) {
-	this->x.init(x, a);
-	this->y.init(y, b);
+void ng::Mass::init2 (const Rect* rect, double m) {
+	this->rect = *rect;
+	this->vec.init2(0.0, 0.0);
+	this->m = m;
 }
 
-void ng::Box::init2 (double x, double y, double a, double b) {
-	this->x.init(x, a);
-	this->y.init(y, b);
+void ng::Mass::init2 (const Rect* rect, const Vec* vec, double m) {
+	this->rect = *rect;
+	this->vec = *vec;
+	this->m = m;
 }
 
-void ng::Box::init2 (const Rect* rect) {
-	double rx, ry;
-	rx = (rect->x.b - rect->x.a) * 0.5;
-	ry = (rect->y.b - rect->y.a) * 0.5;
-	this->x.init(rect->x.a + rx, rx);
-	this->y.init(rect->y.a + ry, ry);
+void ng::Mass::move2 () {
+	this->rect.x += this->vec.x;
+	this->rect.y += this->vec.y;
 }
 
-// get a rect for drawing this box.
-void ng::Box::get_rect2 (Rect* const rect) const {
-	rect->x.init(this->x.p - this->x.r, this->x.p + this->x.r);
-	rect->y.init(this->y.p - this->y.r, this->y.p + this->y.r);
+void ng::Mass::move2 (const Vec* vec) {
+	this->rect.x += vec->x;
+	this->rect.y += vec->y;
 }
 
-void ng::Box::scale2 (double s) {
-	this->x.scale(s);
-	this->y.scale(s);
+// if this collides with rect, returns true and vec to collision.
+// else, returns false.
+bool ng::Mass::collides2 (const Rect* rect, Vec* const vec) {
+	//TODO
+	return false;
 }
 
-void ng::Box::scale2 (double x, double y) {
-	this->x.scale(x);
-	this->y.scale(y);
+// inelastic collision
+void ng::Mass::collide2 (const Rect* rect) {
+	//TODO
 }
 
-// move this by v, and reduce v to 0.
-void ng::Box::moveby2 (Vec* const v) {
-	this->x.p += v->x;
-	this->y.p += v->y;
-	v->x = 0.0;
-	v->y = 0.0;
-}
-
-// move this to p, and reduce v to remaining motion.
-void ng::Box::moveto2 (Vec* const v, const Vec* p) {
-	double dx, dy;
-	dx = p->x - this->x.p;
-	dy = p->y - this->y.p;
-	this->x.p = p->x;
-	this->y.p = p->y;
-	v->x -= dx;
-	v->y -= dy;
-}
-
-bool ng::Box::contains2_rect (double x, double y) const {
-	return (this->x.contains(x) && this->y.contains(y));
-}
-
-bool ng::Box::overlaps2_rect (const Box* b) const {
-	Box k = *b;
-	k.x.r += this->x.r;
-	k.y.r += this->y.r;
-	return k.contains2_rect(this->x, this->y);
-}
-
-// true if this will collide with b as a result of movement by v.
-bool ng::Box::collides2_rect (const Vec* v, const Box* b) const {
-	Box k = *b;
-	k.x.r += this->x.r;
-	k.y.r += this->y.r;
-	return this->intersects2_rect(v, &k);
-}
-
-// collide this with b, and reduce v to remaining motion.
-// true if this collides with b.
-bool ng::Box::collide2_rect (Vec* const v, const Box* b) {
-	Box k = *b;
-	k.x.r += this->x.r;
-	k.y.r += this->y.r;
-	return this->intersect2_rect(v, &k);
-}
-
-// true if the point vector (this.x, this.y, v.x, v.y) intersects b.
-bool ng::Box::intersects2_rect (const Vec* v, const Box* b) const {
-	// point vector intersects box if:
-	// - point vector overlaps box (x and y range overlap), and
-	// - point vector crosses any edge (x or y range intersect).
-	Range vx, vy, bx, by;
-	vx.init(this->x.p, this->x.p + v->x);
-	vy.init(this->y.p, this->y.p + v->y);
-	bx.init(b->x.p - b->x.r, b->x.p + b->x.r);
-	by.init(b->y.p - b->y.r, b->y.p + b->y.r);
-	return ((vx.overlaps(&hx) && vy.overlaps(&hy)) &&
-		(vx.intersects(&hx) || vy.intersects(&hy)));
-}
-
-// intersect this with b (as defined above), and reduce v to remaining motion.
-// true if this intersects b.
-bool ng::Box::intersect2_rect (Vec* const v, const Box* b) {
-	Vec q;
-	q.init(this->x.p, this->y.p);
-
-	Range bx, by;
-	bx.init(b->x.p - b->x.r, b->x.p + b->x.r);
-	by.init(b->y.p - b->y.r, b->y.p + b->y.r);
-	
-	bool i = false; // intersection
-	Vec p, p1, p2, p3, p4;
-	
-	// Find closest intersection point.
-	p1.y = b->y.p - b->y.r;
-	if (p1.xint(&q, v) && bx.contains(p1.x) &&
-	(!i || ng::distance_sq(&q, &p1) < ng::distance_sq(&q, &p))) {
-		i = true;
-		p = p1;
-	}
-	p2.y = b->y.p + b->y.r;
-	if (p2.xint(&q, v) && bx.contains(p2.x) &&
-	(!i || ng::distance_sq(&q, &p2) < ng::distance_sq(&q, &p))) {
-		i = true;
-		p = p2;
-	}
-	p3.x = b->x.p - b->x.r;
-	if (p3.yint(&q, v) && by.contains(p3.y) &&
-	(!i || ng::distance_sq(&q, &p3) < ng::distance_sq(&q, &p))) {
-		i = true;
-		p = p3;
-	}
-	p4.x = b->x.p + b->x.r;
-	if (p4.yint(&q, v) && by.contains(p4.y) &&
-	(!i || ng::distance_sq(&q, &p4) < ng::distance_sq(&q, &p))) {
-		i = true;
-		p = p4;
-	}
-	
-	if (i) { // intersection
-		this->moveto2(v, &p);
-	} else { // no intersection
-		this->moveby2(v);
-	}
-	return i;
+// inelastic collision with momentum transfer
+void ng::Mass::collide2 (Mass* const mass) {
+	//TODO
 }
 
 
