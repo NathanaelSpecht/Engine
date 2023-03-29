@@ -5,6 +5,10 @@
 
 ## 2023 March
 
+March 28:
+- Change nggraphics from int to double.
+- Collider code for vec, rect, and mass.
+
 March 27:
 - Join grid with rect into space, and remove grid.
 - Split hitbox into rect and mass, and remove hitbox.

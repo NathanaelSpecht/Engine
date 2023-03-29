@@ -54,7 +54,7 @@ namespace ng {
 		Rect rect;
 		Color color;
 		
-		void init (const char* title, int w, int h);
+		void init (const char* title, double w, double h);
 		void quit ();
 		void set_color (const Color*);
 		void set_alpha (const Color*);
@@ -71,8 +71,8 @@ namespace ng {
 		void draw_image (Image* const, const Rect*, const Rect*);
 		
 		void draw_rect (const Rect*, int draw);
-		void draw_line (int x1, int y1, int x2, int y2);
-		void draw_point (int x, int y);
+		void draw_line (double x1, double y1, double x2, double y2);
+		void draw_point (double x, double y);
 	};
 
 }

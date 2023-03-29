@@ -3,9 +3,10 @@
 
 #include "ngmath.h"
 
-// given x (-inf, inf) and m [1, inf), produces [0, m).
-// unlike mod(x, m), does NOT mirror x over y-axis.
-// eg: for m=360, wrap(-359)=1, wrap(-1)=359, wrap(1)=1, wrap(359)=359.
+// given x (-int32, int32) and m [1, int16), produces [0, m).
+// unlike std::mod(x, m), does NOT mirror positive and negative x.
+// adds a multiple of m (say, p) to x, such that x+p >= 0 for any x.
+// equivalent to std::mod(x+p, m).
 int ng::wrap (int x, int m) {
 	// cast to int64 to avoid overflow
 	int64_t x1, m1, y;
@@ -22,40 +23,17 @@ double ng::wrap (double x, double m) {
 }
 
 // Bhaskara I's sine approximation
-// given degrees x [0, 180], and radius r (-inf, inf), produces sin(x) [0, r].
-int ng::bhaskara (int x, int r) {
-	// max absolute error is 0.00166, and max relative error is 1.9 percent.
-	// error approaches 0 for x approaching 0, 30, 90, 150, and 180.
-	// cast to int64 to avoid overflow for large r.
-	int64_t x1, r1, p, y;
-	int result;
-	x1 = static_cast<int64_t>(x);
-	r1 = static_cast<int64_t>(r);
-	p = x1 * (INT64_C(180) - x1);
-	y = (INT64_C(4) * p * r1) / (INT64_C(40500) - p);
-	result = static_cast<int>(y);
-	return result;
-}
-
 // given degrees x [0, 180], produces sin(x) [0, 1].
+// 35 cycles.
 double ng::bhaskara (double x) {
-	double p, y;
-	p = x * (180.0 - x);
-	y = (4.0 * p) / (40500.0 - p);
-	return y;
-}
-
-// quick integer sine.
-// given degrees x [0, 360), and radius r (-inf, inf), produces sin(x) [-r, r].
-int ng::qsin (int x, int r) {
-	if (x <= 180) {
-		return ng::bhaskara(x, r);
-	} else {
-		return -ng::bhaskara(x - 180, r);
-	}
+	// Error computed from the graph of y = f(x) - sin((pi*x)/180).
+	// max error of 0.165%. error -> 0 for x -> 0, 30, 90, 150, 180.
+	double p = x * (180.0 - x);
+	return ((4.0 * p) / (40500.0 - p));
 }
 
 // given degrees x [0, 360), produces sin(x) [-1, 1].
+// 35-40 cycles.
 double ng::qsin (double x) {
 	if (x <= 180.0) {
 		return ng::bhaskara(x);
@@ -64,19 +42,8 @@ double ng::qsin (double x) {
 	}
 }
 
-// quick integer cosine.
-// given degrees x [0, 360), and radius r (-inf, inf), produces cos(x) [-r, r].
-int ng::qcos (int x, int r) {
-	if (x <= 90) {
-		return ng::bhaskara(x + 90, r);
-	} else if (x < 270) {
-		return -ng::bhaskara(x - 90, r);
-	} else {
-		return ng::bhaskara(x - 270, r);
-	}
-}
-
 // given degrees x [0, 360), produces cos(x) [-1, 1].
+// 35-40 cycles.
 double ng::qcos (double x) {
 	if (x <= 90.0) {
 		return ng::bhaskara(x + 90.0);
@@ -85,65 +52,6 @@ double ng::qcos (double x) {
 	} else {
 		return ng::bhaskara(x - 270.0);
 	}
-}
-
-// integer square root.
-// int wrapper for float sqrt function in math.h
-// assumes x >= 0.
-int ng::sqrt (int64_t x) {
-	double x1, y;
-	int result;
-	x1 = static_cast<double>(x);
-	y = std::sqrt(x1);
-	result = static_cast<int>(y);
-	return result;
-}
-
-// x squared.
-int64_t ng::sq (int x) {
-	int64_t x1, y;
-	x1 = static_cast<int64_t>(x);
-	y = x1 * x1;
-	return y;
-}
-
-// L1 distance, taxicab distance, or manhattan distance.
-int ng::distance_l1 (const Vec* a, const Vec* a) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len_l1();
-}
-
-double ng::distance_l1 (const Vec* a, const Vec* b) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len_l1();
-}
-
-// squared euclidean/pythagorean distance.
-int ng::distance_sq (const Vec* a, const Vec* b) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len_sq();
-}
-
-double ng::distance_sq (const Vec* a, const Vec* b) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len_sq();
-}
-
-// euclidean/pythagorean distance.
-int ng::distance (const Vec* a, const Vec* b) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len();
-}
-
-double ng::distance (const Vec* a, const Vec* b) {
-	Vec d;
-	d.init(b->x - a->x, b->y - a->y);
-	return d.len();
 }
 
 // Given x in [x_min, x_max], produce y in [0, 1].
@@ -211,6 +119,41 @@ void ng::Vec::init2 (double x, double y) {
 	this->y = y;
 }
 
+// Set this to the vector from p1 to p2.
+void ng::Vec::init2 (const Vec* p1, const Vec* p2) {
+	this->x = p2->x - p1->x;
+	this->y = p2->y - p1->y;
+}
+
+// Set this to the scale between relative to src and relative to dest.
+// For example, a virtual camera with one side in game, and other side on screen:
+// - To draw to screen, src in game world and dest on screen.
+// - To get mouse point, src on screen and dest in game world.
+void ng::Vec::init2 (const Space* src, const Space* dest) {
+	this->x = dest->c / src->c;
+	this->y = dest->r / src->r;
+}
+
+// this - v
+void ng::Vec::sub2 (const Vec* v) {
+	this->x -= v->x;
+	this->y -= v->y;
+}
+
+// flip this over EnumSide.
+void ng::Vec::flip2 (int side) {
+	switch (side) {
+		case ng::SideX: {
+			this->y = -this->y;
+			break;
+		} case ng::SideY: {
+			this->x = -this->x;
+			break;
+		} default {}
+	}
+}
+
+// this * s
 void ng::Vec::scale2 (double s) {
 	this->x *= s;
 	this->y *= s;
@@ -233,11 +176,81 @@ void ng::Vec::relative_to_absolute2 (const Space* s) {
 	this->y += s->rect.y;
 }
 
+// distance from this to p.
+// L1 distance.
+double ng::Vec::distance2_l1 (const Vec* p) const {
+	return (std::abs(p->x - this->x) + std::abs(p->y - this->y));
+}
+
+// squared euclidean distance.
+double ng::Vec::distance2_sq (const Vec* p) const {
+	double dx, dy;
+	dx = p->x - this->x;
+	dy = p->y - this->y;
+	return ((dx * dx) + (dy * dy));
+}
+
+// euclidean distance.
+double ng::Vec::distance2 (const Vec* p) const {
+	return std::hypot(p->x - this->x, p->y - this->y);
+}
+
+// if p+v intersects this axis, then return true and this is intercept.
+// else return false.
+// x-intercept along this y.
+bool ng::Vec::xint2 (const Vec* p, const Vec* v) {
+	// (x,y) is p, 1/m is dx/dy (v->x/v->y), b is x-intercept (this->x), axis is this->y.
+	// x = (1/m)(axis - y) + b
+	// b = x - (1/m)(axis - y)
+	if ((p->y < this->y && p->y + v->y < this->y) ||
+	(p->y > this->y && p->y + v->y > this->y)) {
+		// p+v does not intersect axis.
+		return false;
+		
+	} else if (p->y == i->y) {
+		// p is already on axis. b is x.
+		this->x = p->x;
+		return true;
+		
+	} else {
+		// p+v intersects axis. find b.
+		this->x = p->x - ((v->x / v->y) * (this->y - p->y));
+		return true;
+	}
+}
+
+// y-intercept along this x.
+bool ng::Vec::yint2 (const Vec* p, const Vec* v) {
+	// (x,y) is p, m is dy/dx (v->y/v->x), b is y-intercept (this->y), axis is this->x.
+	// y = m(axis - x) + b
+	// b = y - m(axis - x)
+	if ((p->x < this->x && p->x + v->x < this->x) ||
+	(p->x > this->x && p->x + v->x > this->x)) {
+		// p+v does not intersect axis.
+		return false;
+		
+	} else if (p->x == this->x) {
+		// p is already on axis. b is y.
+		this->y = p->y;
+		return true;
+		
+	} else {
+		// p+v intersects axis. find b.
+		this->y = p->y - ((v->y / v->x) * (this->x - p->x));
+		return true;
+	}
+}
+
 void ng::Rect::init2 (double x, double y, double w, double h) {
 	this->x = x;
 	this->y = y;
 	this->w = w;
 	this->h = h;
+}
+
+void ng::Rect::moveby2 (const Vec* v) {
+	this->x += v->x;
+	this->y += v->y;
 }
 
 void ng::Rect::scale2 (double s) {
@@ -280,7 +293,68 @@ bool ng::Rect::overlaps2 (const Rect* r) const {
 	return s.contains2(r->x + a, r->y + b);
 }
 
-void ng::Space::init2_n (const Rect* rect, double c, double r) {
+// if p+v intersects the edge of this, returns true, and
+// sets vint to the part of v which produces an intersection, and
+// sets side to the intersecting side (see EnumSide).
+// else, returns false, and sets vint to v.
+bool ng::Rect::intersect2 (const Vec* p, const Vec* v, Vec* const vint, int* const side) const {
+	Rect c = *this; // collider
+	bool intersect = false;
+	Vec p1, p2, p3, p4, pint;
+	p1.x = c.x;
+	p2.x = c.x + c.w;
+	p3.y = c.y;
+	p4.y = c.y + c.h;
+	
+	if (p1.yint2(p, v) && c.y <= p1.y && p1.y < c.y + c.h) {
+		intersect = true;
+		pint = p1;
+		*side = ng::SideY;
+	}
+	if (p2.yint2(p, v) && c.y <= p2.y && p2.y < c.y + c.h &&
+	(!intersect || p.distance2_l1(p2) < p.distance2_l1(pint))) {
+		intersect = true;
+		pint = p2;
+		*side = ng::SideY;
+	}
+	if (p3.xint2(p, v) && c.x <= p3.x && p3.x < c.x + c.w &&
+	(!intersect || p.distance2_l1(p3) < p.distance2_l1(pint))) {
+		intersect = true;
+		pint = p3;
+		*side = ng::SideX;
+	}
+	if (p4.xint2(p, v) && c.x <= p4.x && p4.x < c.x + c.w &&
+	(!intersect || p.distance2_l1(p4) < p.distance2_l1(pint))) {
+		intersect = true;
+		pint = p4;
+		*side = ng::SideX;
+	}
+	
+	if (intersect) {
+		vint->init2(&p, &pint);
+	} else {
+		*vint = v;
+	}
+	return intersect;
+}
+
+void ng::Space::init2 (double x, double y, double w, double h) {
+	this->rect.init2(x, y, w, h);
+	this->c = w;
+	this->r = h;
+	this->i = 1.0;
+	this->j = 1.0;
+}
+
+void ng::Space::init2 (const Rect* rect) {
+	this->rect = *rect;
+	this->c = rect->w;
+	this->r = rect->h;
+	this->i = 1.0;
+	this->j = 1.0;
+}
+
+void ng::Space::init2_c (const Rect* rect, double c, double r) {
 	this->rect = *rect;
 	this->c = c;
 	this->r = r;
@@ -288,7 +362,7 @@ void ng::Space::init2_n (const Rect* rect, double c, double r) {
 	this->j = rect->h / r;
 }
 
-void ng::Space::init2_u (const Rect* rect, double i, double j) {
+void ng::Space::init2_i (const Rect* rect, double i, double j) {
 	this->rect = *rect;
 	this->c = rect->w / i;
 	this->r = rect->h / j;
@@ -296,50 +370,50 @@ void ng::Space::init2_u (const Rect* rect, double i, double j) {
 	this->j = j;
 }
 
-void ng::Space::scale2_n (double s) {
+void ng::Space::scale2_c (double s) {
 	this->rect.scale2(s);
 	this->c *= s;
 	this->r *= s;
 }
 
-void ng::Space::scale2_n (double x, double y) {
+void ng::Space::scale2_c (double x, double y) {
 	this->rect.scale2(x, y);
 	this->c *= x;
 	this->r *= y;
 }
 
-void ng::Space::scale2_u (double s) {
+void ng::Space::scale2_i (double s) {
 	this->rect.scale2(s);
 	this->i *= s;
 	this->j *= s;
 }
 
-void ng::Space::scale2_u (double x, double y) {
+void ng::Space::scale2_i (double x, double y) {
 	this->rect.scale2(x, y);
 	this->i *= x;
 	this->j *= y;
 }
 
-void ng::Space::absolute_to_relative2_n (const Space* s) {
+void ng::Space::absolute_to_relative2_c (const Space* s) {
 	this->rect.x -= s->rect.x;
 	this->rect.y -= s->rect.y;
-	this->scale2_n(1.0/s->i, 1.0/s->j);
+	this->scale2_c(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Space::absolute_to_relative2_u (const Space* s) {
+void ng::Space::absolute_to_relative2_i (const Space* s) {
 	this->rect.x -= s->rect.x;
 	this->rect.y -= s->rect.y;
-	this->scale2_u(1.0/s->i, 1.0/s->j);
+	this->scale2_i(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Space::relative_to_absolute2_n (const Space* s) {
-	this->scale2_n(s->i, s->j);
+void ng::Space::relative_to_absolute2_c (const Space* s) {
+	this->scale2_c(s->i, s->j);
 	this->rect.x += s->rect.x;
 	this->rect.y += s->rect.y;
 }
 
-void ng::Space::relative_to_absolute2_u (const Space* s) {
-	this->scale2_u(s->i, s->j);
+void ng::Space::relative_to_absolute2_i (const Space* s) {
+	this->scale2_i(s->i, s->j);
 	this->rect.x += s->rect.x;
 	this->rect.y += s->rect.y;
 }
@@ -357,30 +431,68 @@ void ng::Mass::init2 (const Rect* rect, const Vec* vec, double m) {
 }
 
 void ng::Mass::move2 () {
-	this->rect.x += this->vec.x;
-	this->rect.y += this->vec.y;
+	this->rect.moveby2(&this->vec);
 }
 
-void ng::Mass::move2 (const Vec* vec) {
-	this->rect.x += vec->x;
-	this->rect.y += vec->y;
+// intersect this rect+vec with r. (see Rect::intersect)
+bool ng::Mass::intersect2 (const Rect* r, Vec* const vint, int* const side) {
+	// (this center+vec) intersects edge of (r center, r radius + this radius).
+	Rect c; // collider
+	Vec p, v; // this center and vec
+	double a, b; // this radius
+	a = this->rect.w * 0.5;
+	b = this->rect.h * 0.5;
+	p.init2(this->rect.x + a, this->rect.y + b);
+	v = this->vec;
+	c.init2(r->x - a, r->y - b, r->w + this->rect.w, r->h + this->rect.h);
+	
+	return c.intersect2(&p, &v, vint, side);
 }
 
-// if this collides with rect, returns true and vec to collision.
-// else, returns false.
-bool ng::Mass::collides2 (const Rect* rect, Vec* const vec) {
-	//TODO
-	return false;
+// Elastic collision without momentum transfer.
+// qbounce ignores all other possible collisions!
+// vint and side are the same parameters returned by intersect.
+void ng::Mass::qbounce2 (const Vec* vint, int side) {
+	Vec v = this->vec;
+	this->rect.moveby2(vint);
+	v.sub2(vint);
+	v.flip2(side);
+	this->rect.moveby2(&v);
+	this->vec.flip2(side);
 }
 
-// inelastic collision
-void ng::Mass::collide2 (const Rect* rect) {
-	//TODO
+// Elastic collision without momentum transfer.
+// bounce allows for more collisions along the remaining path of this mass.
+// vint and side are the same parameters returned by intersect.
+void ng::Mass::bounce2 (const Vec* vint, int side) {
+	this->rect.moveby2(vint);
+	this->vec.sub2(vint);
+	this->vec.flip2(side);
 }
 
-// inelastic collision with momentum transfer
-void ng::Mass::collide2 (Mass* const mass) {
-	//TODO
+// Perfectly inelastic momentum transfer.
+// For when two moving masses collide and stick together, without deformation.
+// For example: you're moving, an object is moving, and you pick it up.
+// 2 versions: one like qbounce and the other like bounce.
+void ng::Mass::qcollide2_inelastic (Mass* const) {
+	// TODO
+}
+
+void ng::Mass::collide2_inelastic (Mass* const) {
+	// TODO
+}
+
+// Perfectly elastic momentum transfer and bounce.
+// For when two moving masses collide and bounce, transfering energy perfectly
+// without deformation.
+// For example: an object hits another object and they ricochet off each other.
+// 2 versions: one like qbounce and the other like bounce.
+void ng::Mass::qcollide2_elastic (Mass* const) {
+	// TODO
+}
+
+void ng::Mass::collide2_elastic (Mass* const) {
+	// TODO
 }
 
 

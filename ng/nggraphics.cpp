@@ -19,7 +19,7 @@ void ng::Color::init (int r, int g, int b, int a) {
 
 void ng::Image::init (Graphics* const g, const char* file, const Color* key) {
 	this->texture = NULL;
-	this->rect.init(0, 0, 0, 0);
+	this->rect.init(0.0, 0.0, 0.0, 0.0);
 	this->color.init(255, 255, 255);
 	this->flip = ng::None;
 	this->angle = 0.0;
@@ -43,8 +43,8 @@ void ng::Image::init (Graphics* const g, const char* file, const Color* key) {
 	}
 	
 	this->texture = texture;
-	this->rect.w = surface->w;
-	this->rect.h = surface->h;
+	this->rect.w = static_cast<double>(surface->w);
+	this->rect.h = static_cast<double>(surface->h);
 }
 
 void ng::Image::quit () {
@@ -86,14 +86,14 @@ void ng::Image::set_angle (double angle) {
 	this->angle = angle;
 }
 
-void ng::Graphics::init (const char* title, int w, int h) {
+void ng::Graphics::init (const char* title, double w, double h) {
 	this->window = NULL;
 	this->renderer = NULL;
-	this->rect.init(0, 0, w, h);
+	this->rect.init(0.0, 0.0, w, h);
 	this->color.init(0, 0, 0);
 	
-	this->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_RESIZABLE);
+	this->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		static_cast<int>(w), static_cast<int>(h), SDL_WINDOW_RESIZABLE);
 	if (this->window == NULL) {
 		throw std::runtime_error(SDL_GetError());
 	}
@@ -169,8 +169,16 @@ void ng::Graphics::draw_image (Image* const image, const Rect* dest) {
 
 // Draw part of image to part of window.
 void ng::Graphics::draw_image (Image* const image, const Rect* src, const Rect* dest) {
-	SDL_Rect src_sdl = {src->x, src->y, src->w, src->h};
-	SDL_Rect dest_sdl = {dest->x, dest->y, dest->w, dest->h};
+	SDL_Rect src_sdl, dest_sdl;
+	src_sdl.x = static_cast<int>(src->x);
+	src_sdl.y = static_cast<int>(src->y);
+	src_sdl.w = static_cast<int>(src->w);
+	src_sdl.h = static_cast<int>(src->h);
+	dest_sdl.x = static_cast<int>(dest->x);
+	dest_sdl.y = static_cast<int>(dest->y);
+	dest_sdl.w = static_cast<int>(dest->w);
+	dest_sdl.h = static_cast<int>(dest->h);
+	
 	if (image->flip == ng::None && image->angle == 0.0) {
 		if (SDL_RenderCopy(this->renderer, image->texture, &src_sdl, &dest_sdl) != 0) {
 			throw std::runtime_error(SDL_GetError());
@@ -203,7 +211,12 @@ void ng::Graphics::draw_image (Image* const image, const Rect* src, const Rect* 
 }
 
 void ng::Graphics::draw_rect (const Rect* dest, int draw) {
-	SDL_Rect dest_sdl = {dest->x, dest->y, dest->w, dest->h};
+	SDL_Rect dest_sdl;
+	dest_sdl.x = static_cast<int>(dest->x);
+	dest_sdl.y = static_cast<int>(dest->y);
+	dest_sdl.w = static_cast<int>(dest->w);
+	dest_sdl.h = static_cast<int>(dest->h);
+	
 	switch (draw) {
 		case ng::DrawFill: {
 			if (SDL_RenderFillRect(this->renderer, &dest_sdl) != 0) {
@@ -221,14 +234,24 @@ void ng::Graphics::draw_rect (const Rect* dest, int draw) {
 	}
 }
 
-void ng::Graphics::draw_line (int x1, int y1, int x2, int y2) {
-	if (SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2) != 0) {
+void ng::Graphics::draw_line (double x1, double y1, double x2, double y2) {
+	int ix1, iy1, ix2, iy2;
+	ix1 = static_cast<int>(x1);
+	iy1 = static_cast<int>(y1);
+	ix2 = static_cast<int>(x2);
+	iy2 = static_cast<int>(y2);
+
+	if (SDL_RenderDrawLine(this->renderer, ix1, iy1, ix2, iy2) != 0) {
 		throw std::runtime_error(SDL_GetError());
 	}
 }
 
-void ng::Graphics::draw_point (int x, int y) {
-	if (SDL_RenderDrawPoint(this->renderer, x, y) != 0) {
+void ng::Graphics::draw_point (double x, double y) {
+	int ix, iy;
+	ix = static_cast<int>(x);
+	iy = static_cast<int>(y);
+
+	if (SDL_RenderDrawPoint(this->renderer, ix, iy) != 0) {
 		throw std::runtime_error(SDL_GetError());
 	}
 }
