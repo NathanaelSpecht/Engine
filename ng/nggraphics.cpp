@@ -19,7 +19,7 @@ void ng::Color::init (int r, int g, int b, int a) {
 
 void ng::Image::init (Graphics* const g, const char* file, const Color* key) {
 	this->texture = NULL;
-	this->rect.init(0.0, 0.0, 0.0, 0.0);
+	this->rect.init2(0.0, 0.0, 0.0, 0.0);
 	this->color.init(255, 255, 255);
 	this->flip = ng::None;
 	this->angle = 0.0;
@@ -89,7 +89,7 @@ void ng::Image::set_angle (double angle) {
 void ng::Graphics::init (const char* title, double w, double h) {
 	this->window = NULL;
 	this->renderer = NULL;
-	this->rect.init(0.0, 0.0, w, h);
+	this->rect.init2(0.0, 0.0, w, h);
 	this->color.init(0, 0, 0);
 	
 	this->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,

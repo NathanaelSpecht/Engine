@@ -19,7 +19,7 @@ int ng::wrap (int x, int m) {
 }
 
 double ng::wrap (double x, double m) {
-	return std::mod(x + (2147483648.0 * m), m);
+	return std::fmod(x + (2147483648.0 * m), m);
 }
 
 // Bhaskara I's sine approximation
@@ -134,6 +134,21 @@ void ng::Vec::init2 (const Space* src, const Space* dest) {
 	this->y = dest->r / src->r;
 }
 
+void ng::Vec::init2 (const Space* src, const Rect* dest) {
+	this->x = dest->w / src->c;
+	this->y = dest->h / src->r;
+}
+
+void ng::Vec::init2 (const Rect* src, const Space* dest) {
+	this->x = dest->c / src->w;
+	this->y = dest->r / src->h;
+}
+
+void ng::Vec::init2 (const Rect* src, const Rect* dest) {
+	this->x = dest->w / src->w;
+	this->y = dest->h / src->h;
+}
+
 // this - v
 void ng::Vec::sub2 (const Vec* v) {
 	this->x -= v->x;
@@ -149,7 +164,7 @@ void ng::Vec::flip2 (int side) {
 		} case ng::SideY: {
 			this->x = -this->x;
 			break;
-		} default {}
+		} default: {}
 	}
 }
 
@@ -207,7 +222,7 @@ bool ng::Vec::xint2 (const Vec* p, const Vec* v) {
 		// p+v does not intersect axis.
 		return false;
 		
-	} else if (p->y == i->y) {
+	} else if (p->y == this->y) {
 		// p is already on axis. b is x.
 		this->x = p->x;
 		return true;
@@ -312,28 +327,28 @@ bool ng::Rect::intersect2 (const Vec* p, const Vec* v, Vec* const vint, int* con
 		*side = ng::SideY;
 	}
 	if (p2.yint2(p, v) && c.y <= p2.y && p2.y < c.y + c.h &&
-	(!intersect || p.distance2_l1(p2) < p.distance2_l1(pint))) {
+	(!intersect || p->distance2_l1(&p2) < p->distance2_l1(&pint))) {
 		intersect = true;
 		pint = p2;
 		*side = ng::SideY;
 	}
 	if (p3.xint2(p, v) && c.x <= p3.x && p3.x < c.x + c.w &&
-	(!intersect || p.distance2_l1(p3) < p.distance2_l1(pint))) {
+	(!intersect || p->distance2_l1(&p3) < p->distance2_l1(&pint))) {
 		intersect = true;
 		pint = p3;
 		*side = ng::SideX;
 	}
 	if (p4.xint2(p, v) && c.x <= p4.x && p4.x < c.x + c.w &&
-	(!intersect || p.distance2_l1(p4) < p.distance2_l1(pint))) {
+	(!intersect || p->distance2_l1(&p4) < p->distance2_l1(&pint))) {
 		intersect = true;
 		pint = p4;
 		*side = ng::SideX;
 	}
 	
 	if (intersect) {
-		vint->init2(&p, &pint);
+		vint->init2(p, &pint);
 	} else {
-		*vint = v;
+		*vint = *v;
 	}
 	return intersect;
 }
@@ -368,6 +383,20 @@ void ng::Space::init2_i (const Rect* rect, double i, double j) {
 	this->r = rect->h / j;
 	this->i = i;
 	this->j = j;
+}
+
+void ng::Space::resize2_c (double w, double h) {
+	this->c *= w / this->rect.w;
+	this->r *= h / this->rect.h;
+	this->rect.w = w;
+	this->rect.h = h;
+}
+
+void ng::Space::resize2_i (double w, double h) {
+	this->i *= w / this->rect.w;
+	this->j *= h / this->rect.h;
+	this->rect.w = w;
+	this->rect.h = h;
 }
 
 void ng::Space::scale2_c (double s) {

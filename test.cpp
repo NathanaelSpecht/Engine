@@ -13,7 +13,7 @@ int main (int argc, char** argv) {
 	try {
 		ng::init();
 		event.init(&graphics);
-		graphics.init("Fire Days Demo", 640, 480);
+		graphics.init("Fire Days Demo", 640.0, 480.0);
 		audio.init();
 		audio.volume = 1.0f;
 		time.init();
@@ -50,20 +50,18 @@ int main (int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	
-	int up, down, left, right;
-	up = 0;
-	down = 0;
-	left = 0;
-	right = 0;
+	double up, down, left, right;
+	up = 0.0;
+	down = 0.0;
+	left = 0.0;
+	right = 0.0;
 	
 	ng::Tileset tileset;
-	tileset.init(&image, &image.rect, 32, 6);
-	tileset.row_offset = -1;
+	tileset.init_c(&image, &image.rect, 32.0, 6.0);
+	tileset.offset.init2(0.0, -1.0);
 	
 	ng::Canvas window;
-	window.init_root(&graphics);
-	ng::Canvas viewport;
-	viewport.init_scale(&window, &graphics.rect);
+	window.init(&graphics);
 	
 	ng::Color background_color;
 	background_color.init(0, 0, 0);
@@ -74,15 +72,15 @@ int main (int argc, char** argv) {
 	ng::Color text_color;
 	text_color.init(196, 128, 0);
 	ng::Rect rect;
-	rect.init((viewport.rect.w/2)-256, (viewport.rect.h/2)-80, 256*2, 80*2);
+	rect.init2((window.space.rect.w*0.5)-256.0, (window.space.rect.h*0.5)-80.0, 256.0*2.0, 80.0*2.0);
 	
-	int line_w, line_h;
-	line_w = 12;
-	line_h = 24;
+	double line_w, line_h;
+	line_w = 12.0;
+	line_h = 24.0;
 	ng::Rect text_rect;
-	text_rect.init(line_w, line_h, viewport.rect.w-(line_w*2), viewport.rect.h-(line_h*2));
-	ng::Grid text_grid;
-	text_grid.init(&text_rect, text_rect.w/line_w, text_rect.h/line_h);
+	text_rect.init2(line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
+	ng::Space textbox;
+	textbox.init2_i(&text_rect, line_w, line_h);
 	
 	while (true) {
 		while (event.next()) {
@@ -94,31 +92,31 @@ int main (int argc, char** argv) {
 				case ng::Quit:
 					goto quit;
 					break;
-				case ng::WindowEvent:
-					rect.x = (viewport.rect.w/2)-(rect.w/2);
-					rect.y = (viewport.rect.h/2)-(rect.h/2);
+				case ng::WindowEvent: {
+					rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
+					rect.y = (window.space.rect.h*0.5)-(rect.h*0.5);
 					break;
-				case ng::KeyPress: {
+				} case ng::KeyPress: {
 					switch (event.key.scancode) {
 						case SDL_SCANCODE_SPACE:
-							rect.x = (viewport.rect.w/2)-(rect.w/2);
-							rect.y = (viewport.rect.h/2)-(rect.h/2);
-							up = 0;
-							down = 0;
-							left = 0;
-							right = 0;
+							rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
+							rect.y = (window.space.rect.h*0.5)-(rect.h*0.5);
+							up = 0.0;
+							down = 0.0;
+							left = 0.0;
+							right = 0.0;
 							break;
 						case SDL_SCANCODE_W:
-							up = 1;
+							up = 1.0;
 							break;
 						case SDL_SCANCODE_S:
-							down = 1;
+							down = 1.0;
 							break;
 						case SDL_SCANCODE_A:
-							left = 1;
+							left = 1.0;
 							break;
 						case SDL_SCANCODE_D:
-							right = 1;
+							right = 1.0;
 							break;
 						case SDL_SCANCODE_PERIOD:
 							channel.volume = ng::clamp(channel.volume + 0.05f, 0.0f, 1.0f);
@@ -139,16 +137,16 @@ int main (int argc, char** argv) {
 				case ng::KeyRelease: {
 					switch (event.key.scancode) {
 						case SDL_SCANCODE_W:
-							up = 0;
+							up = 0.0;
 							break;
 						case SDL_SCANCODE_S:
-							down = 0;
+							down = 0.0;
 							break;
 						case SDL_SCANCODE_A:
-							left = 0;
+							left = 0.0;
 							break;
 						case SDL_SCANCODE_D:
-							right = 0;
+							right = 0.0;
 							break;
 						default: {}
 					}
@@ -158,23 +156,23 @@ int main (int argc, char** argv) {
 			}
 		}
 		
-		rect.x += (right - left) * 2;
-		rect.y += (down - up) * 2;
+		rect.x += (right - left) * 2.0;
+		rect.y += (down - up) * 2.0;
 		
 		try {
 			graphics.set_color(&background_color);
 			window.clear();
 			
 			graphics.set_color(&draw_color);
-			viewport.draw_rect(&text_rect, ng::DrawFill);
+			window.draw_rect(&text_rect, ng::DrawFill);
 			
 			graphics.set_color(&rect_color);
-			viewport.draw_rect(&rect, ng::DrawFill);
+			window.draw_rect(&rect, ng::DrawFill);
 			
 			tileset.image->set_color(&text_color);
-			tileset.image->set_angle(10.0);
-			//graphics.draw_text(&tileset, "Hello, World!", &text_rect, &text_grid);
-			viewport.draw_text(&tileset,
+			//tileset.image->set_angle(10.0);
+			window.draw_text(&tileset, "Hello, World!", &textbox);
+			/* window.draw_text(&tileset,
 				"My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
 				"Sleep well to-night. At three to-morrow the diligence will start for "
 				"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
@@ -183,7 +181,8 @@ int main (int argc, char** argv) {
 				"beautiful land.\n"
 				"                                                        Your friend,\n"
 				"                                                        DRACULA.",
-				&text_rect, &text_grid);
+				&textbox);
+			*/
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
 			

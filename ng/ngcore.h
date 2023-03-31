@@ -48,27 +48,33 @@ void init ();
 void quit ();
 
 // Forward declarations, to avoid "has not been declared" compilation errors.
+// ngevent
 class Mouse;
 class Key;
 class Event;
 
+// ngmath
 class Vec;
-class Circle;
 class Rect;
-class Scale;
-class Grid;
+class Space;
+class Mass;
+
+// nggraphics
 class Color;
 class Image;
-class Tileset;
 class Graphics;
 
+// nggui
+class Tileset;
 class Canvas;
 
+// ngaudio
 class Clip;
 class Sound;
 class Channel;
 class Audio;
 
+// ngtime
 class Time;
 
 } // namespace ng

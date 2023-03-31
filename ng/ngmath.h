@@ -19,7 +19,7 @@ namespace ng {
 		SideXZ = 5,
 		SideYZ = 6,
 		SideXYZ = 7
-	}
+	};
 
 	// For all quick math functions, the following applies:
 	//
@@ -27,11 +27,18 @@ namespace ng {
 	// Source: www.agner.org/optimize | 4. Instruction tables.
 	//
 	// Cycles per function approximated from a generalization of the above.
-	// For x87 on most platforms released last decade (as-of 2022):
+	// For most platforms released last decade (as-of 2022):
+	// - if/while is approx. 1 cycle.
+	// - int add/subtract is approx. 1 cycle.
+	// - int multiply is approx. 3 cycles.
+	// - function call/return is approx. 5 cycles.
+	// - int32 divide is approx. 15-20 cycles.
+	// - int64 divide is approx. 15-50 cycles.
 	// - double add/subtract/multiply is approx. 5 cycles.
 	// - double divide is approx. 15 cycles.
 	// - double sqrt is approx. 20 cycles.
 	// - double sin/cos is approx. 50-150 cycles.
+	// - double arctan/tan is approx. 100-150 cycles.
 	//
 	// The "q" at the start of functions means "quick".
 	
@@ -49,11 +56,11 @@ namespace ng {
 	// 35 cycles.
 	double bhaskara (double x);
 	
-	// given degrees x [0, 360), produces sin(x) [-1, 1].
+	// given degrees x [0, 360], produces sin(x) [-1, 1].
 	// 35-40 cycles.
 	double qsin (double x);
 	
-	// given degrees x [0, 360), produces cos(x) [-1, 1].
+	// given degrees x [0, 360], produces cos(x) [-1, 1].
 	// 35-40 cycles.
 	double qcos (double x);
 	
@@ -98,6 +105,9 @@ namespace ng {
 		// - To draw to screen, src in game world and dest on screen.
 		// - To get mouse point, src on screen and dest in game world.
 		void init2 (const Space* src, const Space* dest);
+		void init2 (const Space* src, const Rect* dest);
+		void init2 (const Rect* src, const Space* dest);
+		void init2 (const Rect* src, const Rect* dest);
 		
 		// this - v
 		void sub2 (const Vec* v);
@@ -170,6 +180,8 @@ namespace ng {
 		void init2 (const Rect*);
 		void init2_c (const Rect*, double c, double r);
 		void init2_i (const Rect*, double i, double j);
+		void resize2_c (double w, double h);
+		void resize2_i (double w, double h);
 		void scale2_c (double s);
 		void scale2_c (double x, double y);
 		void scale2_i (double s);
