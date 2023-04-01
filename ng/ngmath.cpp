@@ -359,6 +359,7 @@ void ng::Space::init2 (double x, double y, double w, double h) {
 	this->r = h;
 	this->i = 1.0;
 	this->j = 1.0;
+	this->const_c = true;
 }
 
 void ng::Space::init2 (const Rect* rect) {
@@ -367,6 +368,16 @@ void ng::Space::init2 (const Rect* rect) {
 	this->r = rect->h;
 	this->i = 1.0;
 	this->j = 1.0;
+	this->const_c = true;
+}
+
+void ng::Space::init2_c (double x, double y, double w, double h, double c, double r) {
+	this->rect.init2(x, y, w, h);
+	this->c = c;
+	this->r = r;
+	this->i = w / c;
+	this->j = h / r;
+	this->const_c = true;
 }
 
 void ng::Space::init2_c (const Rect* rect, double c, double r) {
@@ -375,6 +386,16 @@ void ng::Space::init2_c (const Rect* rect, double c, double r) {
 	this->r = r;
 	this->i = rect->w / c;
 	this->j = rect->h / r;
+	this->const_c = true;
+}
+
+void ng::Space::init2_i (double x, double y, double w, double h, double i, double j) {
+	this->rect.init2(x, y, w, h);
+	this->c = w / i;
+	this->r = h / j;
+	this->i = i;
+	this->j = j;
+	this->const_c = false;
 }
 
 void ng::Space::init2_i (const Rect* rect, double i, double j) {
@@ -383,66 +404,51 @@ void ng::Space::init2_i (const Rect* rect, double i, double j) {
 	this->r = rect->h / j;
 	this->i = i;
 	this->j = j;
+	this->const_c = false;
 }
 
-void ng::Space::resize2_c (double w, double h) {
-	this->c *= w / this->rect.w;
-	this->r *= h / this->rect.h;
+void ng::Space::resize2 (double w, double h) {
+	if (this->const_c) {
+		this->i *= w / this->rect.w;
+		this->j *= h / this->rect.h;
+	} else {
+		this->c *= w / this->rect.w;
+		this->r *= h / this->rect.h;
+	}
 	this->rect.w = w;
 	this->rect.h = h;
 }
 
-void ng::Space::resize2_i (double w, double h) {
-	this->i *= w / this->rect.w;
-	this->j *= h / this->rect.h;
-	this->rect.w = w;
-	this->rect.h = h;
-}
-
-void ng::Space::scale2_c (double s) {
+void ng::Space::scale2 (double s) {
 	this->rect.scale2(s);
-	this->c *= s;
-	this->r *= s;
+	if (this->const_c) {
+		this->i *= s;
+		this->j *= s;
+	} else {
+		this->c *= s;
+		this->r *= s;
+	}
 }
 
-void ng::Space::scale2_c (double x, double y) {
+void ng::Space::scale2 (double x, double y) {
 	this->rect.scale2(x, y);
-	this->c *= x;
-	this->r *= y;
+	if (this->const_c) {
+		this->i *= x;
+		this->j *= y;
+	} else {
+		this->c *= x;
+		this->r *= y;
+	}
 }
 
-void ng::Space::scale2_i (double s) {
-	this->rect.scale2(s);
-	this->i *= s;
-	this->j *= s;
-}
-
-void ng::Space::scale2_i (double x, double y) {
-	this->rect.scale2(x, y);
-	this->i *= x;
-	this->j *= y;
-}
-
-void ng::Space::absolute_to_relative2_c (const Space* s) {
+void ng::Space::absolute_to_relative2 (const Space* s) {
 	this->rect.x -= s->rect.x;
 	this->rect.y -= s->rect.y;
-	this->scale2_c(1.0/s->i, 1.0/s->j);
+	this->scale2(1.0/s->i, 1.0/s->j);
 }
 
-void ng::Space::absolute_to_relative2_i (const Space* s) {
-	this->rect.x -= s->rect.x;
-	this->rect.y -= s->rect.y;
-	this->scale2_i(1.0/s->i, 1.0/s->j);
-}
-
-void ng::Space::relative_to_absolute2_c (const Space* s) {
-	this->scale2_c(s->i, s->j);
-	this->rect.x += s->rect.x;
-	this->rect.y += s->rect.y;
-}
-
-void ng::Space::relative_to_absolute2_i (const Space* s) {
-	this->scale2_i(s->i, s->j);
+void ng::Space::relative_to_absolute2 (const Space* s) {
+	this->scale2(s->i, s->j);
 	this->rect.x += s->rect.x;
 	this->rect.y += s->rect.y;
 }

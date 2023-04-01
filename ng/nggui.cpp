@@ -31,36 +31,120 @@ void ng::Tileset::init_i (Image* image, const Rect* rect, double i, double j) {
 void ng::Canvas::init (Graphics* graphics) {
 	this->graphics = graphics;
 	this->parent = NULL;
-	this->root = true;
 	this->space.init2(&graphics->rect);
+	this->root = true;
+	this->relative = false;
 }
 
 void ng::Canvas::init (Canvas* canvas, const Space* space) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
-	this->root = false;
 	this->space = *space;
+	this->root = false;
+	this->relative = true;
+}
+
+// scale from parent/graphics to this.
+void ng::Canvas::scale_in (Vec* const vec) {
+	if (this->relative) {
+		vec->absolute_to_relative2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->graphics->rect, &this->space);
+		} else {
+			s.init2(&this->parent->space, &this->space);
+		}
+		vec->scale2(s.x, s.y);
+	}
+}
+
+void ng::Canvas::scale_in (Rect* const rect) {
+	if (this->relative) {
+		rect->absolute_to_relative2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->graphics->rect, &this->space);
+		} else {
+			s.init2(&this->parent->space, &this->space);
+		}
+		rect->scale2(s.x, s.y);
+	}
+}
+
+void ng::Canvas::scale_in (Space* const space) {
+	if (this->relative) {
+		space->absolute_to_relative2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->graphics->rect, &this->space);
+		} else {
+			s.init2(&this->parent->space, &this->space);
+		}
+		space->scale2(s.x, s.y);
+	}
+}
+
+// scale from this to parent/graphics.
+void ng::Canvas::scale_out (Vec* const vec) {
+	if (this->relative) {
+		vec->relative_to_absolute2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->space, &this->graphics->rect);
+		} else {
+			s.init2(&this->space, &this->parent->space);
+		}
+		vec->scale2(s.x, s.y);
+	}
+}
+
+void ng::Canvas::scale_out (Rect* const rect) {
+	if (this->relative) {
+		rect->relative_to_absolute2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->space, &this->graphics->rect);
+		} else {
+			s.init2(&this->space, &this->parent->space);
+		}
+		rect->scale2(s.x, s.y);
+	}
+}
+
+void ng::Canvas::scale_out (Space* const space) {
+	if (this->relative) {
+		space->relative_to_absolute2(&this->space);
+	} else {
+		Vec s;
+		if (this->root) {
+			s.init2(&this->space, &this->graphics->rect);
+		} else {
+			s.init2(&this->space, &this->parent->space);
+		}
+		space->scale2(s.x, s.y);
+	}
 }
 
 // Given event mouse point on root canvas, find mouse point on this canvas.
 void ng::Canvas::get_mouse (Vec* const mouse) {
-	if (this->root) {
-		Vec s;
-		s.init2(&this->graphics->rect, &this->space);
-		mouse->scale2(s.x, s.y);
-	} else {
-		this->parent->get_mouse(mouse);
-		mouse->absolute_to_relative2(&this->space);
-	}
+	this->scale_in(mouse);
 }
 
-// Draw this->rect on parent.
-// Clearing root canvas calls graphics clear().
+// Draw this->space on parent.
 void ng::Canvas::clear () {
-	if (this->root) {
+	if (this->relative && this->root) {
+		this->graphics->draw_rect(&this->space.rect, ng::DrawFill);
+	} else if (this->relative && !this->root) {
+		this->parent->draw_rect(&this->space.rect, ng::DrawFill);
+	} else if (!this->relative && this->root) {
 		this->graphics->clear();
 	} else {
-		this->parent->draw_rect(&this->space.rect, ng::DrawFill);
+		this->parent->clear();
 	}
 }
 
@@ -74,27 +158,16 @@ void ng::Canvas::draw () {
 
 // Graphics primitives
 void ng::Canvas::draw_image (Image* const image) {
-	if (this->root) {
-		this->graphics->draw_image(image, &image->rect, &this->space.rect);
-	} else {
-		this->parent->draw_image(image, &image->rect, &this->space.rect);
-	}
+	this->draw_image(image, &image->rect, &this->space.rect);
 }
 
 void ng::Canvas::draw_image (Image* const image, const Rect* dest) {
-	Rect d = *dest;
-	d.relative_to_absolute2(&this->space);
-	
-	if (this->root) {
-		this->graphics->draw_image(image, &image->rect, &d);
-	} else {
-		this->parent->draw_image(image, &image->rect, &d);
-	}
+	this->draw_image(image, &image->rect, dest);
 }
 
 void ng::Canvas::draw_image (Image* const image, const Rect* src, const Rect* dest) {
 	Rect d = *dest;
-	d.relative_to_absolute2(&this->space);
+	this->scale_out(&d);
 	
 	if (this->root) {
 		this->graphics->draw_image(image, src, &d);
@@ -105,7 +178,7 @@ void ng::Canvas::draw_image (Image* const image, const Rect* src, const Rect* de
 
 void ng::Canvas::draw_rect (const Rect* dest, int draw) {
 	Rect d = *dest;
-	d.relative_to_absolute2(&this->space);
+	this->scale_out(&d);
 	
 	if (this->root) {
 		this->graphics->draw_rect(&d, draw);
@@ -118,8 +191,8 @@ void ng::Canvas::draw_line (double x1, double y1, double x2, double y2) {
 	Vec v1, v2;
 	v1.init2(x1, y1);
 	v2.init2(x2, y2);
-	v1.relative_to_absolute2(&this->space);
-	v2.relative_to_absolute2(&this->space);
+	this->scale_out(&v1);
+	this->scale_out(&v2);
 	
 	if (this->root) {
 		this->graphics->draw_line(v1.x, v1.y, v2.x, v2.y);
@@ -131,7 +204,7 @@ void ng::Canvas::draw_line (double x1, double y1, double x2, double y2) {
 void ng::Canvas::draw_point (double x, double y) {
 	Vec v;
 	v.init2(x, y);
-	v.relative_to_absolute2(&this->space);
+	this->scale_out(&v);
 	
 	if (this->root) {
 		this->graphics->draw_point(v.x, v.y);
@@ -178,14 +251,14 @@ void ng::Canvas::draw_text (Tileset* const tileset, const char* str, const Space
 		
 	} else {
 		Space d = *dest;
-		d.relative_to_absolute2_i(&this->space);
+		this->scale_out(&d);
 		this->parent->draw_text(tileset, str, &d);
 	}
 }
 
 void ng::Canvas::draw_tile (Tileset* const tileset, const Rect* src, const Rect* dest) {
 	Rect d = *dest;
-	d.relative_to_absolute2(&this->space);
+	this->scale_out(&d);
 	
 	if (this->root) {
 		Rect s = *src;

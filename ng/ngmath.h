@@ -175,21 +175,20 @@ namespace ng {
 		double i;
 		double j;
 		//double k; //todo
+		// true for constant c/r/l. false for constant i/j/k
+		bool const_c;
 		
 		void init2 (double x, double y, double w, double h);
 		void init2 (const Rect*);
+		void init2_c (double x, double y, double w, double h, double c, double r);
 		void init2_c (const Rect*, double c, double r);
+		void init2_i (double x, double y, double w, double h, double i, double j);
 		void init2_i (const Rect*, double i, double j);
-		void resize2_c (double w, double h);
-		void resize2_i (double w, double h);
-		void scale2_c (double s);
-		void scale2_c (double x, double y);
-		void scale2_i (double s);
-		void scale2_i (double x, double y);
-		void absolute_to_relative2_c (const Space*);
-		void absolute_to_relative2_i (const Space*);
-		void relative_to_absolute2_c (const Space*);
-		void relative_to_absolute2_i (const Space*);
+		void resize2 (double w, double h);
+		void scale2 (double s);
+		void scale2 (double x, double y);
+		void absolute_to_relative2 (const Space*);
+		void relative_to_absolute2 (const Space*);
 	};
 	
 	// mass in R2 or R3

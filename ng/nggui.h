@@ -25,17 +25,29 @@ namespace ng {
 	public:
 		Graphics* graphics;
 		Canvas* parent;
-		bool root;
 		Space space;
+		// root draws to graphics. non-root draws to parent canvas.
+		bool root;
+		// relative draws relative_to_absolute(this space).
+		// non-relative scales from this space to parent space/graphics rect.
+		bool relative;
 		
 		void init (Graphics*);
 		void init (Canvas*, const Space*);
 		
+		// scale from parent/graphics to this.
+		void scale_in (Vec* const);
+		void scale_in (Rect* const);
+		void scale_in (Space* const);
+		// scale from this to parent/graphics.
+		void scale_out (Vec* const);
+		void scale_out (Rect* const);
+		void scale_out (Space* const);
+		
 		// Given event mouse point on root canvas, find mouse point on this canvas.
 		void get_mouse (Vec* const);
 		
-		// Draw this rect on parent.
-		// Clearing root canvas calls graphics clear().
+		// Draw this space on parent.
 		void clear ();
 		
 		// Usually does nothing.
