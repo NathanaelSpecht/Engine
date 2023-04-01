@@ -9,6 +9,8 @@ March 31:
 - Change nggui from int to double.
 - Change test from int to double.
 - Fixed canvas scaling bug.
+- The changes from int to double fixed some performance problems.
+- Still works on Windows.
 
 March 28:
 - Change nggraphics from int to double.
