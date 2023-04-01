@@ -7,11 +7,11 @@ void fd::HudMenu::init (GameState* gs) {
 	this->events = false;
 	this->draws = false;
 	// tiles
-	this->frame.init(1, 1, 18, 5);
+	this->canvas.init(&gs->canvas, 1.0, 1.0, 18.0, 5.0);
 	// tiles in frame
-	this->temp.init(1, 1, 3, 3);
-	this->heat.init(5, 1, 13, 2);
-	this->fuel.init(5, 3, 13, 1);
+	this->temp.init2(1.0, 1.0, 3.0, 3.0);
+	this->heat.init2(5.0, 1.0, 13.0, 2.0);
+	this->fuel.init2(5.0, 3.0, 13.0, 1.0);
 }
 
 void fd::HudMenu::event (GameState* gs) {
@@ -35,10 +35,13 @@ void fd::HudMenu::draw (GameState* gs) {
 		return;
 	}
 	
-	fd::frame_draw_rect(&this->frame, gs);
-	fd::frame_draw_rect(&this->temp, gs, &this->frame);
-	fd::frame_draw_rect(&this->heat, gs, &this->frame);
-	fd::frame_draw_rect(&this->fuel, gs, &this->frame);
+	gs->graphics.set_color(&gs->background_color);
+	this->canvas.clear();
+	gs->graphics.set_color(&gs->draw_color);
+	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
+	this->canvas.draw_rect(&this->temp, ng::DrawFrame);
+	this->canvas.draw_rect(&this->heat, ng::DrawFrame);
+	this->canvas.draw_rect(&this->fuel, ng::DrawFrame);
 }
 
 

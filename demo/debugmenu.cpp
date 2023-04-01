@@ -7,10 +7,10 @@ void fd::DebugMenu::init (GameState* gs) {
 	this->events = false;
 	this->draws = false;
 	// tiles
-	this->frame.init(0, 29, 40, 1);
+	this->canvas.init(&gs->canvas, 0.0, 29.0, 40.0, 1.0);
 	// tiles in frame
-	this->version.init(0, 0, 25, 1);
-	this->fps.init(30, 0, 10, 1);
+	this->version.init2(0.0, 0.0, 25.0, 1.0);
+	this->fps.init2(30.0, 0.0, 10.0, 1.0);
 }
 
 void fd::DebugMenu::event (GameState* gs) {
@@ -34,9 +34,12 @@ void fd::DebugMenu::draw (GameState* gs) {
 		return;
 	}
 	
-	fd::frame_draw_rect(&this->frame, gs);
-	fd::frame_draw_rect(&this->version, gs, &this->frame);
-	fd::frame_draw_rect(&this->fps, gs, &this->frame);
+	gs->graphics.set_color(&gs->background_color);
+	this->canvas.clear();
+	gs->graphics.set_color(&gs->draw_color);
+	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
+	this->canvas.draw_rect(&this->version, ng::DrawFrame);
+	this->canvas.draw_rect(&this->fps, ng::DrawFrame);
 }
 
 

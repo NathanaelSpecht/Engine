@@ -36,10 +36,50 @@ void ng::Canvas::init (Graphics* graphics) {
 	this->relative = false;
 }
 
+void ng::Canvas::init_c (Graphics* graphics, double c, double r) {
+	this->graphics = graphics;
+	this->parent = NULL;
+	this->space.init2_c(&graphics->rect, c, r);
+	this->root = true;
+	this->relative = false;
+}
+
+void ng::Canvas::init_i (Graphics* graphics, double i, double j) {
+	this->graphics = graphics;
+	this->parent = NULL;
+	this->space.init2_i(&graphics->rect, i, j);
+	this->root = true;
+	this->relative = false;
+}
+
 void ng::Canvas::init (Canvas* canvas, const Space* space) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
 	this->space = *space;
+	this->root = false;
+	this->relative = true;
+}
+
+void ng::Canvas::init (Canvas* canvas, double x, double y, double w, double h) {
+	this->graphics = canvas->graphics;
+	this->parent = canvas;
+	this->space.init2(x, y, w, h);
+	this->root = false;
+	this->relative = true;
+}
+
+void ng::Canvas::init_c (Canvas* canvas, double x, double y, double w, double h, double c, double r) {
+	this->graphics = canvas->graphics;
+	this->parent = canvas;
+	this->space.init2_c(x, y, w, h, c, r);
+	this->root = false;
+	this->relative = true;
+}
+
+void ng::Canvas::init_i (Canvas* canvas, double x, double y, double w, double h, double i, double j) {
+	this->graphics = canvas->graphics;
+	this->parent = canvas;
+	this->space.init2_i(x, y, w, h, i, j);
 	this->root = false;
 	this->relative = true;
 }

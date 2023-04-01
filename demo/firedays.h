@@ -40,7 +40,7 @@ void frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame);
 class TitleScreen {
 public:
 	ng::Rect header;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect start_btn;
 	ng::Rect quit_btn;
 	
@@ -52,7 +52,7 @@ public:
 class FileScreen {
 public:
 	ng::Rect header;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect save1;
 	
 	void init (GameState* gs);
@@ -63,7 +63,7 @@ public:
 class WorldScreen {
 public:
 	ng::Rect header;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect level1;
 	
 	void init (GameState* gs);
@@ -73,7 +73,7 @@ public:
 
 class LevelScreen {
 public:
-	ng::Rect frame;
+	ng::Canvas canvas;
 	
 	void init (GameState* gs);
 	void event (GameState* gs);
@@ -84,7 +84,7 @@ class HudMenu {
 public:
 	bool events;
 	bool draws;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect temp;
 	ng::Rect heat;
 	ng::Rect fuel;
@@ -99,7 +99,7 @@ public:
 	bool events;
 	bool draws;
 	ng::Rect header;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect resume_btn;
 	ng::Rect quit_btn;
 	
@@ -112,7 +112,7 @@ class DebugMenu {
 public:
 	bool events;
 	bool draws;
-	ng::Rect frame;
+	ng::Canvas canvas;
 	ng::Rect version;
 	ng::Rect fps;
 	
@@ -128,9 +128,7 @@ public:
 	ng::Audio audio;
 	ng::Time time;
 	
-	ng::Rect rect;
-	ng::Grid char_grid;
-	ng::Grid tile_grid;
+	ng::Canvas canvas;
 	ng::Color background_color;
 	ng::Color draw_color;
 	

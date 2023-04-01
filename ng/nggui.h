@@ -33,7 +33,12 @@ namespace ng {
 		bool relative;
 		
 		void init (Graphics*);
+		void init_c (Graphics*, double c, double r);
+		void init_i (Graphics*, double i, double j);
 		void init (Canvas*, const Space*);
+		void init (Canvas*, double x, double y, double w, double h);
+		void init_c (Canvas*, double x, double y, double w, double h, double c, double r);
+		void init_i (Canvas*, double x, double y, double w, double h, double i, double j);
 		
 		// scale from parent/graphics to this.
 		void scale_in (Vec* const);

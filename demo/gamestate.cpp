@@ -4,40 +4,10 @@
 #include "firedays.h"
 #include <iostream>
 
-void fd::frame_mouse(ng::Rect* r, GameState* gs, ng::Rect* frame) {
-	r->init(gs->event.mouse.x, gs->event.mouse.y, 0, 0);
-	r->portal(&gs->graphics.rect, &gs->rect);
-	// frame uses grid coords, so give r grid coords before going relative to frame.
-	r->absolute_to_relative(&gs->tile_grid);
-	r->absolute_to_relative(frame);
-}
-
-void fd::frame_draw_rect(const ng::Rect* r, GameState* gs) {
-	ng::Rect r2 = *r;
-	r2.relative_to_absolute(&gs->tile_grid);
-	
-	r2.portal(&gs->rect, &gs->graphics.rect);
-	gs->graphics.draw_rect(&r2, ng::DrawFrame);
-}
-
-void fd::frame_draw_rect(const ng::Rect* r, GameState* gs, ng::Rect* frame) {
-	ng::Rect r2 = *r;
-	// frame uses grid coords, so go absolute before removing grid coords.
-	r2.relative_to_absolute(frame);
-	r2.relative_to_absolute(&gs->tile_grid);
-	
-	r2.portal(&gs->rect, &gs->graphics.rect);
-	gs->graphics.draw_rect(&r2, ng::DrawFrame);
-}
-
 void fd::GameState::init () {
-	int w, h; // 4:3
-	w = 640;
-	h = 480;
-	
 	try {
 		ng::init();
-		this->graphics.init("Fire Days Demo", w, h);
+		this->graphics.init("Fire Days Demo", 640.0, 480.0);
 		this->audio.init();
 		this->event.init(&this->graphics);
 		this->time.init();
@@ -48,9 +18,8 @@ void fd::GameState::init () {
 		exit(EXIT_FAILURE);
 	}
 	
-	this->rect.init(0, 0, w, h);
-	this->char_grid.init(&this->rect, w/8, h/16); // 8x16 chars
-	this->tile_grid.init(&this->rect, w/16, h/16); // 16x16 tiles
+	this->canvas.init_i(&this->graphics, 16.0, 16.0);
+	this->canvas.space.const_c = true;
 	this->background_color.init(0, 0, 0);
 	this->draw_color.init(255, 255, 255);
 	
@@ -138,7 +107,7 @@ void fd::GameState::loop () {
 		
 		try {
 			this->graphics.set_color(&this->background_color);
-			this->graphics.clear();
+			this->canvas.clear();
 			
 			this->graphics.set_color(&this->draw_color);
 			switch (this->screen_mode) {
@@ -163,7 +132,7 @@ void fd::GameState::loop () {
 			this->pause_menu.draw(this);
 			this->debug_menu.draw(this);
 			
-			this->graphics.draw();
+			this->canvas.draw();
 			
 		} catch (const std::exception& ex) {
 			std::cout << "error drawing graphics:\n"
