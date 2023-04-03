@@ -3,10 +3,17 @@
 
 # 2023
 
-## 2023 March
+## 2023 April
+
+April 02:
+- Fixed mouse scaling bug.
+- Added how-to instructions to README.
+- Release version 0.0.3.
 
 April 01:
 - Change demo from int to double.
+
+## 2023 March
 
 March 31:
 - Change nggui from int to double.

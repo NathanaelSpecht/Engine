@@ -67,13 +67,15 @@ int main (int argc, char** argv) {
 	background_color.init(0, 0, 0);
 	ng::Color draw_color;
 	draw_color.init(32, 32, 32);
-	ng::Color rect_color;
-	rect_color.init(64, 16, 0);
-	ng::Color text_color;
-	text_color.init(196, 128, 0);
+	ng::Color rect_color_true, rect_color_false;
+	rect_color_true.init(64, 16, 0);
+	rect_color_false.init(32, 0, 128);
+	bool rect_contains_mouse = false;
 	ng::Rect rect;
 	rect.init2((window.space.rect.w*0.5)-256.0, (window.space.rect.h*0.5)-80.0, 256.0*2.0, 80.0*2.0);
 	
+	ng::Color text_color;
+	text_color.init(196, 128, 0);
 	double line_w, line_h;
 	line_w = 12.0;
 	line_h = 24.0;
@@ -82,6 +84,11 @@ int main (int argc, char** argv) {
 	ng::Space textbox;
 	textbox.init2_i(&text_rect, line_w, line_h);
 	
+	ng::Color mouse_color;
+	mouse_color.init(255, 255, 255);
+	ng::Vec mouse;
+	mouse.init2(0.0, 0.0);
+	
 	while (true) {
 		while (event.next()) {
 			if (event.mode == ng::Quit) {
@@ -89,14 +96,16 @@ int main (int argc, char** argv) {
 			}
 			
 			switch (event.mode) {
-				case ng::Quit:
+				case ng::Quit: {
 					goto quit;
 					break;
-				case ng::WindowEvent: {
-					rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
-					rect.y = (window.space.rect.h*0.5)-(rect.h*0.5);
-					break;
-				} case ng::KeyPress: {
+				}
+				//case ng::WindowEvent: {
+				//	rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
+				//	rect.y = (window.space.rect.h*0.5)-(rect.h*0.5);
+				//	break;
+				//} 
+				case ng::KeyPress: {
 					switch (event.key.scancode) {
 						case SDL_SCANCODE_SPACE:
 							rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
@@ -152,6 +161,12 @@ int main (int argc, char** argv) {
 					}
 					break;
 				}
+				case ng::MousePress: {
+					mouse.init2(static_cast<double>(event.mouse.x),
+						static_cast<double>(event.mouse.y));
+					window.get_mouse(&mouse);
+					rect_contains_mouse = rect.contains2(mouse.x, mouse.y);
+				}
 				default: {}
 			}
 		}
@@ -166,7 +181,11 @@ int main (int argc, char** argv) {
 			graphics.set_color(&draw_color);
 			window.draw_rect(&text_rect, ng::DrawFill);
 			
-			graphics.set_color(&rect_color);
+			if (rect_contains_mouse) {
+				graphics.set_color(&rect_color_true);
+			} else {
+				graphics.set_color(&rect_color_false);
+			}
 			window.draw_rect(&rect, ng::DrawFill);
 			
 			tileset.image->set_color(&text_color);
@@ -185,6 +204,9 @@ int main (int argc, char** argv) {
 			*/
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
+			
+			graphics.set_color(&mouse_color);
+			window.draw_point(mouse.x, mouse.y);
 			
 			window.draw();
 			

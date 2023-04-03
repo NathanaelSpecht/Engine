@@ -43,6 +43,7 @@ public:
 	ng::Canvas canvas;
 	ng::Rect start_btn;
 	ng::Rect quit_btn;
+	ng::Vec mouse;
 	
 	void init (GameState* gs);
 	void event (GameState* gs);

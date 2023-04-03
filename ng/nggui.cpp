@@ -172,6 +172,9 @@ void ng::Canvas::scale_out (Space* const space) {
 
 // Given event mouse point on root canvas, find mouse point on this canvas.
 void ng::Canvas::get_mouse (Vec* const mouse) {
+	if (!this->root) {
+		this->parent->get_mouse(mouse);
+	}
 	this->scale_in(mouse);
 }
 

@@ -29,7 +29,7 @@ void fd::WorldScreen::draw (GameState* gs) {
 	gs->graphics.set_color(&gs->background_color);
 	this->canvas.clear();
 	gs->graphics.set_color(&gs->draw_color);
-	this->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
+	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
 	this->canvas.draw_rect(&this->level1, ng::DrawFrame);
 	gs->canvas.draw_rect(&this->header, ng::DrawFrame);
 }

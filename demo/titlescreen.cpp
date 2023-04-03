@@ -19,6 +19,7 @@ void fd::TitleScreen::event (GameState* gs) {
 		ng::Vec p;
 		p.init2(static_cast<double>(gs->event.mouse.x), static_cast<double>(gs->event.mouse.y));
 		this->canvas.get_mouse(&p);
+		this->mouse = p;
 		
 		if (this->start_btn.contains2(p.x, p.y)) {
 			gs->goto_screen(fd::ScreenFile);
@@ -31,13 +32,16 @@ void fd::TitleScreen::event (GameState* gs) {
 }
 
 void fd::TitleScreen::draw (GameState* gs) {
-	gs->graphics.set_color(&gs->background_color);
+	ng::Color red;
+	red.init(64, 0, 0);
+	gs->graphics.set_color(&red); //(&gs->background_color);
 	this->canvas.clear();
 	gs->graphics.set_color(&gs->draw_color);
-	this->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
+	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
 	this->canvas.draw_rect(&this->start_btn, ng::DrawFrame);
 	this->canvas.draw_rect(&this->quit_btn, ng::DrawFrame);
 	gs->canvas.draw_rect(&this->header, ng::DrawFrame);
+	this->canvas.draw_point(this->mouse.x, this->mouse.y);
 }
 
 
