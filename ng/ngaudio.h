@@ -17,8 +17,8 @@ namespace ng {
 	class Clip {
 	public:
 		SDL_AudioSpec spec;
-		float* buffer;
-		int samples;
+		std::vector<float> buffer;
+		//size_t samples;
 		
 		// Load .wav file into buffer, with same spec as audio device.
 		void init (Audio*, const char* file);
@@ -30,7 +30,7 @@ namespace ng {
 	class Sound {
 	public:
 		Clip* clip;
-		int sample;
+		size_t sample;
 		int mode;
 		
 		// Internal. Called by channel::add_sound.
@@ -40,10 +40,10 @@ namespace ng {
 	
 	class Channel {
 	public:
-		Sound* queue;
-		int sounds;
-		float* buffer;
-		int samples;
+		std::vector<Sound> queue;
+		//size_t sounds;
+		std::vector<float> buffer;
+		//size_t samples;
 		float volume;
 		
 		// Initialize sound queue and sample buffer to 0.
@@ -57,18 +57,18 @@ namespace ng {
 		
 		// Internal. Called by mix.
 		// Remove queued sound.
-		void remove_sound (int sound);
+		void remove_sound (size_t sound);
 		
 		// Remove all queued sounds.
 		void stop ();
 		
 		// Internal. Called by audio::mix_channel.
 		// Allocate samples for buffer and fill with silence.
-		void clear (int samples);
+		void clear (size_t samples);
 		
 		// Internal. Called by mix.
 		// Mix samples from sound clip into channel buffer.
-		int mix_sound (int sound);
+		int mix_sound (size_t sound);
 		
 		// Internal. Called by audio::mix_channel.
 		// Mix sounds into channel buffer.
@@ -79,8 +79,8 @@ namespace ng {
 	public:
 		SDL_AudioDeviceID device;
 		SDL_AudioSpec spec;
-		float* buffer;
-		int samples;
+		std::vector<float> buffer;
+		//size_t samples;
 		float volume;
 		bool playing;
 		

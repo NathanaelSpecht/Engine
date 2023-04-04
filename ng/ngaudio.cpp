@@ -16,12 +16,12 @@ void ng::Clip::init (Audio* a, const char* file) {
 	
 	// Use audio stream to convert loaded audio to desired format
 	this->spec = a->spec;
-	this->buffer = NULL;
-	this->samples = 0;
+	//this->buffer = NULL;
+	//this->samples = 0;
 	SDL_AudioStream* stream = NULL;
 	stream = SDL_NewAudioStream(
-	spec.format, spec.channels, spec.freq,
-	this->spec.format, this->spec.channels, this->spec.freq);
+		spec.format, spec.channels, spec.freq,
+		this->spec.format, this->spec.channels, this->spec.freq);
 	if (stream == NULL) {
 		SDL_FreeWAV(file_buffer);
 		throw std::runtime_error("unsupported audio format");
@@ -41,27 +41,33 @@ void ng::Clip::init (Audio* a, const char* file) {
 	// Max 10 minutes (600 seconds) of stereo 44100Hz float32 audio = 212MB!
 	int clip_max = static_cast<int>(this->spec.freq) * 600 *
 		static_cast<int>(this->spec.channels) * sizeof(float);
-	this->buffer = static_cast<float*>(std::malloc(clip_max));
-	int clip_bytes = SDL_AudioStreamGet(stream, this->buffer, clip_max);
+	float* buf = static_cast<float*>(std::malloc(clip_max));
+	int clip_bytes = SDL_AudioStreamGet(stream, buf, clip_max);
+	//this->buffer = static_cast<float*>(std::malloc(clip_max));
+	//int clip_bytes = SDL_AudioStreamGet(stream, this->buffer, clip_max);
 	SDL_FreeAudioStream(stream);
 	SDL_FreeWAV(file_buffer);
 	if (clip_bytes <= 0) {
-		// Technically an error is -1, but we can't realloc 0 so catch that too
+		// Technically an error is -1, but 0 bytes breaks things so catch that too.
 		throw std::runtime_error("audio conversion failure");
 	}
 	
 	// Compute samples and resize buffer
-	this->samples = clip_bytes / sizeof(float);
-	this->buffer = static_cast<float*>(std::realloc(this->buffer, this->samples * sizeof(float)));
+	size_t samples = clip_bytes / sizeof(float);
+	for (size_t i=0; i < samples; i++) {
+		this->buffer.push_back(buf[i]);
+	}
+	std::free(buf);
+	//this->buffer = static_cast<float*>(std::realloc(this->buffer, this->samples * sizeof(float)));
 }
 
 // Free buffer.
 void ng::Clip::quit () {
-	this->samples = 0;
-	if (this->buffer != NULL) {
-		std::free(this->buffer);
-		this->buffer = NULL;
-	}
+	//this->samples = 0;
+	//if (this->buffer != NULL) {
+	//	std::free(this->buffer);
+	//	this->buffer = NULL;
+	//}
 }
 
 void ng::Sound::init (Clip* clip, int mode) {
@@ -71,37 +77,45 @@ void ng::Sound::init (Clip* clip, int mode) {
 }
 
 void ng::Channel::init () {
-	this->queue = NULL;
-	this->sounds = 0;
-	this->buffer = NULL;
-	this->samples = 0;
-	this->volume = 1.0;
+	//this->queue = NULL;
+	//this->sounds = 0;
+	//this->buffer = NULL;
+	//this->samples = 0;
+	this->volume = 1.0f;
 }
 
 // Free queue and buffer.
 void ng::Channel::quit () {
-	this->sounds = 0;
-	if (this->queue == NULL) {
-		std::free(this->queue);
-		this->queue = NULL;
-	}
-	this->samples = 0;
-	if (this->buffer == NULL) {
-		std::free(this->buffer);
-		this->buffer = NULL;
-	}
+	//this->sounds = 0;
+	//if (this->queue == NULL) {
+	//	std::free(this->queue);
+	//	this->queue = NULL;
+	//}
+	//this->samples = 0;
+	//if (this->buffer == NULL) {
+	//	std::free(this->buffer);
+	//	this->buffer = NULL;
+	//}
 }
 
 // Queue a sound with EnumSound mode.
 void ng::Channel::play_sound (Clip* c, int mode) {
-	this->queue = static_cast<Sound*>(std::realloc(this->queue,
-		(this->sounds + 1) * sizeof(Sound)));
-	this->queue[this->sounds].init(c, mode);
-	this->sounds++;
+	//this->queue = static_cast<Sound*>(std::realloc(this->queue,
+	//	(this->sounds + 1) * sizeof(Sound)));
+	Sound sound;
+	sound.init(c, mode);
+	this->queue.push_back(sound);
+	//this->queue[this->sounds].init(c, mode);
+	//this->sounds++;
 }
 
 // Remove queued sound.
-void ng::Channel::remove_sound (int sound) {
+void ng::Channel::remove_sound (size_t sound) {
+	if (this->queue.size() == 0 || sound < 0 || sound >= this->queue.size()) {
+		return;
+	}
+	this->queue.erase(this->queue.begin()+sound);
+	/*
 	if (this->sounds == 0 || sound < 0 || sound >= this->sounds) {
 		return;
 	}
@@ -120,38 +134,44 @@ void ng::Channel::remove_sound (int sound) {
 			(this->sounds - 1) * sizeof(Sound)));
 		this->sounds--;
 	}
+	*/
 }
 
 // Remove all queued sounds.
 void ng::Channel::stop () {
-	if (this->queue != NULL) {
-		std::free(this->queue);
-		this->queue = NULL;
-		this->sounds = 0;
-	}
+	this->queue.clear();
+	//if (this->queue != NULL) {
+	//	std::free(this->queue);
+	//	this->queue = NULL;
+	//	this->sounds = 0;
+	//}
 }
 
 // Allocate samples for buffer and fill with silence.
-void ng::Channel::clear (int samples) {
-	this->buffer = static_cast<float*>(realloc(this->buffer, samples * sizeof(float)));
-	this->samples = samples;
-	for (int i=0; i < samples; i++) {
-		this->buffer[i] = ng::dB_silence();
+void ng::Channel::clear (size_t samples) {
+	this->buffer.clear();
+	for (size_t i=0; i < samples; i++) {
+		this->buffer.push_back(ng::dB_silence());
 	}
+	//this->buffer = static_cast<float*>(realloc(this->buffer, samples * sizeof(float)));
+	//this->samples = samples;
+	//for (int i=0; i < samples; i++) {
+	//	this->buffer[i] = ng::dB_silence();
+	//}
 }
 
 // Mix samples from sound clip into channel buffer.
-int ng::Channel::mix_sound (int sound) {
+int ng::Channel::mix_sound (size_t sound) {
 	Clip* clip = this->queue[sound].clip;
-	int s = this->queue[sound].sample;
+	size_t s = this->queue[sound].sample;
 	
 	switch (this->queue[sound].mode) {
 		case ng::SoundPlayOnce: {
-			for (int i=0; i < this->samples; i++) {
+			for (size_t i=0; i < this->buffer.size(); i++) {
 				this->buffer[i] = ng::mix_dB(this->buffer[i], clip->buffer[s]);
 				s++;
 				// Returns ng::SoundComplete if sound completes during the mix.
-				if (s == clip->samples) {
+				if (s == clip->buffer.size()) {
 					this->queue[sound].mode = ng::SoundComplete;
 					this->queue[sound].sample = s;
 					return ng::SoundComplete;
@@ -160,10 +180,10 @@ int ng::Channel::mix_sound (int sound) {
 			break;
 			
 		} case ng::SoundLoop: {
-			for (int i=0; i < this->samples; i++) {
+			for (size_t i=0; i < this->buffer.size(); i++) {
 				this->buffer[i] = ng::mix_dB(this->buffer[i], clip->buffer[s]);
 				s++;
-				if (s == clip->samples) {
+				if (s == clip->buffer.size()) {
 					s = 0;
 				}
 			}
@@ -177,7 +197,7 @@ int ng::Channel::mix_sound (int sound) {
 
 // Mix sounds into channel buffer.
 void ng::Channel::mix () {
-	for (int i=0; i < this->sounds;) {
+	for (size_t i=0; i < this->queue.size();) {
 		if (this->mix_sound(i) == ng::SoundComplete) {
 			this->remove_sound(i);
 		} else {
@@ -188,8 +208,8 @@ void ng::Channel::mix () {
 
 // Open audio device in a paused state and set playing to false.
 void ng::Audio::init () {
-	this->buffer = NULL;
-	this->samples = 0;
+	//this->buffer = NULL;
+	//this->samples = 0;
 	this->volume = 1.0;
 	this->playing = false;
 	
@@ -214,11 +234,11 @@ void ng::Audio::init () {
 // Free buffer and close audio device.
 void ng::Audio::quit () {
 	this->playing = false;
-	this->samples = 0;
-	if (this->buffer!= NULL) {
-		std::free(this->buffer);
-		this->buffer = NULL;
-	}
+	//this->samples = 0;
+	//if (this->buffer!= NULL) {
+	//	std::free(this->buffer);
+	//	this->buffer = NULL;
+	//}
 	SDL_ClearQueuedAudio(this->device);
 	SDL_CloseAudioDevice(this->device);
 	this->device = 0;
@@ -248,7 +268,8 @@ void ng::Audio::clear (int ms) {
 	// If the audio device contains more samples than ms would create, then
 	// sets samples = 0 and does nothing to buffer.
 	if (queue_samples >= samples) {
-		this->samples = 0;
+		this->buffer.clear();
+		//this->samples = 0;
 		return;
 	}
 	
@@ -258,34 +279,45 @@ void ng::Audio::clear (int ms) {
 	int chunks = (samples / chunk_samples) + 1;
 	samples = chunks * chunk_samples;
 	
-	this->buffer = static_cast<float*>(std::realloc(this->buffer, samples * sizeof(float)));
-	this->samples = samples;
-	for (int i=0; i < samples; i++) {
-		this->buffer[i] = ng::dB_silence();
+	this->buffer.clear();
+	for (size_t i=0; i < static_cast<size_t>(samples); i++) {
+		this->buffer.push_back(ng::dB_silence());
 	}
+	//this->buffer = static_cast<float*>(std::realloc(this->buffer, samples * sizeof(float)));
+	//this->samples = samples;
+	//for (int i=0; i < samples; i++) {
+	//	this->buffer[i] = ng::dB_silence();
+	//}
 }
 
 // Clear channel, mix sounds, and mix channel buffer.
 void ng::Audio::mix_channel (Channel* c) {
 	// Does nothing if samples == 0.
-	if (this->samples == 0) {
+	if (this->buffer.size() == 0) {
 		return;
 	}
+	//if (this->samples == 0) {
+	//	return;
+	//}
 	
-	c->clear(this->samples); // Channel samples = samples.
+	c->clear(this->buffer.size()); // Channel samples = samples.
 	c->mix();
 	
 	float dv = ng::dB_volume(c->volume);
-	for (int i=0; i < this->samples; i++) {
+	for (size_t i=0; i < this->buffer.size(); i++) {
 		c->buffer[i] *= dv;
 		this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i] * dv);
 	}
+	//for (int i=0; i < this->samples; i++) {
+	//	c->buffer[i] *= dv;
+	//	this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i] * dv);
+	//}
 }
 
 // Send buffer to audio device and set playing to true.
 void ng::Audio::play () {
 	// Does nothing if samples == 0.
-	if (this->samples == 0) {
+	if (this->buffer.size() == 0) {
 		return;
 	}
 	
@@ -293,7 +325,7 @@ void ng::Audio::play () {
 	int chunk_samples, chunks, chunk_bytes;
 	chunk_samples = static_cast<int>(this->spec.samples) *
 		static_cast<int>(this->spec.channels);
-	chunks = this->samples / chunk_samples;
+	chunks = static_cast<int>(this->buffer.size()) / chunk_samples;
 	chunk_bytes = chunk_samples * sizeof(float);
 	
 	float dv = ng::dB_volume(this->volume);
@@ -304,6 +336,7 @@ void ng::Audio::play () {
 		}
 		int result = SDL_QueueAudio(this->device, chunk, static_cast<uint32_t>(chunk_bytes));
 		if (result != 0) {
+			std::free(chunk);
 			throw std::runtime_error(SDL_GetError());
 		}
 	}

@@ -5,6 +5,9 @@
 
 ## 2023 April
 
+April 03:
+- Changed arrays to std::vectors.
+
 April 02:
 - Fixed mouse scaling bug.
 - Added how-to instructions to README.

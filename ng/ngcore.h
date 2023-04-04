@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdint>
+#include <vector>
 
 #include "SDL.h"
 
