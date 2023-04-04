@@ -7,6 +7,7 @@
 
 April 03:
 - Changed arrays to std::vectors.
+- Change classes to use constructors and destructors, instead of init and quit.
 
 April 02:
 - Fixed mouse scaling bug.

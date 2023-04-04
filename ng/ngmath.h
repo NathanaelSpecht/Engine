@@ -95,19 +95,22 @@ namespace ng {
 		double y;
 		//double z; //todo
 		
-		void init2 (double x, double y);
+		Vec ();
+		~Vec ();
+		
+		void set2 (double x, double y);
 		
 		// Set this to the vector from p1 to p2.
-		void init2 (const Vec* p1, const Vec* p2);
+		void set2 (const Vec* p1, const Vec* p2);
 		
 		// Set this to the scale between relative to src and relative to dest.
 		// For example, a virtual camera with one side in game, and other side on screen:
 		// - To draw to screen, src in game world and dest on screen.
 		// - To get mouse point, src on screen and dest in game world.
-		void init2 (const Space* src, const Space* dest);
-		void init2 (const Space* src, const Rect* dest);
-		void init2 (const Rect* src, const Space* dest);
-		void init2 (const Rect* src, const Rect* dest);
+		void set2 (const Space* src, const Space* dest);
+		void set2 (const Space* src, const Rect* dest);
+		void set2 (const Rect* src, const Space* dest);
+		void set2 (const Rect* src, const Rect* dest);
 		
 		// this - v
 		void sub2 (const Vec* v);
@@ -146,7 +149,10 @@ namespace ng {
 		double h;
 		//double d; //todo
 		
-		void init2 (double x, double y, double w, double h);
+		Rect ();
+		~Rect ();
+		
+		void set2 (double x, double y, double w, double h);
 		void moveby2 (const Vec*);
 		void scale2 (double s);
 		void scale2 (double x, double y);
@@ -178,12 +184,15 @@ namespace ng {
 		// true for constant c/r/l. false for constant i/j/k
 		bool const_c;
 		
-		void init2 (double x, double y, double w, double h);
-		void init2 (const Rect*);
-		void init2_c (double x, double y, double w, double h, double c, double r);
-		void init2_c (const Rect*, double c, double r);
-		void init2_i (double x, double y, double w, double h, double i, double j);
-		void init2_i (const Rect*, double i, double j);
+		Space ();
+		~Space ();
+		
+		void set2 (double x, double y, double w, double h);
+		void set2 (const Rect*);
+		void set2_c (double x, double y, double w, double h, double c, double r);
+		void set2_c (const Rect*, double c, double r);
+		void set2_i (double x, double y, double w, double h, double i, double j);
+		void set2_i (const Rect*, double i, double j);
 		void resize2 (double w, double h);
 		void scale2 (double s);
 		void scale2 (double x, double y);
@@ -198,8 +207,12 @@ namespace ng {
 		Vec vec;
 		double m;
 		
-		void init2 (const Rect*, double m);
-		void init2 (const Rect*, const Vec*, double m);
+		Mass ();
+		~Mass ();
+		
+		void set2 (double x, double y, double w, double h, double m);
+		void set2 (const Rect*, double m);
+		void set2 (const Rect*, const Vec*, double m);
 		
 		void move2 ();
 		

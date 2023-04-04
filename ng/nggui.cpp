@@ -4,55 +4,73 @@
 #include "nggui.h"
 #include "ngmath.h"
 
-void ng::Tileset::init (Image* image, const Space* space) {
+ng::Tileset::Tileset () {
+	this->image = NULL;
+	this->space.set2(0.0, 0.0, 0.0, 0.0);
+	this->offset.set2(0.0, 0.0);
+}
+
+ng::Tileset::~Tileset () {}
+
+void ng::Tileset::set (Image* image, const Space* space) {
 	this->image = image;
 	this->space = *space;
-	this->offset.init2(0.0, 0.0);
+	this->offset.set2(0.0, 0.0);
 }
 
-void ng::Tileset::init (Image* image, const Rect* rect) {
+void ng::Tileset::set (Image* image, const Rect* rect) {
 	this->image = image;
-	this->space.init2(rect);
-	this->offset.init2(0.0, 0.0);
+	this->space.set2(rect);
+	this->offset.set2(0.0, 0.0);
 }
 
-void ng::Tileset::init_c (Image* image, const Rect* rect, double c, double r) {
+void ng::Tileset::set_c (Image* image, const Rect* rect, double c, double r) {
 	this->image = image;
-	this->space.init2_c(rect, c, r);
-	this->offset.init2(0.0, 0.0);
+	this->space.set2_c(rect, c, r);
+	this->offset.set2(0.0, 0.0);
 }
 
-void ng::Tileset::init_i (Image* image, const Rect* rect, double i, double j) {
+void ng::Tileset::set_i (Image* image, const Rect* rect, double i, double j) {
 	this->image = image;
-	this->space.init2_i(rect, i, j);
-	this->offset.init2(0.0, 0.0);
+	this->space.set2_i(rect, i, j);
+	this->offset.set2(0.0, 0.0);
 }
 
-void ng::Canvas::init (Graphics* graphics) {
+ng::Canvas::Canvas () {
+	this->graphics = NULL;
+	this->parent = NULL;
+	this->space.set2(0.0, 0.0, 0.0, 0.0);
+	this->root = false;
+	this->relative = true;
+}
+
+ng::Canvas::~Canvas () {}
+
+void ng::Canvas::set (Graphics* graphics) {
 	this->graphics = graphics;
 	this->parent = NULL;
-	this->space.init2(&graphics->rect);
+	this->space.set2(&graphics->rect);
 	this->root = true;
 	this->relative = false;
 }
 
-void ng::Canvas::init_c (Graphics* graphics, double c, double r) {
+void ng::Canvas::set_c (Graphics* graphics, double c, double r) {
 	this->graphics = graphics;
 	this->parent = NULL;
-	this->space.init2_c(&graphics->rect, c, r);
+	this->space.set2_c(&graphics->rect, c, r);
 	this->root = true;
 	this->relative = false;
 }
 
-void ng::Canvas::init_i (Graphics* graphics, double i, double j) {
+void ng::Canvas::set_i (Graphics* graphics, double i, double j) {
 	this->graphics = graphics;
 	this->parent = NULL;
-	this->space.init2_i(&graphics->rect, i, j);
+	this->space.set2_i(&graphics->rect, i, j);
 	this->root = true;
 	this->relative = false;
 }
 
-void ng::Canvas::init (Canvas* canvas, const Space* space) {
+void ng::Canvas::set (Canvas* canvas, const Space* space) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
 	this->space = *space;
@@ -60,26 +78,26 @@ void ng::Canvas::init (Canvas* canvas, const Space* space) {
 	this->relative = true;
 }
 
-void ng::Canvas::init (Canvas* canvas, double x, double y, double w, double h) {
+void ng::Canvas::set (Canvas* canvas, double x, double y, double w, double h) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
-	this->space.init2(x, y, w, h);
+	this->space.set2(x, y, w, h);
 	this->root = false;
 	this->relative = true;
 }
 
-void ng::Canvas::init_c (Canvas* canvas, double x, double y, double w, double h, double c, double r) {
+void ng::Canvas::set_c (Canvas* canvas, double x, double y, double w, double h, double c, double r) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
-	this->space.init2_c(x, y, w, h, c, r);
+	this->space.set2_c(x, y, w, h, c, r);
 	this->root = false;
 	this->relative = true;
 }
 
-void ng::Canvas::init_i (Canvas* canvas, double x, double y, double w, double h, double i, double j) {
+void ng::Canvas::set_i (Canvas* canvas, double x, double y, double w, double h, double i, double j) {
 	this->graphics = canvas->graphics;
 	this->parent = canvas;
-	this->space.init2_i(x, y, w, h, i, j);
+	this->space.set2_i(x, y, w, h, i, j);
 	this->root = false;
 	this->relative = true;
 }
@@ -91,9 +109,9 @@ void ng::Canvas::scale_in (Vec* const vec) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->graphics->rect, &this->space);
+			s.set2(&this->graphics->rect, &this->space);
 		} else {
-			s.init2(&this->parent->space, &this->space);
+			s.set2(&this->parent->space, &this->space);
 		}
 		vec->scale2(s.x, s.y);
 	}
@@ -105,9 +123,9 @@ void ng::Canvas::scale_in (Rect* const rect) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->graphics->rect, &this->space);
+			s.set2(&this->graphics->rect, &this->space);
 		} else {
-			s.init2(&this->parent->space, &this->space);
+			s.set2(&this->parent->space, &this->space);
 		}
 		rect->scale2(s.x, s.y);
 	}
@@ -119,9 +137,9 @@ void ng::Canvas::scale_in (Space* const space) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->graphics->rect, &this->space);
+			s.set2(&this->graphics->rect, &this->space);
 		} else {
-			s.init2(&this->parent->space, &this->space);
+			s.set2(&this->parent->space, &this->space);
 		}
 		space->scale2(s.x, s.y);
 	}
@@ -134,9 +152,9 @@ void ng::Canvas::scale_out (Vec* const vec) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->space, &this->graphics->rect);
+			s.set2(&this->space, &this->graphics->rect);
 		} else {
-			s.init2(&this->space, &this->parent->space);
+			s.set2(&this->space, &this->parent->space);
 		}
 		vec->scale2(s.x, s.y);
 	}
@@ -148,9 +166,9 @@ void ng::Canvas::scale_out (Rect* const rect) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->space, &this->graphics->rect);
+			s.set2(&this->space, &this->graphics->rect);
 		} else {
-			s.init2(&this->space, &this->parent->space);
+			s.set2(&this->space, &this->parent->space);
 		}
 		rect->scale2(s.x, s.y);
 	}
@@ -162,9 +180,9 @@ void ng::Canvas::scale_out (Space* const space) {
 	} else {
 		Vec s;
 		if (this->root) {
-			s.init2(&this->space, &this->graphics->rect);
+			s.set2(&this->space, &this->graphics->rect);
 		} else {
-			s.init2(&this->space, &this->parent->space);
+			s.set2(&this->space, &this->parent->space);
 		}
 		space->scale2(s.x, s.y);
 	}
@@ -232,8 +250,8 @@ void ng::Canvas::draw_rect (const Rect* dest, int draw) {
 
 void ng::Canvas::draw_line (double x1, double y1, double x2, double y2) {
 	Vec v1, v2;
-	v1.init2(x1, y1);
-	v2.init2(x2, y2);
+	v1.set2(x1, y1);
+	v2.set2(x2, y2);
 	this->scale_out(&v1);
 	this->scale_out(&v2);
 	
@@ -246,7 +264,7 @@ void ng::Canvas::draw_line (double x1, double y1, double x2, double y2) {
 
 void ng::Canvas::draw_point (double x, double y) {
 	Vec v;
-	v.init2(x, y);
+	v.set2(x, y);
 	this->scale_out(&v);
 	
 	if (this->root) {
@@ -260,8 +278,8 @@ void ng::Canvas::draw_point (double x, double y) {
 void ng::Canvas::draw_text (Tileset* const tileset, const char* str, const Space* dest) {
 	if (this->root) {
 		Rect s, tile, d;
-		s.init2(0.0, 0.0, 1.0, 1.0);
-		tile.init2(0.0, 0.0, 1.0, 1.0);
+		s.set2(0.0, 0.0, 1.0, 1.0);
+		tile.set2(0.0, 0.0, 1.0, 1.0);
 		
 		int c, tc;
 		tc = static_cast<int>(tileset->space.c);

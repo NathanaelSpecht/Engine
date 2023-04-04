@@ -15,10 +15,13 @@ namespace ng {
 		Space space;
 		Vec offset;
 		
-		void init (Image*, const Space*);
-		void init (Image*, const Rect*);
-		void init_c (Image*, const Rect*, double c, double r);
-		void init_i (Image*, const Rect*, double i, double j);
+		Tileset ();
+		~Tileset ();
+		
+		void set (Image*, const Space*);
+		void set (Image*, const Rect*);
+		void set_c (Image*, const Rect*, double c, double r);
+		void set_i (Image*, const Rect*, double i, double j);
 	};
 	
 	class Canvas {
@@ -32,13 +35,16 @@ namespace ng {
 		// non-relative scales from this space to parent space/graphics rect.
 		bool relative;
 		
-		void init (Graphics*);
-		void init_c (Graphics*, double c, double r);
-		void init_i (Graphics*, double i, double j);
-		void init (Canvas*, const Space*);
-		void init (Canvas*, double x, double y, double w, double h);
-		void init_c (Canvas*, double x, double y, double w, double h, double c, double r);
-		void init_i (Canvas*, double x, double y, double w, double h, double i, double j);
+		Canvas ();
+		~Canvas ();
+		
+		void set (Graphics*);
+		void set_c (Graphics*, double c, double r);
+		void set_i (Graphics*, double i, double j);
+		void set (Canvas*, const Space*);
+		void set (Canvas*, double x, double y, double w, double h);
+		void set_c (Canvas*, double x, double y, double w, double h, double c, double r);
+		void set_i (Canvas*, double x, double y, double w, double h, double i, double j);
 		
 		// scale from parent/graphics to this.
 		void scale_in (Vec* const);

@@ -114,13 +114,19 @@ float ng::dB_silence () {
 	return -144.0f;
 }
 
-void ng::Vec::init2 (double x, double y) {
+ng::Vec::Vec () {
+	this->set2(0.0, 0.0);
+}
+
+ng::Vec::~Vec () {}
+
+void ng::Vec::set2 (double x, double y) {
 	this->x = x;
 	this->y = y;
 }
 
 // Set this to the vector from p1 to p2.
-void ng::Vec::init2 (const Vec* p1, const Vec* p2) {
+void ng::Vec::set2 (const Vec* p1, const Vec* p2) {
 	this->x = p2->x - p1->x;
 	this->y = p2->y - p1->y;
 }
@@ -129,22 +135,22 @@ void ng::Vec::init2 (const Vec* p1, const Vec* p2) {
 // For example, a virtual camera with one side in game, and other side on screen:
 // - To draw to screen, src in game world and dest on screen.
 // - To get mouse point, src on screen and dest in game world.
-void ng::Vec::init2 (const Space* src, const Space* dest) {
+void ng::Vec::set2 (const Space* src, const Space* dest) {
 	this->x = dest->c / src->c;
 	this->y = dest->r / src->r;
 }
 
-void ng::Vec::init2 (const Space* src, const Rect* dest) {
+void ng::Vec::set2 (const Space* src, const Rect* dest) {
 	this->x = dest->w / src->c;
 	this->y = dest->h / src->r;
 }
 
-void ng::Vec::init2 (const Rect* src, const Space* dest) {
+void ng::Vec::set2 (const Rect* src, const Space* dest) {
 	this->x = dest->c / src->w;
 	this->y = dest->r / src->h;
 }
 
-void ng::Vec::init2 (const Rect* src, const Rect* dest) {
+void ng::Vec::set2 (const Rect* src, const Rect* dest) {
 	this->x = dest->w / src->w;
 	this->y = dest->h / src->h;
 }
@@ -256,7 +262,13 @@ bool ng::Vec::yint2 (const Vec* p, const Vec* v) {
 	}
 }
 
-void ng::Rect::init2 (double x, double y, double w, double h) {
+ng::Rect::Rect () {
+	this->set2(0.0, 0.0, 0.0, 0.0);
+}
+
+ng::Rect::~Rect () {}
+
+void ng::Rect::set2 (double x, double y, double w, double h) {
 	this->x = x;
 	this->y = y;
 	this->w = w;
@@ -304,7 +316,7 @@ bool ng::Rect::overlaps2 (const Rect* r) const {
 	a = r->w * 0.5;
 	b = r->h * 0.5;
 	Rect s;
-	s.init2(this->x - a, this->y - b, this->w + r->w, this->h + r->h);
+	s.set2(this->x - a, this->y - b, this->w + r->w, this->h + r->h);
 	return s.contains2(r->x + a, r->y + b);
 }
 
@@ -346,15 +358,21 @@ bool ng::Rect::intersect2 (const Vec* p, const Vec* v, Vec* const vint, int* con
 	}
 	
 	if (intersect) {
-		vint->init2(p, &pint);
+		vint->set2(p, &pint);
 	} else {
 		*vint = *v;
 	}
 	return intersect;
 }
 
-void ng::Space::init2 (double x, double y, double w, double h) {
-	this->rect.init2(x, y, w, h);
+ng::Space::Space () {
+	this->set2(0.0, 0.0, 0.0, 0.0);
+}
+
+ng::Space::~Space () {}
+
+void ng::Space::set2 (double x, double y, double w, double h) {
+	this->rect.set2(x, y, w, h);
 	this->c = w;
 	this->r = h;
 	this->i = 1.0;
@@ -362,7 +380,7 @@ void ng::Space::init2 (double x, double y, double w, double h) {
 	this->const_c = true;
 }
 
-void ng::Space::init2 (const Rect* rect) {
+void ng::Space::set2 (const Rect* rect) {
 	this->rect = *rect;
 	this->c = rect->w;
 	this->r = rect->h;
@@ -371,8 +389,8 @@ void ng::Space::init2 (const Rect* rect) {
 	this->const_c = true;
 }
 
-void ng::Space::init2_c (double x, double y, double w, double h, double c, double r) {
-	this->rect.init2(x, y, w, h);
+void ng::Space::set2_c (double x, double y, double w, double h, double c, double r) {
+	this->rect.set2(x, y, w, h);
 	this->c = c;
 	this->r = r;
 	this->i = w / c;
@@ -380,7 +398,7 @@ void ng::Space::init2_c (double x, double y, double w, double h, double c, doubl
 	this->const_c = true;
 }
 
-void ng::Space::init2_c (const Rect* rect, double c, double r) {
+void ng::Space::set2_c (const Rect* rect, double c, double r) {
 	this->rect = *rect;
 	this->c = c;
 	this->r = r;
@@ -389,8 +407,8 @@ void ng::Space::init2_c (const Rect* rect, double c, double r) {
 	this->const_c = true;
 }
 
-void ng::Space::init2_i (double x, double y, double w, double h, double i, double j) {
-	this->rect.init2(x, y, w, h);
+void ng::Space::set2_i (double x, double y, double w, double h, double i, double j) {
+	this->rect.set2(x, y, w, h);
 	this->c = w / i;
 	this->r = h / j;
 	this->i = i;
@@ -398,7 +416,7 @@ void ng::Space::init2_i (double x, double y, double w, double h, double i, doubl
 	this->const_c = false;
 }
 
-void ng::Space::init2_i (const Rect* rect, double i, double j) {
+void ng::Space::set2_i (const Rect* rect, double i, double j) {
 	this->rect = *rect;
 	this->c = rect->w / i;
 	this->r = rect->h / j;
@@ -453,13 +471,25 @@ void ng::Space::relative_to_absolute2 (const Space* s) {
 	this->rect.y += s->rect.y;
 }
 
-void ng::Mass::init2 (const Rect* rect, double m) {
-	this->rect = *rect;
-	this->vec.init2(0.0, 0.0);
+ng::Mass::Mass () {
+	this->set2(0.0, 0.0, 0.0, 0.0, 1.0);
+}
+
+ng::Mass::~Mass () {}
+
+void ng::Mass::set2 (double x, double y, double w, double h, double m) {
+	this->rect.set2(x, y, w, h);
+	this->vec.set2(0.0, 0.0);
 	this->m = m;
 }
 
-void ng::Mass::init2 (const Rect* rect, const Vec* vec, double m) {
+void ng::Mass::set2 (const Rect* rect, double m) {
+	this->rect = *rect;
+	this->vec.set2(0.0, 0.0);
+	this->m = m;
+}
+
+void ng::Mass::set2 (const Rect* rect, const Vec* vec, double m) {
 	this->rect = *rect;
 	this->vec = *vec;
 	this->m = m;
@@ -477,9 +507,9 @@ bool ng::Mass::intersect2 (const Rect* r, Vec* const vint, int* const side) {
 	double a, b; // this radius
 	a = this->rect.w * 0.5;
 	b = this->rect.h * 0.5;
-	p.init2(this->rect.x + a, this->rect.y + b);
+	p.set2(this->rect.x + a, this->rect.y + b);
 	v = this->vec;
-	c.init2(r->x - a, r->y - b, r->w + this->rect.w, r->h + this->rect.h);
+	c.set2(r->x - a, r->y - b, r->w + this->rect.w, r->h + this->rect.h);
 	
 	return c.intersect2(&p, &v, vint, side);
 }

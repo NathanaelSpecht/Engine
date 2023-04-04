@@ -18,13 +18,12 @@ namespace ng {
 	public:
 		SDL_AudioSpec spec;
 		std::vector<float> buffer;
-		//size_t samples;
+		
+		Clip ();
+		~Clip ();
 		
 		// Load .wav file into buffer, with same spec as audio device.
-		void init (Audio*, const char* file);
-		
-		// Free buffer.
-		void quit ();
+		void load (Audio*, const char* file);
 	};
 	
 	class Sound {
@@ -33,9 +32,12 @@ namespace ng {
 		size_t sample;
 		int mode;
 		
+		Sound ();
+		~Sound ();
+		
 		// Internal. Called by channel::add_sound.
 		// Initialize a sound pointing to the start of clip, with EnumSound mode.
-		void init (Clip*, int mode);
+		void set (Clip*, int mode);
 	};
 	
 	class Channel {
@@ -46,11 +48,8 @@ namespace ng {
 		//size_t samples;
 		float volume;
 		
-		// Initialize sound queue and sample buffer to 0.
-		void init ();
-		
-		// Free queue and buffer.
-		void quit ();
+		Channel ();
+		~Channel ();
 		
 		// Queue a sound with EnumSound mode.
 		void play_sound (Clip*, int mode);
@@ -84,11 +83,14 @@ namespace ng {
 		float volume;
 		bool playing;
 		
-		// Open audio device in a paused state and set playing to false.
-		void init ();
+		Audio ();
+		~Audio ();
 		
-		// Free buffer and close audio device.
-		void quit ();
+		// Open audio device in a paused state.
+		void open ();
+		
+		// Close audio device.
+		void close ();
 		
 		// Allocate at least ms of samples for buffer and fill with silence.
 		void clear (int ms);

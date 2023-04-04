@@ -3,27 +3,41 @@
 
 #include "nggraphics.h"
 
-void ng::Color::init (int r, int g, int b) {
+ng::Color::Color () {
+	this->set(0, 0, 0);
+}
+
+ng::Color::~Color () {}
+
+void ng::Color::set (int r, int g, int b) {
 	this->r = r;
 	this->g = g;
 	this->b = b;
 	this->a = 255;
 }
 
-void ng::Color::init (int r, int g, int b, int a) {
+void ng::Color::set (int r, int g, int b, int a) {
 	this->r = r;
 	this->g = g;
 	this->b = b;
 	this->a = a;
 }
 
-void ng::Image::init (Graphics* const g, const char* file, const Color* key) {
+ng::Image::Image () {
 	this->texture = NULL;
-	this->rect.init2(0.0, 0.0, 0.0, 0.0);
-	this->color.init(255, 255, 255);
+	this->rect.set2(0.0, 0.0, 0.0, 0.0);
+	this->color.set(255, 255, 255);
 	this->flip = ng::None;
 	this->angle = 0.0;
-	
+}
+
+ng::Image::~Image () {
+	if (this->texture != NULL) {
+		SDL_DestroyTexture(this->texture);
+	}
+}
+
+void ng::Image::load (Graphics* const g, const char* file, const Color* key) {
 	SDL_Surface* surface = NULL;
 	surface = SDL_LoadBMP(file);
 	if (surface == NULL) {
@@ -45,13 +59,6 @@ void ng::Image::init (Graphics* const g, const char* file, const Color* key) {
 	this->texture = texture;
 	this->rect.w = static_cast<double>(surface->w);
 	this->rect.h = static_cast<double>(surface->h);
-}
-
-void ng::Image::quit () {
-	if (this->texture != NULL) {
-		SDL_DestroyTexture(this->texture);
-		this->texture = NULL;
-	}
 }
 
 void ng::Image::set_color (const Color* color) {
@@ -86,12 +93,16 @@ void ng::Image::set_angle (double angle) {
 	this->angle = angle;
 }
 
-void ng::Graphics::init (const char* title, double w, double h) {
+ng::Graphics::Graphics () {
 	this->window = NULL;
 	this->renderer = NULL;
-	this->rect.init2(0.0, 0.0, w, h);
-	this->color.init(0, 0, 0);
-	
+	this->rect.set2(0.0, 0.0, 0.0, 0.0);
+	this->color.set(0, 0, 0);
+}
+
+ng::Graphics::~Graphics () {}
+
+void ng::Graphics::open (const char* title, double w, double h) {
 	this->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		static_cast<int>(w), static_cast<int>(h), SDL_WINDOW_RESIZABLE);
 	if (this->window == NULL) {
@@ -103,7 +114,7 @@ void ng::Graphics::init (const char* title, double w, double h) {
 	}
 }
 
-void ng::Graphics::quit () {
+void ng::Graphics::close () {
 	if (this->renderer != NULL) {
 		SDL_DestroyRenderer(this->renderer);
 		this->renderer = NULL;

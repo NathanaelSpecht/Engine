@@ -13,9 +13,8 @@ int main (int argc, char** argv) {
 	try {
 		ng::init();
 		event.init(&graphics);
-		graphics.init("Fire Days Demo", 640.0, 480.0);
-		audio.init();
-		audio.volume = 1.0f;
+		graphics.open("Fire Days Demo", 640.0, 480.0);
+		audio.open();
 		time.init();
 	} catch (const std::exception& ex) {
 		std::cout << "error at startup:\n"
@@ -24,14 +23,14 @@ int main (int argc, char** argv) {
 	}
 	
 	ng::Color color_key;
-	color_key.init(0, 0, 0);
+	color_key.set(0, 0, 0);
 	ng::Image image;
 	ng::Clip clip;
 	
 	const char* file;
 	try {
-		image.init(&graphics, file="game-data/text.bmp", &color_key);
-		clip.init(&audio, file="game-data/Corncob.wav");
+		image.load(&graphics, file="game-data/text.bmp", &color_key);
+		clip.load(&audio, file="game-data/Corncob.wav");
 	} catch (const std::exception& ex) {
 		std::cout << "error loading \"" << file << "\":\n"
 			<< ex.what() << "\n";
@@ -39,8 +38,8 @@ int main (int argc, char** argv) {
 	}
 	
 	ng::Channel channel;
-	channel.init();
 	channel.volume = 1.0f;
+	audio.volume = 1.0f;
 	
 	try {
 		channel.play_sound(&clip, ng::SoundLoop);
@@ -57,37 +56,37 @@ int main (int argc, char** argv) {
 	right = 0.0;
 	
 	ng::Tileset tileset;
-	tileset.init_c(&image, &image.rect, 32.0, 6.0);
-	tileset.offset.init2(0.0, -1.0);
+	tileset.set_c(&image, &image.rect, 32.0, 6.0);
+	tileset.offset.set2(0.0, -1.0);
 	
 	ng::Canvas window;
-	window.init(&graphics);
+	window.set(&graphics);
 	
 	ng::Color background_color;
-	background_color.init(0, 0, 0);
+	background_color.set(0, 0, 0);
 	ng::Color draw_color;
-	draw_color.init(32, 32, 32);
+	draw_color.set(32, 32, 32);
 	ng::Color rect_color_true, rect_color_false;
-	rect_color_true.init(64, 16, 0);
-	rect_color_false.init(32, 0, 128);
+	rect_color_true.set(64, 16, 0);
+	rect_color_false.set(32, 0, 128);
 	bool rect_contains_mouse = false;
 	ng::Rect rect;
-	rect.init2((window.space.rect.w*0.5)-256.0, (window.space.rect.h*0.5)-80.0, 256.0*2.0, 80.0*2.0);
+	rect.set2((window.space.rect.w*0.5)-256.0, (window.space.rect.h*0.5)-80.0, 256.0*2.0, 80.0*2.0);
 	
 	ng::Color text_color;
-	text_color.init(196, 128, 0);
+	text_color.set(196, 128, 0);
 	double line_w, line_h;
 	line_w = 12.0;
 	line_h = 24.0;
 	ng::Rect text_rect;
-	text_rect.init2(line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
+	text_rect.set2(line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
 	ng::Space textbox;
-	textbox.init2_i(&text_rect, line_w, line_h);
+	textbox.set2_i(&text_rect, line_w, line_h);
 	
 	ng::Color mouse_color;
-	mouse_color.init(255, 255, 255);
+	mouse_color.set(255, 255, 255);
 	ng::Vec mouse;
-	mouse.init2(0.0, 0.0);
+	mouse.set2(0.0, 0.0);
 	
 	while (true) {
 		while (event.next()) {
@@ -162,7 +161,7 @@ int main (int argc, char** argv) {
 					break;
 				}
 				case ng::MousePress: {
-					mouse.init2(static_cast<double>(event.mouse.x),
+					mouse.set2(static_cast<double>(event.mouse.x),
 						static_cast<double>(event.mouse.y));
 					window.get_mouse(&mouse);
 					rect_contains_mouse = rect.contains2(mouse.x, mouse.y);
@@ -231,13 +230,8 @@ int main (int argc, char** argv) {
 	}
 
 quit:
-	image.quit();
-	graphics.quit();
-	
-	clip.quit();
-	channel.quit();
-	audio.quit();
-	
+	graphics.close();
+	audio.close();
 	ng::quit();
 	
 	return EXIT_SUCCESS;

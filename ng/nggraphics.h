@@ -27,8 +27,11 @@ namespace ng {
 		int b;
 		int a;
 		
-		void init (int r, int g, int b);
-		void init (int r, int g, int b, int a);
+		Color ();
+		~Color ();
+		
+		void set (int r, int g, int b);
+		void set (int r, int g, int b, int a);
 	};
 	
 	class Image {
@@ -39,8 +42,10 @@ namespace ng {
 		int flip;
 		double angle;
 		
-		void init (Graphics* const, const char* file, const Color* key);
-		void quit ();
+		Image ();
+		~Image ();
+		
+		void load (Graphics* const, const char* file, const Color* key);
 		void set_color (const Color*);
 		void set_alpha (const Color*);
 		void set_flip (int flip);
@@ -54,8 +59,11 @@ namespace ng {
 		Rect rect;
 		Color color;
 		
-		void init (const char* title, double w, double h);
-		void quit ();
+		Graphics ();
+		~Graphics ();
+		
+		void open (const char* title, double w, double h);
+		void close ();
 		void set_color (const Color*);
 		void set_alpha (const Color*);
 		void clear ();

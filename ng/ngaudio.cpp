@@ -4,8 +4,12 @@
 #include "ngaudio.h"
 #include "ngmath.h"
 
+ng::Clip::Clip () {}
+
+ng::Clip::~Clip () {}
+
 // Load .wav file into buffer, with same spec as audio device.
-void ng::Clip::init (Audio* a, const char* file) {
+void ng::Clip::load (Audio* a, const char* file) {
 	// load audio file
 	SDL_AudioSpec spec;
 	uint8_t* file_buffer;
@@ -16,8 +20,6 @@ void ng::Clip::init (Audio* a, const char* file) {
 	
 	// Use audio stream to convert loaded audio to desired format
 	this->spec = a->spec;
-	//this->buffer = NULL;
-	//this->samples = 0;
 	SDL_AudioStream* stream = NULL;
 	stream = SDL_NewAudioStream(
 		spec.format, spec.channels, spec.freq,
@@ -43,8 +45,6 @@ void ng::Clip::init (Audio* a, const char* file) {
 		static_cast<int>(this->spec.channels) * sizeof(float);
 	float* buf = static_cast<float*>(std::malloc(clip_max));
 	int clip_bytes = SDL_AudioStreamGet(stream, buf, clip_max);
-	//this->buffer = static_cast<float*>(std::malloc(clip_max));
-	//int clip_bytes = SDL_AudioStreamGet(stream, this->buffer, clip_max);
 	SDL_FreeAudioStream(stream);
 	SDL_FreeWAV(file_buffer);
 	if (clip_bytes <= 0) {
@@ -58,55 +58,31 @@ void ng::Clip::init (Audio* a, const char* file) {
 		this->buffer.push_back(buf[i]);
 	}
 	std::free(buf);
-	//this->buffer = static_cast<float*>(std::realloc(this->buffer, this->samples * sizeof(float)));
 }
 
-// Free buffer.
-void ng::Clip::quit () {
-	//this->samples = 0;
-	//if (this->buffer != NULL) {
-	//	std::free(this->buffer);
-	//	this->buffer = NULL;
-	//}
+ng::Sound::Sound () {
+	this->set(NULL, ng::None);
 }
 
-void ng::Sound::init (Clip* clip, int mode) {
+ng::Sound::~Sound () {}
+
+void ng::Sound::set (Clip* clip, int mode) {
 	this->clip = clip;
 	this->sample = 0;
 	this->mode = mode;
 }
 
-void ng::Channel::init () {
-	//this->queue = NULL;
-	//this->sounds = 0;
-	//this->buffer = NULL;
-	//this->samples = 0;
+ng::Channel::Channel () {
 	this->volume = 1.0f;
 }
 
-// Free queue and buffer.
-void ng::Channel::quit () {
-	//this->sounds = 0;
-	//if (this->queue == NULL) {
-	//	std::free(this->queue);
-	//	this->queue = NULL;
-	//}
-	//this->samples = 0;
-	//if (this->buffer == NULL) {
-	//	std::free(this->buffer);
-	//	this->buffer = NULL;
-	//}
-}
+ng::Channel::~Channel () {}
 
 // Queue a sound with EnumSound mode.
 void ng::Channel::play_sound (Clip* c, int mode) {
-	//this->queue = static_cast<Sound*>(std::realloc(this->queue,
-	//	(this->sounds + 1) * sizeof(Sound)));
 	Sound sound;
-	sound.init(c, mode);
+	sound.set(c, mode);
 	this->queue.push_back(sound);
-	//this->queue[this->sounds].init(c, mode);
-	//this->sounds++;
 }
 
 // Remove queued sound.
@@ -115,36 +91,11 @@ void ng::Channel::remove_sound (size_t sound) {
 		return;
 	}
 	this->queue.erase(this->queue.begin()+sound);
-	/*
-	if (this->sounds == 0 || sound < 0 || sound >= this->sounds) {
-		return;
-	}
-	
-	if (this->sounds == 1) {
-		// Remove last sound and free queue.
-		std::free(this->queue);
-		this->queue = NULL;
-		this->sounds = 0;
-	} else {
-		// Shift remaining sounds to fill gap and reduce queue by 1.
-		for (int i=sound; i < this->sounds - 1; i++) {
-			this->queue[i] = this->queue[i + 1];
-		}
-		this->queue = static_cast<Sound*>(std::realloc(this->queue,
-			(this->sounds - 1) * sizeof(Sound)));
-		this->sounds--;
-	}
-	*/
 }
 
 // Remove all queued sounds.
 void ng::Channel::stop () {
 	this->queue.clear();
-	//if (this->queue != NULL) {
-	//	std::free(this->queue);
-	//	this->queue = NULL;
-	//	this->sounds = 0;
-	//}
 }
 
 // Allocate samples for buffer and fill with silence.
@@ -153,11 +104,6 @@ void ng::Channel::clear (size_t samples) {
 	for (size_t i=0; i < samples; i++) {
 		this->buffer.push_back(ng::dB_silence());
 	}
-	//this->buffer = static_cast<float*>(realloc(this->buffer, samples * sizeof(float)));
-	//this->samples = samples;
-	//for (int i=0; i < samples; i++) {
-	//	this->buffer[i] = ng::dB_silence();
-	//}
 }
 
 // Mix samples from sound clip into channel buffer.
@@ -206,13 +152,16 @@ void ng::Channel::mix () {
 	}
 }
 
-// Open audio device in a paused state and set playing to false.
-void ng::Audio::init () {
-	//this->buffer = NULL;
-	//this->samples = 0;
-	this->volume = 1.0;
+ng::Audio::Audio () {
+	this->device = 0;
+	this->volume = 1.0f;
 	this->playing = false;
-	
+}
+
+ng::Audio::~Audio () {}
+
+// Open audio device in a paused state.
+void ng::Audio::open () {
 	SDL_AudioSpec desired, obtained;
 	desired.freq = 44100;
 	desired.format = AUDIO_F32SYS;
@@ -232,16 +181,9 @@ void ng::Audio::init () {
 }
 
 // Free buffer and close audio device.
-void ng::Audio::quit () {
-	this->playing = false;
-	//this->samples = 0;
-	//if (this->buffer!= NULL) {
-	//	std::free(this->buffer);
-	//	this->buffer = NULL;
-	//}
+void ng::Audio::close () {
 	SDL_ClearQueuedAudio(this->device);
 	SDL_CloseAudioDevice(this->device);
-	this->device = 0;
 }
 
 // Allocate at least ms of samples for buffer and fill with silence.
@@ -269,7 +211,6 @@ void ng::Audio::clear (int ms) {
 	// sets samples = 0 and does nothing to buffer.
 	if (queue_samples >= samples) {
 		this->buffer.clear();
-		//this->samples = 0;
 		return;
 	}
 	
@@ -283,11 +224,6 @@ void ng::Audio::clear (int ms) {
 	for (size_t i=0; i < static_cast<size_t>(samples); i++) {
 		this->buffer.push_back(ng::dB_silence());
 	}
-	//this->buffer = static_cast<float*>(std::realloc(this->buffer, samples * sizeof(float)));
-	//this->samples = samples;
-	//for (int i=0; i < samples; i++) {
-	//	this->buffer[i] = ng::dB_silence();
-	//}
 }
 
 // Clear channel, mix sounds, and mix channel buffer.
@@ -296,9 +232,6 @@ void ng::Audio::mix_channel (Channel* c) {
 	if (this->buffer.size() == 0) {
 		return;
 	}
-	//if (this->samples == 0) {
-	//	return;
-	//}
 	
 	c->clear(this->buffer.size()); // Channel samples = samples.
 	c->mix();
@@ -308,10 +241,6 @@ void ng::Audio::mix_channel (Channel* c) {
 		c->buffer[i] *= dv;
 		this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i] * dv);
 	}
-	//for (int i=0; i < this->samples; i++) {
-	//	c->buffer[i] *= dv;
-	//	this->buffer[i] = ng::mix_dB(this->buffer[i], c->buffer[i] * dv);
-	//}
 }
 
 // Send buffer to audio device and set playing to true.
