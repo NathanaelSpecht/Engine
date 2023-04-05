@@ -9,6 +9,7 @@ April 05:
 - Added constructors and destructors for all classes.
 - Removed unused functions.
 - Added constructors and destructors for demo.
+- Text class.
 
 April 03:
 - Changed arrays to std::vectors.

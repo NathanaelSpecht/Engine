@@ -9,6 +9,22 @@
 
 namespace ng {
 	
+	// represents a set of related paragraphs, to be displayed one at a time.
+	// todo left/center/right justify.
+	class Text {
+	public:
+		std::vector<std::string> p;
+		size_t paragraph;
+		
+		Text ();
+		~Text ();
+		
+		void reset ();
+		void add (const char*);
+		void add (const std::string*);
+		const char* c_str () const;
+	};
+	
 	class Tileset {
 	public:
 		Image* image;
@@ -74,7 +90,7 @@ namespace ng {
 		void draw_point (double x, double y);
 		
 		// Advanced graphics
-		void draw_text (Tileset* const, const char*, const Space*);
+		void draw_text (Tileset* const, const Text*, const Space*);
 		void draw_tile (Tileset* const, const Rect*, const Rect*);
 		
 		// Gui elements

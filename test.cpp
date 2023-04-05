@@ -87,6 +87,18 @@ int main (int argc, char** argv) {
 	ng::Vec mouse;
 	mouse.set2(0.0, 0.0);
 	
+	ng::Text text;
+	text.add("Hello, World!");
+	text.add("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
+		"Sleep well to-night. At three to-morrow the diligence will start for "
+		"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
+		"will await you and will bring you to me. I trust that your journey from "
+		"London has been a happy one, and that you will enjoy your stay in my "
+		"beautiful land.\n"
+		"                                                        Your friend,\n"
+		"                                                        DRACULA.");
+	text.paragraph = 1;
+	
 	while (true) {
 		while (event.next()) {
 			if (event.mode == ng::Quit) {
@@ -187,19 +199,8 @@ int main (int argc, char** argv) {
 			window.draw_rect(&rect, ng::DrawFill);
 			
 			tileset.image->set_color(&text_color);
-			tileset.image->set_angle(10.0);
-			window.draw_text(&tileset, "Hello, World!", &textbox);
-			/* window.draw_text(&tileset,
-				"My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
-				"Sleep well to-night. At three to-morrow the diligence will start for "
-				"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
-				"will await you and will bring you to me. I trust that your journey from "
-				"London has been a happy one, and that you will enjoy your stay in my "
-				"beautiful land.\n"
-				"                                                        Your friend,\n"
-				"                                                        DRACULA.",
-				&textbox);
-			*/
+			//tileset.image->set_angle(10.0);
+			window.draw_text(&tileset, &text, &textbox);
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
 			

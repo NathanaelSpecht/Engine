@@ -4,6 +4,37 @@
 #include "nggui.h"
 #include "ngmath.h"
 
+ng::Text::Text () {
+	this->paragraph = 0;
+}
+
+ng::Text::~Text () {
+	for (size_t i=0; i < this->p.size(); i++) {
+		this->p[i].clear();
+	}
+}
+
+void ng::Text::reset () {
+	this->paragraph = 0;
+	for (size_t i=0; i < this->p.size(); i++) {
+		this->p[i].clear();
+	}
+	this->p.clear();
+}
+
+void ng::Text::add (const char* s) {
+	std::string str(s);
+	this->p.push_back(str);
+}
+
+void ng::Text::add (const std::string* str) {
+	this->p.push_back(*str);
+}
+
+const char* ng::Text::c_str () const {
+	return this->p[this->paragraph].c_str();
+}
+
 ng::Tileset::Tileset () {
 	this->image = NULL;
 }
@@ -272,11 +303,13 @@ void ng::Canvas::draw_point (double x, double y) {
 }
 
 // Advanced graphics
-void ng::Canvas::draw_text (Tileset* const tileset, const char* str, const Space* dest) {
+void ng::Canvas::draw_text (Tileset* const tileset, const Text* text, const Space* dest) {
 	if (this->root) {
 		Rect s, tile, d;
 		s.set2(0.0, 0.0, 1.0, 1.0);
 		tile.set2(0.0, 0.0, 1.0, 1.0);
+		
+		const char* str = text->c_str();
 		
 		int c, tc;
 		tc = static_cast<int>(tileset->space.c);
@@ -310,7 +343,7 @@ void ng::Canvas::draw_text (Tileset* const tileset, const char* str, const Space
 	} else {
 		Space d = *dest;
 		this->scale_out(&d);
-		this->parent->draw_text(tileset, str, &d);
+		this->parent->draw_text(tileset, text, &d);
 	}
 }
 
