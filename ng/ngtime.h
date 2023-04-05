@@ -36,7 +36,10 @@ namespace ng {
 		int tps; // Average ticks per second. Starts at 100.
 		int max; // Duration of longest tick since program start.
 		
-		void init ();
+		Time ();
+		~Time ();
+		
+		void reset ();
 		void tick ();
 	};
 

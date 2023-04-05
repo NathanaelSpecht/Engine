@@ -51,7 +51,20 @@ int ng::tps (int tps, int delta, int* acc_ticks, int* acc_ms) {
 	return tps;
 }
 
-void ng::Time::init () {
+ng::Time::Time () {
+	this->now = 0;
+	this->last = 0;
+	this->acc_ticks = 0;
+	this->acc_ms = 0;
+	this->delta = 0;
+	this->tps = 0;
+	this->ticks = 0;
+	this->max = 0;
+}
+
+ng::Time::~Time () {}
+
+void ng::Time::reset () {
 	// internal
 	this->now = SDL_GetTicks();
 	this->last = this->now;

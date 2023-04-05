@@ -61,7 +61,9 @@ void ng::Clip::load (Audio* a, const char* file) {
 }
 
 ng::Sound::Sound () {
-	this->set(NULL, ng::None);
+	this->clip = NULL;
+	this->sample = 0;
+	this->mode = ng::None;
 }
 
 ng::Sound::~Sound () {}

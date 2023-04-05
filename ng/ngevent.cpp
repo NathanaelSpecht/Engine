@@ -3,7 +3,21 @@
 
 #include "ngevent.h"
 
-void ng::Mouse::init () {
+ng::Mouse::Mouse () {
+	this->left = false;
+	this->middle = false;
+	this->right = false;
+	this->x = 0;
+	this->y = 0;
+	this->dx = 0;
+	this->dy = 0;
+	this->scroll_x = 0;
+	this->scroll_y = 0;
+}
+
+ng::Mouse::~Mouse () {}
+
+void ng::Mouse::reset () {
 	this->left = false;
 	this->middle = false;
 	this->right = false;
@@ -81,7 +95,23 @@ void ng::Mouse::scroll (SDL_Event* const e) {
 	}
 }
 
-void ng::Key::init () {
+ng::Key::Key () {
+	this->scancode = 0;
+	this->keycode = 0;
+	this->lshift = false;
+	this->rshift = false;
+	this->lctrl = false;
+	this->rctrl = false;
+	this->lalt = false;
+	this->ralt = false;
+	this->caps = false;
+}
+
+ng::Key::~Key () {}
+
+void ng::Key::reset () {
+	this->scancode = 0;
+	this->keycode = 0;
 	this->lshift = false;
 	this->rshift = false;
 	this->lctrl = false;
@@ -117,10 +147,20 @@ void ng::Key::release (SDL_Event* const e) {
 	this->caps = !!(mod & KMOD_CAPS);
 }
 
-void ng::Event::init (Graphics* const g) {
+ng::Event::Event () {
 	this->mode = ng::None;
-	this->mouse.init();
-	this->key.init();
+	for (int i=0; i<NG_EVENT_TEXT; i++) {
+		this->text[i] = '\0';
+	}
+	this->graphics = NULL;
+}
+
+ng::Event::~Event () {}
+
+void ng::Event::reset (Graphics* const g) {
+	this->mode = ng::None;
+	this->mouse.reset();
+	this->key.reset();
 	for (int i=0; i<NG_EVENT_TEXT; i++) {
 		this->text[i] = '\0';
 	}

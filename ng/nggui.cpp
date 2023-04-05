@@ -6,8 +6,6 @@
 
 ng::Tileset::Tileset () {
 	this->image = NULL;
-	this->space.set2(0.0, 0.0, 0.0, 0.0);
-	this->offset.set2(0.0, 0.0);
 }
 
 ng::Tileset::~Tileset () {}
@@ -39,9 +37,8 @@ void ng::Tileset::set_i (Image* image, const Rect* rect, double i, double j) {
 ng::Canvas::Canvas () {
 	this->graphics = NULL;
 	this->parent = NULL;
-	this->space.set2(0.0, 0.0, 0.0, 0.0);
 	this->root = false;
-	this->relative = true;
+	this->relative = false;
 }
 
 ng::Canvas::~Canvas () {}

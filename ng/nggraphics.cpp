@@ -4,7 +4,10 @@
 #include "nggraphics.h"
 
 ng::Color::Color () {
-	this->set(0, 0, 0);
+	this->r = 0;
+	this->g = 0;
+	this->b = 0;
+	this->a = 255;
 }
 
 ng::Color::~Color () {}
@@ -34,6 +37,7 @@ ng::Image::Image () {
 ng::Image::~Image () {
 	if (this->texture != NULL) {
 		SDL_DestroyTexture(this->texture);
+		this->texture = NULL;
 	}
 }
 
@@ -103,6 +107,7 @@ ng::Graphics::Graphics () {
 ng::Graphics::~Graphics () {}
 
 void ng::Graphics::open (const char* title, double w, double h) {
+	this->rect.set2(0.0, 0.0, w, h);
 	this->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		static_cast<int>(w), static_cast<int>(h), SDL_WINDOW_RESIZABLE);
 	if (this->window == NULL) {

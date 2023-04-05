@@ -6,11 +6,11 @@
 
 #include "ngcore.h"
 #include "ngmath.h"
-#include "ngtime.h"
 #include "nggraphics.h"
 #include "nggui.h"
 #include "ngaudio.h"
 #include "ngevent.h"
+#include "ngtime.h"
 // Use <string> and <sstream> for string.
 // Use <iostream> and <fstream> and <filesystem> for file.
 

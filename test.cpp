@@ -5,17 +5,17 @@
 #include <iostream>
 
 int main (int argc, char** argv) {
-	ng::Event event;
 	ng::Graphics graphics;
 	ng::Audio audio;
+	ng::Event event;
 	ng::Time time;
 	
 	try {
 		ng::init();
-		event.init(&graphics);
 		graphics.open("Fire Days Demo", 640.0, 480.0);
 		audio.open();
-		time.init();
+		event.reset(&graphics);
+		time.reset();
 	} catch (const std::exception& ex) {
 		std::cout << "error at startup:\n"
 			<< ex.what() << "\n";
@@ -49,12 +49,6 @@ int main (int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	
-	double up, down, left, right;
-	up = 0.0;
-	down = 0.0;
-	left = 0.0;
-	right = 0.0;
-	
 	ng::Tileset tileset;
 	tileset.set_c(&image, &image.rect, 32.0, 6.0);
 	tileset.offset.set2(0.0, -1.0);
@@ -63,7 +57,7 @@ int main (int argc, char** argv) {
 	window.set(&graphics);
 	
 	ng::Color background_color;
-	background_color.set(0, 0, 0);
+	background_color.set(16, 0, 16);
 	ng::Color draw_color;
 	draw_color.set(32, 32, 32);
 	ng::Color rect_color_true, rect_color_false;
@@ -85,6 +79,11 @@ int main (int argc, char** argv) {
 	
 	ng::Color mouse_color;
 	mouse_color.set(255, 255, 255);
+	double up, down, left, right;
+	up = 0.0;
+	down = 0.0;
+	left = 0.0;
+	right = 0.0;
 	ng::Vec mouse;
 	mouse.set2(0.0, 0.0);
 	
@@ -175,7 +174,7 @@ int main (int argc, char** argv) {
 		
 		try {
 			graphics.set_color(&background_color);
-			window.clear();
+			graphics.clear();
 			
 			graphics.set_color(&draw_color);
 			window.draw_rect(&text_rect, ng::DrawFill);
@@ -188,7 +187,7 @@ int main (int argc, char** argv) {
 			window.draw_rect(&rect, ng::DrawFill);
 			
 			tileset.image->set_color(&text_color);
-			//tileset.image->set_angle(10.0);
+			tileset.image->set_angle(10.0);
 			window.draw_text(&tileset, "Hello, World!", &textbox);
 			/* window.draw_text(&tileset,
 				"My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
@@ -207,7 +206,7 @@ int main (int argc, char** argv) {
 			graphics.set_color(&mouse_color);
 			window.draw_point(mouse.x, mouse.y);
 			
-			window.draw();
+			graphics.draw();
 			
 		} catch (const std::exception& ex) {
 			std::cout << "error drawing graphics:\n"
@@ -217,7 +216,7 @@ int main (int argc, char** argv) {
 		
 		try {
 			audio.clear(time.delta);
-			audio.mix_channel(&channel);
+			//audio.mix_channel(&channel);
 			audio.play();
 			
 		} catch (const std::exception& ex) {

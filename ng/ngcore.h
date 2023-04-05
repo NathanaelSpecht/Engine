@@ -49,11 +49,6 @@ void init ();
 void quit ();
 
 // Forward declarations, to avoid "has not been declared" compilation errors.
-// ngevent
-class Mouse;
-class Key;
-class Event;
-
 // ngmath
 class Vec;
 class Rect;
@@ -74,6 +69,11 @@ class Clip;
 class Sound;
 class Channel;
 class Audio;
+
+// ngevent
+class Mouse;
+class Key;
+class Event;
 
 // ngtime
 class Time;

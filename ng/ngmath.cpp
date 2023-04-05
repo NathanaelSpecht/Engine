@@ -115,7 +115,8 @@ float ng::dB_silence () {
 }
 
 ng::Vec::Vec () {
-	this->set2(0.0, 0.0);
+	this->x = 0.0;
+	this->y = 0.0;
 }
 
 ng::Vec::~Vec () {}
@@ -263,7 +264,10 @@ bool ng::Vec::yint2 (const Vec* p, const Vec* v) {
 }
 
 ng::Rect::Rect () {
-	this->set2(0.0, 0.0, 0.0, 0.0);
+	this->x = 0.0;
+	this->y = 0.0;
+	this->w = 0.0;
+	this->h = 0.0;
 }
 
 ng::Rect::~Rect () {}
@@ -366,7 +370,10 @@ bool ng::Rect::intersect2 (const Vec* p, const Vec* v, Vec* const vint, int* con
 }
 
 ng::Space::Space () {
-	this->set2(0.0, 0.0, 0.0, 0.0);
+	this->c = 0.0;
+	this->r = 0.0;
+	this->i = 1.0;
+	this->j = 1.0;
 }
 
 ng::Space::~Space () {}
@@ -472,7 +479,7 @@ void ng::Space::relative_to_absolute2 (const Space* s) {
 }
 
 ng::Mass::Mass () {
-	this->set2(0.0, 0.0, 0.0, 0.0, 1.0);
+	this->m = 0.0;
 }
 
 ng::Mass::~Mass () {}

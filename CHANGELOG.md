@@ -5,9 +5,12 @@
 
 ## 2023 April
 
+April 05:
+- Added constructors and destructors for all classes.
+- Removed unused functions.
+
 April 03:
 - Changed arrays to std::vectors.
-- Change classes to use constructors and destructors, instead of init and quit.
 
 April 02:
 - Fixed mouse scaling bug.

@@ -35,8 +35,11 @@ namespace ng {
 		int scroll_x;
 		int scroll_y;
 		
+		Mouse ();
+		~Mouse ();
+		
 		// Internal. Called by event::init.
-		void init ();
+		void reset ();
 		
 		// Internal. Called by event::next.
 		// Set this to mouse press event from SDL.
@@ -67,8 +70,11 @@ namespace ng {
 		bool ralt;
 		bool caps;
 		
+		Key ();
+		~Key ();
+		
 		// Internal. Called by event::init.
-		void init ();
+		void reset ();
 		
 		// Internal. Called by event::next.
 		// Set this to key press event from SDL.
@@ -95,9 +101,10 @@ namespace ng {
 		// Internal SDL event.
 		SDL_Event event;
 		
-		// Initialize this and set mode = ng::None.
-		// Graphics pointer is for internal window events.
-		void init (Graphics* const);
+		Event ();
+		~Event ();
+		
+		void reset (Graphics* const);
 		
 		// Set this to next event and return true, or
 		// there are no events so set mode = ng::None and return false.
