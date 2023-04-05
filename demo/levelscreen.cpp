@@ -3,8 +3,12 @@
 
 #include "firedays.h"
 
-void fd::LevelScreen::init (GameState* gs) {
-	this->canvas.init(&gs->canvas, 1.0, 1.0, 38.0, 28.0);
+fd::LevelScreen::LevelScreen () {}
+
+fd::LevelScreen::~LevelScreen () {}
+
+void fd::LevelScreen::reset (GameState* gs) {
+	this->canvas.set(&gs->canvas, 1.0, 1.0, 38.0, 28.0);
 }
 
 void fd::LevelScreen::event (GameState* gs) {

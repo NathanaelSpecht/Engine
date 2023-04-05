@@ -5,7 +5,7 @@
 
 int main (int argc, char** argv) {
 	fd::GameState game;
-	game.init();
+	game.reset();
 	game.loop();
 	game.quit();
 	return EXIT_SUCCESS;

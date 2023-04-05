@@ -3,14 +3,21 @@
 
 #include "firedays.h"
 
-void fd::DebugMenu::init (GameState* gs) {
+fd::DebugMenu::DebugMenu () {
+	this->events = false;
+	this->draws = false;
+}
+
+fd::DebugMenu::~DebugMenu () {}
+
+void fd::DebugMenu::reset (GameState* gs) {
 	this->events = false;
 	this->draws = false;
 	// tiles
-	this->canvas.init(&gs->canvas, 0.0, 29.0, 40.0, 1.0);
+	this->canvas.set(&gs->canvas, 0.0, 29.0, 40.0, 1.0);
 	// tiles in frame
-	this->version.init2(0.0, 0.0, 25.0, 1.0);
-	this->fps.init2(30.0, 0.0, 10.0, 1.0);
+	this->version.set2(0.0, 0.0, 25.0, 1.0);
+	this->fps.set2(30.0, 0.0, 10.0, 1.0);
 }
 
 void fd::DebugMenu::event (GameState* gs) {

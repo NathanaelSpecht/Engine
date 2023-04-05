@@ -45,7 +45,10 @@ public:
 	ng::Rect quit_btn;
 	ng::Vec mouse;
 	
-	void init (GameState* gs);
+	TitleScreen ();
+	~TitleScreen ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -56,7 +59,10 @@ public:
 	ng::Canvas canvas;
 	ng::Rect save1;
 	
-	void init (GameState* gs);
+	FileScreen ();
+	~FileScreen ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -67,7 +73,10 @@ public:
 	ng::Canvas canvas;
 	ng::Rect level1;
 	
-	void init (GameState* gs);
+	WorldScreen ();
+	~WorldScreen ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -76,7 +85,10 @@ class LevelScreen {
 public:
 	ng::Canvas canvas;
 	
-	void init (GameState* gs);
+	LevelScreen ();
+	~LevelScreen ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -90,7 +102,10 @@ public:
 	ng::Rect heat;
 	ng::Rect fuel;
 	
-	void init (GameState* gs);
+	HudMenu ();
+	~HudMenu ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -104,7 +119,10 @@ public:
 	ng::Rect resume_btn;
 	ng::Rect quit_btn;
 	
-	void init (GameState* gs);
+	PauseMenu ();
+	~PauseMenu ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -117,7 +135,10 @@ public:
 	ng::Rect version;
 	ng::Rect fps;
 	
-	void init (GameState* gs);
+	DebugMenu ();
+	~DebugMenu ();
+	
+	void reset (GameState* gs);
 	void event (GameState* gs);
 	void draw (GameState* gs);
 };
@@ -146,7 +167,10 @@ public:
 	PauseMenu pause_menu;
 	DebugMenu debug_menu;
 	
-	void init ();
+	GameState ();
+	~GameState ();
+	
+	void reset ();
 	void loop ();
 	void quit ();
 	

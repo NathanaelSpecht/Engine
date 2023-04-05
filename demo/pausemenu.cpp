@@ -3,15 +3,22 @@
 
 #include "firedays.h"
 
-void fd::PauseMenu::init (GameState* gs) {
+fd::PauseMenu::PauseMenu () {
+	this->events = false;
+	this->draws = false;
+}
+
+fd::PauseMenu::~PauseMenu () {}
+
+void fd::PauseMenu::reset (GameState* gs) {
 	this->events = false;
 	this->draws = false;
 	// tiles
-	this->header.init2(5.0, 5.0, 30.0, 3.0);
-	this->canvas.init(&gs->canvas, 14.0, 13.0, 12.0, 5.0);
+	this->header.set2(5.0, 5.0, 30.0, 3.0);
+	this->canvas.set(&gs->canvas, 14.0, 13.0, 12.0, 5.0);
 	// tiles in frame
-	this->resume_btn.init2(1.0, 1.0, 10.0, 1.0);
-	this->quit_btn.init2(1.0, 3.0, 10.0, 1.0);
+	this->resume_btn.set2(1.0, 1.0, 10.0, 1.0);
+	this->quit_btn.set2(1.0, 3.0, 10.0, 1.0);
 }
 
 void fd::PauseMenu::event (GameState* gs) {
@@ -37,7 +44,7 @@ void fd::PauseMenu::event (GameState* gs) {
 	// - if titlescreen, then quit
 	if (this->draws && gs->event.mode == ng::MousePress) {
 		ng::Vec p;
-		p.init2(gs->event.mouse.x, gs->event.mouse.y);
+		p.set2(gs->event.mouse.x, gs->event.mouse.y);
 		this->canvas.get_mouse(&p);
 		
 		if (this->resume_btn.contains2(p.x, p.y)) {

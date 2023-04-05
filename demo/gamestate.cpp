@@ -4,13 +4,19 @@
 #include "firedays.h"
 #include <iostream>
 
-void fd::GameState::init () {
+fd::GameState::GameState () {
+	this->screen_mode = fd::None;
+}
+
+fd::GameState::~GameState () {}
+
+void fd::GameState::reset () {
 	try {
 		ng::init();
-		this->graphics.init("Fire Days Demo", 640.0, 480.0);
-		this->audio.init();
-		this->event.init(&this->graphics);
-		this->time.init();
+		this->graphics.open("Fire Days Demo", 640.0, 480.0);
+		this->audio.open();
+		this->event.reset(&this->graphics);
+		this->time.reset();
 		
 	} catch (const std::exception& ex) {
 		std::cout << "error at startup:\n"
@@ -18,14 +24,14 @@ void fd::GameState::init () {
 		exit(EXIT_FAILURE);
 	}
 	
-	this->canvas.init_i(&this->graphics, 16.0, 16.0);
+	this->canvas.set_i(&this->graphics, 16.0, 16.0);
 	this->canvas.space.const_c = true;
-	this->background_color.init(0, 0, 0);
-	this->draw_color.init(255, 255, 255);
+	this->background_color.set(0, 0, 0);
+	this->draw_color.set(255, 255, 255);
 	
 	const char* file;
 	try {
-		this->crazy_music.init(&this->audio, file="game-data/Corncob.wav");
+		this->crazy_music.load(&this->audio, file="game-data/Corncob.wav");
 		
 	} catch (const std::exception& ex) {
 		std::cout << "error loading \"" << file << "\":\n"
@@ -33,22 +39,22 @@ void fd::GameState::init () {
 		exit(EXIT_FAILURE);
 	}
 	
-	this->music_channel.init();
+	//this->music_channel.set();
 	this->music_channel.volume = 0.75;
-	this->sound_channel.init();
+	//this->sound_channel.init();
 	this->sound_channel.volume = 0.75;
 	
 	try {
 		this->music_channel.play_sound(&this->crazy_music, ng::SoundLoop);
 		
 		this->screen_mode = fd::None;
-		this->title_screen.init(this);
-		this->file_screen.init(this);
-		this->world_screen.init(this);
-		this->level_screen.init(this);
-		this->hud_menu.init(this);
-		this->pause_menu.init(this);
-		this->debug_menu.init(this);
+		this->title_screen.reset(this);
+		this->file_screen.reset(this);
+		this->world_screen.reset(this);
+		this->level_screen.reset(this);
+		this->hud_menu.reset(this);
+		this->pause_menu.reset(this);
+		this->debug_menu.reset(this);
 		
 	} catch (const std::exception& ex) {
 		std::cout << "error configuring data:\n"
@@ -107,7 +113,7 @@ void fd::GameState::loop () {
 		
 		try {
 			this->graphics.set_color(&this->background_color);
-			this->canvas.clear();
+			this->graphics.clear();
 			
 			this->graphics.set_color(&this->draw_color);
 			switch (this->screen_mode) {
@@ -132,7 +138,7 @@ void fd::GameState::loop () {
 			this->pause_menu.draw(this);
 			this->debug_menu.draw(this);
 			
-			this->canvas.draw();
+			this->graphics.draw();
 			
 		} catch (const std::exception& ex) {
 			std::cout << "error drawing graphics:\n"
@@ -159,11 +165,11 @@ void fd::GameState::loop () {
 }
 
 void fd::GameState::quit () {
-	this->graphics.quit();
+	this->graphics.close();
 	
-	this->music_channel.quit();
-	this->sound_channel.quit();
-	this->audio.quit();
+	//this->music_channel.quit();
+	//this->sound_channel.quit();
+	this->audio.close();
 	
 	ng::quit();
 }

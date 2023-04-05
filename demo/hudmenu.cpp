@@ -3,15 +3,22 @@
 
 #include "firedays.h"
 
-void fd::HudMenu::init (GameState* gs) {
+fd::HudMenu::HudMenu () {
+	this->events = false;
+	this->draws = false;
+}
+
+fd::HudMenu::~HudMenu () {}
+
+void fd::HudMenu::reset (GameState* gs) {
 	this->events = false;
 	this->draws = false;
 	// tiles
-	this->canvas.init(&gs->canvas, 1.0, 1.0, 18.0, 5.0);
+	this->canvas.set(&gs->canvas, 1.0, 1.0, 18.0, 5.0);
 	// tiles in frame
-	this->temp.init2(1.0, 1.0, 3.0, 3.0);
-	this->heat.init2(5.0, 1.0, 13.0, 2.0);
-	this->fuel.init2(5.0, 3.0, 13.0, 1.0);
+	this->temp.set2(1.0, 1.0, 3.0, 3.0);
+	this->heat.set2(5.0, 1.0, 13.0, 2.0);
+	this->fuel.set2(5.0, 3.0, 13.0, 1.0);
 }
 
 void fd::HudMenu::event (GameState* gs) {
