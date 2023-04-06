@@ -61,6 +61,7 @@ class Image;
 class Graphics;
 
 // nggui
+class Text;
 class Tileset;
 class Canvas;
 

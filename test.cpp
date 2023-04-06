@@ -88,16 +88,16 @@ int main (int argc, char** argv) {
 	mouse.set2(0.0, 0.0);
 	
 	ng::Text text;
-	text.add("Hello, World!");
-	text.add("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
+	text.push_line("Hello, World!");
+	text.push_line("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
 		"Sleep well to-night. At three to-morrow the diligence will start for "
 		"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
 		"will await you and will bring you to me. I trust that your journey from "
 		"London has been a happy one, and that you will enjoy your stay in my "
-		"beautiful land.\n"
-		"                                                        Your friend,\n"
-		"                                                        DRACULA.");
-	text.paragraph = 1;
+		"beautiful land.");
+	text.push_line("                           Your friend,");
+	text.push_line("                           DRACULA.");
+	text.set_cursor(1, 0);
 	
 	while (true) {
 		while (event.next()) {
