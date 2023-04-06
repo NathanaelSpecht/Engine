@@ -3,7 +3,6 @@
 
 #include "nggui.h"
 #include "ngmath.h"
-#include <cstring>
 
 ng::Text::Text () {
 	this->line = 0;
@@ -12,18 +11,13 @@ ng::Text::Text () {
 
 ng::Text::~Text () {
 	for (size_t line=0; line < this->buffer.size(); line++) {
-		if (this->buffer[line] != NULL) {
-			std::free(this->buffer[line]);
-		}
+		this->buffer[line].clear();
 	}
 }
 
 void ng::Text::reset () {
 	for (size_t line=0; line < this->buffer.size(); line++) {
-		if (this->buffer[line] != NULL) {
-			std::free(this->buffer[line]);
-			this->buffer[line] = NULL;
-		}
+		this->buffer[line].clear();
 	}
 	this->buffer.clear();
 	this->line = 0;
@@ -33,13 +27,15 @@ void ng::Text::reset () {
 // If result will be in-bounds, set/move cursor and return true.
 // Else can't set/move cursor, so return false.
 bool ng::Text::set_cursor (int line, int i) {
-	if (line < 0 || static_cast<size_t>(line) > this->buffer.size() ||
-	i < 0 || static_cast<size_t>(i) > std::strlen(this->buffer[static_cast<size_t>(line)])) {
+	size_t sline, si;
+	sline = static_cast<size_t>(line);
+	si = static_cast<size_t>(i);
+	if (line < 0 || sline > this->buffer.size() || i < 0 || si > this->buffer[sline].size()) {
 		return false;
 	}
 	
-	this->line = static_cast<size_t>(line);
-	this->i = static_cast<size_t>(i);
+	this->line = sline;
+	this->i = si;
 	
 	return true;
 }
@@ -51,8 +47,8 @@ bool ng::Text::move_next_line () {
 	}
 	
 	this->line++;
-	if (this->i > std::strlen(this->buffer[this->line])) {
-		this->i = std::strlen(this->buffer[this->line]);
+	if (this->i > this->buffer[this->line].size()) {
+		this->i = this->buffer[this->line].size();
 	}
 	
 	return true;
@@ -64,8 +60,8 @@ bool ng::Text::move_prev_line () {
 	}
 	
 	this->line--;
-	if (this->i > std::strlen(this->buffer[this->line])) {
-		this->i = std::strlen(this->buffer[this->line]);
+	if (this->i > this->buffer[this->line].size()) {
+		this->i = this->buffer[this->line].size();
 	}
 	
 	return true;
@@ -76,7 +72,7 @@ bool ng::Text::move_next () {
 		return false;
 	}
 	
-	if (this->i == std::strlen(this->buffer[this->line])) {
+	if (this->i == this->buffer[this->line].size()) {
 		this->i = 0;
 		this->line++;
 	} else {
@@ -94,7 +90,7 @@ bool ng::Text::move_prev () {
 	if (this->i == 0) {
 		if (this->line > 0) {
 			this->line--;
-			this->i = std::strlen(this->buffer[this->line]);
+			this->i = this->buffer[this->line].size();
 		}
 	} else {
 		this->i--;
@@ -105,23 +101,13 @@ bool ng::Text::move_prev () {
 
 // Add/remove a line of text at the end.
 void ng::Text::push_line (const char* s) {
-	char* t;
-	if (s == NULL) {
-		t = NULL;
-	} else {
-		size_t len = std::strlen(s);
-		t = static_cast<char*>(std::malloc((len + 1) * sizeof(char)));
-		for (size_t i=0; i < len; i++) {
-			t[i] = s[i];
-		}
-		t[len] = '\0';
-	}
-	
-	this->buffer.push_back(t);
+	std::string str(s);
+	this->buffer.push_back(str);
 }
 
 void ng::Text::pop_line () {
 	if (this->buffer.size() > 0) {
+		this->buffer[this->buffer.size() - 1].clear();
 		this->buffer.pop_back();
 	}
 }
@@ -138,29 +124,22 @@ void ng::Text::enter (const char* c) {
 }
 
 // Perform copy/paste operations on entire text.
-// Cut and copy return a malloc-d c-string, and must be free-d.
+// Cut and copy return a newed string which must be deleted
 // Cut also resets this text.
-char* ng::Text::cut () {
+std::string* ng::Text::cut () {
 	// TODO
-	return NULL;
+	std::string* str = new std::string();
+	return str;
 }
 
-char* ng::Text::copy () {
+std::string* ng::Text::copy () {
 	// TODO
-	return NULL;
+	std::string* str = new std::string();
+	return str;
 }
 
-void ng::Text::paste (const char* s) {
+void ng::Text::paste (const std::string* str) {
 	// TODO
-}
-
-// Get pointer to current line or NULL for end of text.
-char* ng::Text::get_line () {
-	if (this->line >= this->buffer.size()) {
-		return NULL;
-	}
-	
-	return this->buffer[this->line];
 }
 
 // Get next char or a pointer to next line, and advance cursor.
@@ -171,7 +150,8 @@ char ng::Text::next () {
 	i = this->i;
 	if (line >= this->buffer.size()) {
 		return '\0';
-	} else if (i >= std::strlen(this->buffer[line])) {
+	} else if (i >= this->buffer[line].size()) {
+		bool bb = this->move_next();
 		return '\n';
 	}
 	
@@ -180,7 +160,7 @@ char ng::Text::next () {
 	return this->buffer[line][i];
 }
 
-char* ng::Text::next_line () {
+const std::string* ng::Text::next_line () {
 	size_t line;
 	line = this->line;
 	if (line >= this->buffer.size()) {
@@ -190,7 +170,7 @@ char* ng::Text::next_line () {
 	bool b = this->move_next_line();
 	this->i = 0;
 	
-	return this->buffer[line];
+	return &this->buffer[line];
 }
 
 ng::Tileset::Tileset () {
@@ -472,8 +452,7 @@ void ng::Canvas::draw_text (Tileset* const tileset, Text* const text, const Spac
 		text_i = text->i;
 		char ch;
 		
-		int c, tc;
-		tc = static_cast<int>(tileset->space.c);
+		double c;
 		while ((ch = text->next()) != '\0') {
 			if (ch == '\n') {
 				tile.x = 0.0;
@@ -484,9 +463,9 @@ void ng::Canvas::draw_text (Tileset* const tileset, Text* const text, const Spac
 				continue;
 			}
 			
-			c = static_cast<int>(ch);
-			s.x = static_cast<double>(c % tc);
-			s.y = static_cast<double>(c / tc);
+			c = static_cast<double>(ch);
+			s.x = fmod(c, tileset->space.c);
+			s.y = floor(c / tileset->space.c);
 			d = tile;
 			d.relative_to_absolute2(dest);
 			this->draw_tile(tileset, &s, &d);

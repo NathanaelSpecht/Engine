@@ -5,11 +5,14 @@
 
 ## 2023 April
 
+April 06:
+- Button (wip).
+
 April 05:
 - Added constructors and destructors for all classes.
 - Removed unused functions.
 - Added constructors and destructors for demo.
-- Text processing code (wip).
+- Text processing code.
 
 April 03:
 - Changed arrays to std::vectors.

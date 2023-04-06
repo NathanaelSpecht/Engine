@@ -6,13 +6,14 @@
 
 #include "ngcore.h"
 #include "nggraphics.h"
+#include <string>
 
 namespace ng {
 	
 	// represents text as a set of lines.
 	class Text {
 	public:
-		std::vector<char*> buffer;
+		std::vector<std::string> buffer;
 		size_t line;
 		size_t i;
 		
@@ -41,18 +42,16 @@ namespace ng {
 		void enter (const char*);
 		
 		// Perform copy/paste operations on entire text.
-		// Cut and copy return a malloc-d c-string, and must be free-d.
+		// Cut and copy return a newed string which must be deleted
 		// Cut also resets this text.
-		char* cut ();
-		char* copy ();
-		void paste (const char*);
+		std::string* cut ();
+		std::string* copy ();
+		void paste (const std::string*);
 		
-		// Get pointer to current line or NULL for end of text.
-		char* get_line ();
 		// Get next char or a pointer to next line, and advance cursor.
 		// Returns nul or NULL for end of text.
 		char next ();
-		char* next_line ();
+		const std::string* next_line ();
 	};
 	
 	class Tileset {
