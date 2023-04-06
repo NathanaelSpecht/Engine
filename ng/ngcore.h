@@ -63,6 +63,8 @@ class Graphics;
 // nggui
 class Text;
 class Tileset;
+class Button;
+class Label;
 class Canvas;
 
 // ngaudio

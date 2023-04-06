@@ -16,8 +16,8 @@ void fd::DebugMenu::reset (GameState* gs) {
 	// tiles
 	this->canvas.set(&gs->canvas, 0.0, 29.0, 40.0, 1.0);
 	// tiles in frame
-	this->version.set2(0.0, 0.0, 25.0, 1.0);
-	this->fps.set2(30.0, 0.0, 10.0, 1.0);
+	this->version.set("Version: 0.0.4", 1.1, 0.0, 0.0, 25.0, 1.0);
+	this->fps.set("FPS: ??", 1.1, 30.0, 0.0, 10.0, 1.0);
 }
 
 void fd::DebugMenu::event (GameState* gs) {
@@ -45,8 +45,8 @@ void fd::DebugMenu::draw (GameState* gs) {
 	this->canvas.clear();
 	gs->graphics.set_color(&gs->draw_color);
 	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
-	this->canvas.draw_rect(&this->version, ng::DrawFrame);
-	this->canvas.draw_rect(&this->fps, ng::DrawFrame);
+	this->canvas.draw_label(&gs->font, &this->version);
+	this->canvas.draw_label(&gs->font, &this->fps);
 }
 
 

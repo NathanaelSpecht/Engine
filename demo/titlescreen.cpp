@@ -12,8 +12,8 @@ void fd::TitleScreen::reset (GameState* gs) {
 	this->header.set2(5.0, 5.0, 30.0, 10.0);
 	this->canvas.set(&gs->canvas, 14.0, 20.0, 12.0, 5.0);
 	// tiles in frame
-	this->start_btn.set2(1.0, 1.0, 10.0, 1.0);
-	this->quit_btn.set2(1.0, 3.0, 10.0, 1.0);
+	this->start_btn.set("Start", 0.8, 1.0, 1.0, 10.0, 1.0);
+	this->quit_btn.set("Quit", 0.8, 1.0, 3.0, 10.0, 1.0);
 }
 
 void fd::TitleScreen::event (GameState* gs) {
@@ -25,10 +25,10 @@ void fd::TitleScreen::event (GameState* gs) {
 		this->canvas.get_mouse(&p);
 		this->mouse = p;
 		
-		if (this->start_btn.contains2(p.x, p.y)) {
+		if (this->start_btn.contains(&p)) {
 			gs->goto_screen(fd::ScreenFile);
 			gs->event.consume();
-		} else if (this->quit_btn.contains2(p.x, p.y)) {
+		} else if (this->quit_btn.contains(&p)) {
 			gs->goto_screen(fd::None);
 			gs->event.consume();
 		}
@@ -42,8 +42,8 @@ void fd::TitleScreen::draw (GameState* gs) {
 	this->canvas.clear();
 	gs->graphics.set_color(&gs->draw_color);
 	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
-	this->canvas.draw_rect(&this->start_btn, ng::DrawFrame);
-	this->canvas.draw_rect(&this->quit_btn, ng::DrawFrame);
+	this->canvas.draw_button(&gs->font, &this->start_btn);
+	this->canvas.draw_button(&gs->font, &this->quit_btn);
 	gs->canvas.draw_rect(&this->header, ng::DrawFrame);
 	this->canvas.draw_point(this->mouse.x, this->mouse.y);
 }

@@ -72,10 +72,17 @@ int main (int argc, char** argv) {
 	double line_w, line_h;
 	line_w = 12.0;
 	line_h = 24.0;
-	ng::Rect text_rect;
-	text_rect.set2(line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
-	ng::Space textbox;
-	textbox.set2_i(&text_rect, line_w, line_h);
+	ng::Label label;
+	label.set("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
+		"Sleep well to-night. At three to-morrow the diligence will start for "
+		"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
+		"will await you and will bring you to me. I trust that your journey from "
+		"London has been a happy one, and that you will enjoy your stay in my "
+		"beautiful land.\n"
+		"                           Your friend,\n"
+		"                           DRACULA.",
+		20.0, &text_color,
+		line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
 	
 	ng::Color mouse_color;
 	mouse_color.set(255, 255, 255);
@@ -87,17 +94,12 @@ int main (int argc, char** argv) {
 	ng::Vec mouse;
 	mouse.set2(0.0, 0.0);
 	
-	ng::Text text;
-	text.push_line("Hello, World!");
-	text.push_line("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
-		"Sleep well to-night. At three to-morrow the diligence will start for "
-		"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
-		"will await you and will bring you to me. I trust that your journey from "
-		"London has been a happy one, and that you will enjoy your stay in my "
-		"beautiful land.");
-	text.push_line("                           Your friend,");
-	text.push_line("                           DRACULA.");
-	text.set_cursor(1, 0);
+	ng::Color button_press_color, button_release_color;
+	button_press_color.set(0, 32, 0);
+	button_release_color.set(0, 100, 0);
+	ng::Button button;
+	button.set("Press Me!", 0.33, 440.0, 380.0, 200.0, 100.0);
+	bool button_contains_mouse = false;
 	
 	while (true) {
 		while (event.next()) {
@@ -176,6 +178,17 @@ int main (int argc, char** argv) {
 						static_cast<double>(event.mouse.y));
 					window.get_mouse(&mouse);
 					rect_contains_mouse = rect.contains2(mouse.x, mouse.y);
+					
+					if (button.contains(&mouse)) {
+						button.fill_color = button_press_color;
+					} else {
+						button.fill_color = button_release_color;
+					}
+					break;
+				}
+				case ng::MouseRelease: {
+					button.fill_color = button_release_color;
+					break;
 				}
 				default: {}
 			}
@@ -189,7 +202,7 @@ int main (int argc, char** argv) {
 			graphics.clear();
 			
 			graphics.set_color(&draw_color);
-			window.draw_rect(&text_rect, ng::DrawFill);
+			window.draw_rect(&label.space.rect, ng::DrawFill);
 			
 			if (rect_contains_mouse) {
 				graphics.set_color(&rect_color_true);
@@ -198,9 +211,8 @@ int main (int argc, char** argv) {
 			}
 			window.draw_rect(&rect, ng::DrawFill);
 			
-			tileset.image->set_color(&text_color);
-			//tileset.image->set_angle(10.0);
-			window.draw_text(&tileset, &text, &textbox);
+			window.draw_button(&tileset, &button);
+			window.draw_label(&tileset, &label);
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
 			

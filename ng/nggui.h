@@ -9,6 +9,11 @@
 #include <string>
 
 namespace ng {
+
+	enum EnumButtonTile {
+		TilePress = 0,
+		TileRelease = 1
+	};
 	
 	// represents text as a set of lines.
 	class Text {
@@ -69,6 +74,39 @@ namespace ng {
 		void set_i (Image*, const Rect*, double i, double j);
 	};
 	
+	class Button {
+	public:
+		Text text;
+		Color text_color;
+		Rect rect;
+		Space space;
+		Color fill_color;
+		Color frame_color;
+		
+		Button ();
+		~Button ();
+		
+		void set (const char* str, double text_scale, double x, double y, double w, double h);
+		void set (const char* str, double text_scale, const Color* text_color,
+			double x, double y, double w, double h, const Color* fill, const Color* frame);
+		bool contains (const Vec* p) const;
+	};
+	
+	class Label {
+	public:
+		Text text;
+		Color text_color;
+		Space space;
+		
+		Label ();
+		~Label ();
+		
+		void set (const char* str, double lines, double x, double y, double w, double h);
+		void set (const char* str, double lines, const Color* text_color,
+			double x, double y, double w, double h);
+		bool contains (const Vec* p) const;
+	};
+	
 	class Canvas {
 	public:
 		Graphics* graphics;
@@ -123,6 +161,8 @@ namespace ng {
 		void draw_tile (Tileset* const, const Rect*, const Rect*);
 		
 		// Gui elements
+		void draw_button (Tileset* const, Button* const);
+		void draw_label (Tileset* const, Label* const);
 	};
 	
 }

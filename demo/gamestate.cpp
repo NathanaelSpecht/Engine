@@ -24,13 +24,11 @@ void fd::GameState::reset () {
 		exit(EXIT_FAILURE);
 	}
 	
-	this->canvas.set_i(&this->graphics, 16.0, 16.0);
-	this->canvas.space.const_c = true;
-	this->background_color.set(0, 0, 0);
-	this->draw_color.set(255, 255, 255);
-	
 	const char* file;
+	ng::Color color_key;
+	color_key.set(0, 0, 0);
 	try {
+		this->text.load(&this->graphics, file="game-data/text.bmp", &color_key);
 		this->crazy_music.load(&this->audio, file="game-data/Corncob.wav");
 		
 	} catch (const std::exception& ex) {
@@ -38,6 +36,13 @@ void fd::GameState::reset () {
 			<< ex.what();
 		exit(EXIT_FAILURE);
 	}
+	
+	this->font.set_c(&this->text, &this->text.rect, 32.0, 6.0);
+	this->font.offset.set2(0.0, -1.0);
+	this->canvas.set_i(&this->graphics, 16.0, 16.0);
+	this->canvas.space.const_c = true;
+	this->background_color.set(0, 0, 0);
+	this->draw_color.set(255, 255, 255);
 	
 	//this->music_channel.set();
 	this->music_channel.volume = 0.75;

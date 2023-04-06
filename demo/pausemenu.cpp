@@ -17,8 +17,8 @@ void fd::PauseMenu::reset (GameState* gs) {
 	this->header.set2(5.0, 5.0, 30.0, 3.0);
 	this->canvas.set(&gs->canvas, 14.0, 13.0, 12.0, 5.0);
 	// tiles in frame
-	this->resume_btn.set2(1.0, 1.0, 10.0, 1.0);
-	this->quit_btn.set2(1.0, 3.0, 10.0, 1.0);
+	this->resume_btn.set("Resume", 0.8, 1.0, 1.0, 10.0, 1.0);
+	this->quit_btn.set("Quit", 0.8, 1.0, 3.0, 10.0, 1.0);
 }
 
 void fd::PauseMenu::event (GameState* gs) {
@@ -47,10 +47,10 @@ void fd::PauseMenu::event (GameState* gs) {
 		p.set2(gs->event.mouse.x, gs->event.mouse.y);
 		this->canvas.get_mouse(&p);
 		
-		if (this->resume_btn.contains2(p.x, p.y)) {
+		if (this->resume_btn.contains(&p)) {
 			this->draws = false;
 			gs->event.consume();
-		} else if (this->quit_btn.contains2(p.x, p.y)) {
+		} else if (this->quit_btn.contains(&p)) {
 			switch (gs->screen_mode) {
 				case fd::ScreenLevel: {
 					gs->goto_screen(fd::ScreenWorld);
@@ -77,8 +77,8 @@ void fd::PauseMenu::draw (GameState* gs) {
 	this->canvas.clear();
 	gs->graphics.set_color(&gs->draw_color);
 	gs->canvas.draw_rect(&this->canvas.space.rect, ng::DrawFrame);
-	this->canvas.draw_rect(&this->resume_btn, ng::DrawFrame);
-	this->canvas.draw_rect(&this->quit_btn, ng::DrawFrame);
+	this->canvas.draw_button(&gs->font, &this->resume_btn);
+	this->canvas.draw_button(&gs->font, &this->quit_btn);
 	gs->canvas.draw_rect(&this->header, ng::DrawFrame);
 }
 

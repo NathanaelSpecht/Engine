@@ -203,6 +203,62 @@ void ng::Tileset::set_i (Image* image, const Rect* rect, double i, double j) {
 	this->offset.set2(0.0, 0.0);
 }
 
+ng::Button::Button () {}
+
+ng::Button::~Button () {}
+
+void ng::Button::set (const char* str, double text_scale, double x, double y, double w, double h) {
+	this->text.reset();
+	this->text.push_line(str);
+	this->rect.set2(x, y, w, h);
+	this->space.set2_i(&this->rect, h*text_scale*0.5, h*text_scale);
+	this->text_color.set(255, 255, 255);
+	this->fill_color.set(0, 0, 0);
+	this->frame_color.set(255, 255, 255);
+}
+
+void ng::Button::set (const char* str, double text_scale, const Color* text_color,
+double x, double y, double w, double h, const Color* fill, const Color* frame) {
+	this->text.reset();
+	this->text.push_line(str);
+	this->rect.set2(x, y, w, h);
+	this->space.set2_i(&this->rect, h*text_scale*0.5, h*text_scale);
+	this->text_color = *text_color;
+	this->fill_color = *fill;
+	this->frame_color = *frame;
+}
+
+bool ng::Button::contains (const Vec* p) const {
+	return this->rect.contains2(p->x, p->y);
+}
+
+ng::Label::Label () {}
+
+ng::Label::~Label () {}
+
+void ng::Label::set (const char* str, double lines, double x, double y, double w, double h) {
+	this->text.reset();
+	this->text.push_line(str);
+	ng::Rect r;
+	r.set2(x, y, w, h);
+	this->space.set2_i(&r, (h*0.5)/lines, h/lines);
+	this->text_color.set(255, 255, 255);
+}
+
+void ng::Label::set (const char* str, double lines, const Color* text_color,
+double x, double y, double w, double h) {
+	this->text.reset();
+	this->text.push_line(str);
+	ng::Rect r;
+	r.set2(x, y, w, h);
+	this->space.set2_i(&r, (h*0.5)/lines, h/lines);
+	this->text_color = *text_color;
+}
+
+bool ng::Label::contains (const Vec* p) const {
+	return this->space.rect.contains2(p->x, p->y);
+}
+
 ng::Canvas::Canvas () {
 	this->graphics = NULL;
 	this->parent = NULL;
@@ -505,5 +561,18 @@ void ng::Canvas::draw_tile (Tileset* const tileset, const Rect* src, const Rect*
 }
 
 // Gui elements
+void ng::Canvas::draw_button (Tileset* const tileset, Button* const button) {
+	this->graphics->set_color(&button->fill_color);
+	this->draw_rect(&button->rect, ng::DrawFill);
+	this->graphics->set_color(&button->frame_color);
+	this->draw_rect(&button->rect, ng::DrawFrame);
+	tileset->image->set_color(&button->text_color);
+	this->draw_text(tileset, &button->text, &button->space);
+}
+
+void ng::Canvas::draw_label (Tileset* const tileset, Label* const label) {
+	tileset->image->set_color(&label->text_color);
+	this->draw_text(tileset, &label->text, &label->space);
+}
 
 

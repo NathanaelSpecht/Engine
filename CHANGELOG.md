@@ -6,7 +6,7 @@
 ## 2023 April
 
 April 06:
-- Button (wip).
+- Button and label code.
 
 April 05:
 - Added constructors and destructors for all classes.

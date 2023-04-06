@@ -41,8 +41,8 @@ class TitleScreen {
 public:
 	ng::Rect header;
 	ng::Canvas canvas;
-	ng::Rect start_btn;
-	ng::Rect quit_btn;
+	ng::Button start_btn;
+	ng::Button quit_btn;
 	ng::Vec mouse;
 	
 	TitleScreen ();
@@ -57,7 +57,7 @@ class FileScreen {
 public:
 	ng::Rect header;
 	ng::Canvas canvas;
-	ng::Rect save1;
+	ng::Button save1;
 	
 	FileScreen ();
 	~FileScreen ();
@@ -71,7 +71,7 @@ class WorldScreen {
 public:
 	ng::Rect header;
 	ng::Canvas canvas;
-	ng::Rect level1;
+	ng::Button level1;
 	
 	WorldScreen ();
 	~WorldScreen ();
@@ -116,8 +116,8 @@ public:
 	bool draws;
 	ng::Rect header;
 	ng::Canvas canvas;
-	ng::Rect resume_btn;
-	ng::Rect quit_btn;
+	ng::Button resume_btn;
+	ng::Button quit_btn;
 	
 	PauseMenu ();
 	~PauseMenu ();
@@ -132,8 +132,8 @@ public:
 	bool events;
 	bool draws;
 	ng::Canvas canvas;
-	ng::Rect version;
-	ng::Rect fps;
+	ng::Label version;
+	ng::Label fps;
 	
 	DebugMenu ();
 	~DebugMenu ();
@@ -150,6 +150,8 @@ public:
 	ng::Audio audio;
 	ng::Time time;
 	
+	ng::Image text;
+	ng::Tileset font;
 	ng::Canvas canvas;
 	ng::Color background_color;
 	ng::Color draw_color;
