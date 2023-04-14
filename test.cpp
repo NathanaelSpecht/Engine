@@ -50,11 +50,11 @@ int main (int argc, char** argv) {
 	}
 	
 	ng::Tileset tileset;
-	tileset.set_c(&image, &image.rect, 32.0, 6.0);
-	tileset.offset.set2(0.0, -1.0);
+	tileset.set(&image, 32.0, 6.0);
+	tileset.offset.set(0.0, -1.0);
 	
-	ng::Canvas window;
-	window.set(&graphics);
+	ng::Canvas canvas;
+	canvas.set(&graphics, graphics.w, graphics.h);
 	
 	ng::Color background_color;
 	background_color.set(16, 0, 16);
@@ -64,8 +64,8 @@ int main (int argc, char** argv) {
 	rect_color_true.set(64, 16, 0);
 	rect_color_false.set(32, 0, 128);
 	bool rect_contains_mouse = false;
-	ng::Rect rect;
-	rect.set2((window.space.rect.w*0.5)-256.0, (window.space.rect.h*0.5)-80.0, 256.0*2.0, 80.0*2.0);
+	ng::Rect2 rect;
+	rect.set(0.0, 0.0, 256.0*2.0, 80.0*2.0);
 	
 	ng::Color text_color;
 	text_color.set(196, 128, 0);
@@ -73,16 +73,18 @@ int main (int argc, char** argv) {
 	line_w = 12.0;
 	line_h = 24.0;
 	ng::Label label;
-	label.set("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
-		"Sleep well to-night. At three to-morrow the diligence will start for "
-		"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
-		"will await you and will bring you to me. I trust that your journey from "
-		"London has been a happy one, and that you will enjoy your stay in my "
-		"beautiful land.\n"
-		"                           Your friend,\n"
-		"                           DRACULA.",
-		20.0, &text_color,
-		line_w, line_h, window.space.rect.w-(line_w*2.0), window.space.rect.h-(line_h*2.0));
+	{
+		label.set("My Friend.--Welcome to the Carpathians. I am anxiously expecting you. "
+			"Sleep well to-night. At three to-morrow the diligence will start for "
+			"Bukovina; a place on it is kept for you. At the Borgo Pass my carriage "
+			"will await you and will bring you to me. I trust that your journey from "
+			"London has been a happy one, and that you will enjoy your stay in my "
+			"beautiful land.\n"
+			"                           Your friend,\n"
+			"                           DRACULA.",
+			20.0, &text_color,
+			0.0, 0.0, canvas.w-(line_w*2.0), canvas.h-(line_h*2.0));
+	}
 	
 	ng::Color mouse_color;
 	mouse_color.set(255, 255, 255);
@@ -91,14 +93,14 @@ int main (int argc, char** argv) {
 	down = 0.0;
 	left = 0.0;
 	right = 0.0;
-	ng::Vec mouse;
-	mouse.set2(0.0, 0.0);
+	ng::Vec2 mouse;
+	mouse.set(0.0, 0.0);
 	
 	ng::Color button_press_color, button_release_color;
 	button_press_color.set(0, 32, 0);
 	button_release_color.set(0, 100, 0);
 	ng::Button button;
-	button.set("Press Me!", 0.33, 440.0, 380.0, 200.0, 100.0);
+	button.set("Press Me!", 0.33, 0.0, 0.0, 200.0, 100.0);
 	bool button_contains_mouse = false;
 	
 	while (true) {
@@ -120,8 +122,7 @@ int main (int argc, char** argv) {
 				case ng::KeyPress: {
 					switch (event.key.scancode) {
 						case SDL_SCANCODE_SPACE:
-							rect.x = (window.space.rect.w*0.5)-(rect.w*0.5);
-							rect.y = (window.space.rect.h*0.5)-(rect.h*0.5);
+							rect.p.set(0.0, 0.0);
 							up = 0.0;
 							down = 0.0;
 							left = 0.0;
@@ -174,10 +175,10 @@ int main (int argc, char** argv) {
 					break;
 				}
 				case ng::MousePress: {
-					mouse.set2(static_cast<double>(event.mouse.x),
+					mouse.set(static_cast<double>(event.mouse.x),
 						static_cast<double>(event.mouse.y));
-					window.get_mouse(&mouse);
-					rect_contains_mouse = rect.contains2(mouse.x, mouse.y);
+					canvas.get_mouse(&mouse);
+					rect_contains_mouse = rect.contains(&mouse);
 					
 					if (button.contains(&mouse)) {
 						button.fill_color = button_press_color;
@@ -194,30 +195,30 @@ int main (int argc, char** argv) {
 			}
 		}
 		
-		rect.x += (right - left) * 2.0;
-		rect.y += (down - up) * 2.0;
+		rect.p.x += (right - left) * 2.0;
+		rect.p.y += (down - up) * 2.0;
 		
 		try {
 			graphics.set_color(&background_color);
 			graphics.clear();
 			
 			graphics.set_color(&draw_color);
-			window.draw_rect(&label.space.rect, ng::DrawFill);
+			canvas.draw_rect(&label.rect, ng::DrawFill);
 			
 			if (rect_contains_mouse) {
 				graphics.set_color(&rect_color_true);
 			} else {
 				graphics.set_color(&rect_color_false);
 			}
-			window.draw_rect(&rect, ng::DrawFill);
+			canvas.draw_rect(&rect, ng::DrawFill);
 			
-			window.draw_button(&tileset, &button);
-			window.draw_label(&tileset, &label);
+			canvas.draw_button(&tileset, &button);
+			canvas.draw_label(&tileset, &label);
 			
 			//graphics.draw_image(&image, &image.rect, &rect);
 			
 			graphics.set_color(&mouse_color);
-			window.draw_point(mouse.x, mouse.y);
+			canvas.draw_point(&mouse);
 			
 			graphics.draw();
 			

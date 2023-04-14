@@ -37,10 +37,10 @@ namespace ng {
 	class Image {
 	public:
 		SDL_Texture* texture;
-		Rect rect;
+		double w;
+		double h;
 		Color color;
 		int flip;
-		double angle;
 		
 		Image ();
 		~Image ();
@@ -49,14 +49,14 @@ namespace ng {
 		void set_color (const Color*);
 		void set_alpha (const Color*);
 		void set_flip (int flip);
-		void set_angle (double angle);
 	};
 	
 	class Graphics {
 	public:
 		SDL_Window* window;
 		SDL_Renderer* renderer;
-		Rect rect;
+		double w;
+		double h;
 		Color color;
 		
 		Graphics ();
@@ -73,14 +73,14 @@ namespace ng {
 		void draw_image (Image* const);
 		
 		// Draw whole image to part of window.
-		void draw_image (Image* const, const Rect*);
+		void draw_image (Image* const, const Rect2*);
 		
 		// Draw part of image to part of window.
-		void draw_image (Image* const, const Rect*, const Rect*);
+		void draw_image (Image* const, const Rect2*, const Rect2*);
 		
-		void draw_rect (const Rect*, int draw);
-		void draw_line (double x1, double y1, double x2, double y2);
-		void draw_point (double x, double y);
+		void draw_rect (const Rect2*, int draw);
+		void draw_line (const Line2*);
+		void draw_point (const Vec2*);
 	};
 
 }

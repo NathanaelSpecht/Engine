@@ -98,6 +98,8 @@ namespace ng {
 	
 	double determinant (double a, double b, double c, double d);
 	
+	double scale (double src_w, double dest_w);
+	
 	// Represents a point or vector in R2.
 	class Vec2 {
 	public:
@@ -229,6 +231,33 @@ namespace ng {
 		void relative (Rect2* const rect) const;
 		void relative (Basis2* const basis) const;
 		void relative (Space2* const space) const;
+	};
+	
+	// Represents a finite grid in R2.
+	class Grid2 {
+	public:
+		Vec2 p; // top-left corner
+		double i;
+		double j;
+		double c; // columns
+		double r; // rows
+		
+		Grid2 ();
+		Grid2 (double i, double j, double c, double r);
+		Grid2 (double x, double y, double i, double j, double c, double r);
+		Grid2 (const Vec2* p, double i, double j, double c, double r);
+		Grid2 (const Grid2* grid);
+		~Grid2 ();
+		
+		void set (double i, double j, double c, double r);
+		void set (double x, double y, double i, double j, double c, double r);
+		void set (const Vec2* p, double i, double j, double c, double r);
+		
+		void absolute (Vec2* const vec) const;
+		void absolute (Rect2* const rect) const;
+		
+		void relative (Vec2* const vec) const;
+		void relative (Rect2* const rect) const;
 	};
 	
 	

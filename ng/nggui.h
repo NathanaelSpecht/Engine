@@ -62,24 +62,27 @@ namespace ng {
 	class Tileset {
 	public:
 		Image* image;
-		Space space;
-		Vec offset;
+		Grid2 grid;
+		Vec2 offset; // relative to grid
 		
 		Tileset ();
 		~Tileset ();
 		
-		void set (Image*, const Space*);
-		void set (Image*, const Rect*);
-		void set_c (Image*, const Rect*, double c, double r);
-		void set_i (Image*, const Rect*, double i, double j);
+		void set (Image* image);
+		void set (Image* image, double c, double r);
+		void set (Image* image, double x, double y, double c, double r);
+		void set (Image* image, const Vec2* p, double c, double r);
+		void set (Image* image, const Grid2* grid);
+		
+		void absolute (Rect2* const rect) const;
 	};
 	
 	class Button {
 	public:
 		Text text;
+		Grid2 text_grid;
 		Color text_color;
-		Rect rect;
-		Space space;
+		Rect2 rect;
 		Color fill_color;
 		Color frame_color;
 		
@@ -89,14 +92,15 @@ namespace ng {
 		void set (const char* str, double text_scale, double x, double y, double w, double h);
 		void set (const char* str, double text_scale, const Color* text_color,
 			double x, double y, double w, double h, const Color* fill, const Color* frame);
-		bool contains (const Vec* p) const;
+		bool contains (const Vec2* p) const;
 	};
 	
 	class Label {
 	public:
 		Text text;
+		Grid2 text_grid;
 		Color text_color;
-		Space space;
+		Rect2 rect;
 		
 		Label ();
 		~Label ();
@@ -104,61 +108,45 @@ namespace ng {
 		void set (const char* str, double lines, double x, double y, double w, double h);
 		void set (const char* str, double lines, const Color* text_color,
 			double x, double y, double w, double h);
-		bool contains (const Vec* p) const;
+		bool contains (const Vec2* p) const;
 	};
 	
 	class Canvas {
 	public:
 		Graphics* graphics;
 		Canvas* parent;
-		Space space;
+		Space2 space;
+		double w; // w and h are relative to space.
+		double h;
 		// root draws to graphics. non-root draws to parent canvas.
 		bool root;
-		// relative draws relative_to_absolute(this space).
-		// non-relative scales from this space to parent space/graphics rect.
-		bool relative;
 		
 		Canvas ();
 		~Canvas ();
 		
-		void set (Graphics*);
-		void set_c (Graphics*, double c, double r);
-		void set_i (Graphics*, double i, double j);
-		void set (Canvas*, const Space*);
-		void set (Canvas*, double x, double y, double w, double h);
-		void set_c (Canvas*, double x, double y, double w, double h, double c, double r);
-		void set_i (Canvas*, double x, double y, double w, double h, double i, double j);
+		void set (Graphics* graphics, double w, double h);
+		void set (Graphics* graphics, double x, double y, double w, double h);
+		void set (Graphics* graphics, const Space2* space, double w, double h);
+		void set (Canvas* canvas, double x, double y, double w, double h);
+		void set (Canvas* canvas, const Space2* space, double w, double h);
 		
-		// scale from parent/graphics to this.
-		void scale_in (Vec* const);
-		void scale_in (Rect* const);
-		void scale_in (Space* const);
-		// scale from this to parent/graphics.
-		void scale_out (Vec* const);
-		void scale_out (Rect* const);
-		void scale_out (Space* const);
+		// Get the bounding box for this canvas, relative to this space.
+		void get_rect (Rect2* const) const;
 		
-		// Given event mouse point on root canvas, find mouse point on this canvas.
-		void get_mouse (Vec* const);
-		
-		// Draw this space on parent.
-		void clear ();
-		
-		// Usually does nothing.
-		// Drawing root canvas calls graphics draw().
-		void draw ();
+		// Given event mouse point on graphics, find mouse point on this canvas.
+		void get_mouse (Vec2* const) const;
 		
 		// Graphics primitives
 		void draw_image (Image* const);
-		void draw_image (Image* const, const Rect*);
-		void draw_image (Image* const, const Rect*, const Rect*);
-		void draw_rect (const Rect*, int draw);
-		void draw_line (double x1, double y1, double x2, double y2);
-		void draw_point (double x, double y);
+		void draw_image (Image* const, const Rect2*);
+		void draw_image (Image* const, const Rect2*, const Rect2*);
+		void draw_rect (const Rect2*, int draw);
+		void draw_line (const Line2*);
+		void draw_point (const Vec2*);
 		
 		// Advanced graphics
-		void draw_text (Tileset* const, Text* const, const Space*);
-		void draw_tile (Tileset* const, const Rect*, const Rect*);
+		void draw_text (Tileset* const, Text* const, const Grid2*);
+		void draw_tile (Tileset* const, const Rect2*, const Rect2*);
 		
 		// Gui elements
 		void draw_button (Tileset* const, Button* const);

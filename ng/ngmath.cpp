@@ -134,6 +134,10 @@ double ng::determinant (double a, double b, double c, double d) {
 	return (a * d) - (b * c);
 }
 
+double ng::scale (double src_w, double dest_w) {
+	return dest_w/src_w;
+}
+
 ng::Vec2::Vec2 () {
 	this->x = 0.0;
 	this->y = 0.0;
@@ -646,6 +650,98 @@ void ng::Space2::relative (Space2* const space) const {
 	space->i /= this->i;
 	space->j /= this->j;
 	space->a -= this->a;
+}
+
+ng::Grid2::Grid2 () {
+	this->p.set(0.0, 0.0);
+	this->i = 1.0;
+	this->j = 1.0;
+	this->c = 0.0;
+	this->r = 0.0;
+}
+
+ng::Grid2::Grid2 (double i, double j, double c, double r) {
+	this->p.set(0.0, 0.0);
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+ng::Grid2::Grid2 (double x, double y, double i, double j, double c, double r) {
+	this->p.set(x, y);
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+ng::Grid2::Grid2 (const Vec2* p, double i, double j, double c, double r) {
+	this->p = *p;
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+ng::Grid2::Grid2 (const Grid2* grid) {
+	this->p = grid->p;
+	this->i = grid->i;
+	this->j = grid->j;
+	this->c = grid->c;
+	this->r = grid->r;
+}
+
+ng::Grid2::~Grid2 () {}
+
+void ng::Grid2::set (double i, double j, double c, double r) {
+	this->p.set(0.0, 0.0);
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+void ng::Grid2::set (double x, double y, double i, double j, double c, double r) {
+	this->p.set(x, y);
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+void ng::Grid2::set (const Vec2* p, double i, double j, double c, double r) {
+	this->p = *p;
+	this->i = i;
+	this->j = j;
+	this->c = c;
+	this->r = r;
+}
+
+void ng::Grid2::absolute (Vec2* const vec) const {
+	// vec*{i, j}
+	// +p
+	vec->x = (vec->x * this->i) + this->p.x;
+	vec->y = (vec->y * this->j) + this->p.y;
+}
+
+void ng::Grid2::absolute (Rect2* const rect) const {
+	this->absolute(&rect->p);
+	rect->w *= this->i;
+	rect->h *= this->j;
+}
+
+void ng::Grid2::relative (Vec2* const vec) const {
+	// vec-p
+	// /{i, j}
+	vec->x = (vec->x - this->p.x) / this->i;
+	vec->y = (vec->y - this->p.y) / this->j;
+}
+
+void ng::Grid2::relative (Rect2* const rect) const {
+	this->relative(&rect->p);
+	rect->w /= this->i;
+	rect->h /= this->j;
 }
 
 

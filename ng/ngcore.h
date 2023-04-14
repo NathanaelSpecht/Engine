@@ -55,6 +55,7 @@ class Line2;
 class Rect2;
 class Basis2;
 class Space2;
+class Grid2;
 
 class Vec;
 class Rect;

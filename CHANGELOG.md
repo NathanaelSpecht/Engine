@@ -7,7 +7,10 @@
 
 TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
 
-TODO: Change graphics, gui, test, and demo to use vec2, rect2, space2, etc.
+TODO: Change demo to use vec2, rect2, space2, etc.
+
+April 14:
+- Change graphics, gui, and test to use vec2, rect2, space2, etc.
 
 April 13:
 - Changed ngmath from rects and hitboxes to vectors and meshes, part 1.

@@ -245,24 +245,24 @@ void ng::Event::text_input (SDL_Event* const e) {
 void ng::Event::window_event (SDL_Event* const e) {
 	switch (e->window.event) {
 		case SDL_WINDOWEVENT_RESIZED: {
-			this->graphics->rect.w = static_cast<double>(e->window.data1);
-			this->graphics->rect.h = static_cast<double>(e->window.data2);
+			this->graphics->w = static_cast<double>(e->window.data1);
+			this->graphics->h = static_cast<double>(e->window.data2);
 			break;
 		} case SDL_WINDOWEVENT_SIZE_CHANGED: {
-			this->graphics->rect.w = static_cast<double>(e->window.data1);
-			this->graphics->rect.h = static_cast<double>(e->window.data2);
+			this->graphics->w = static_cast<double>(e->window.data1);
+			this->graphics->h = static_cast<double>(e->window.data2);
 			break;
 		} case SDL_WINDOWEVENT_MAXIMIZED: {
 			int w, h;
 			SDL_GetWindowSize(this->graphics->window, &w, &h);
-			graphics->rect.w = static_cast<double>(w);
-			graphics->rect.h = static_cast<double>(h);
+			this->graphics->w = static_cast<double>(w);
+			this->graphics->h = static_cast<double>(h);
 			break;
 		} case SDL_WINDOWEVENT_RESTORED: {
 			int w, h;
 			SDL_GetWindowSize(this->graphics->window, &w, &h);
-			graphics->rect.w = static_cast<double>(w);
-			graphics->rect.h = static_cast<double>(h);
+			this->graphics->w = static_cast<double>(w);
+			this->graphics->h = static_cast<double>(h);
 			break;
 		}
 	}
