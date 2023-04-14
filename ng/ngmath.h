@@ -88,6 +88,150 @@ namespace ng {
 	
 	float dB_silence ();
 	
+	double radians (double degrees);
+	
+	double degrees (double radians);
+	
+	double units (double columns, double width);
+	
+	double columns (double units, double width);
+	
+	double determinant (double a, double b, double c, double d);
+	
+	// Represents a point or vector in R2.
+	class Vec2 {
+	public:
+		double x;
+		double y;
+		
+		Vec2 ();
+		Vec2 (double x, double y);
+		Vec2 (const Vec2* v);
+		~Vec2 ();
+		
+		void set (double x, double y);
+		void rotate (double a);
+		void rotate (double sina, double cosa);
+		void normalize ();
+		void normalize (double length);
+		double length () const;
+		double lengthsq () const;
+	};
+	
+	// Represents a line segment in R2.
+	class Line2 {
+	public:
+		Vec2 p; // p1 = p
+		Vec2 v; // p2 = p + v
+		
+		Line2 ();
+		Line2 (double px, double py, double vx, double vy);
+		Line2 (const Vec2* p, const Vec2* v);
+		Line2 (const Line2* line);
+		~Line2 ();
+		
+		void set (double px, double py, double vx, double vy);
+		void set (const Vec2* p, const Vec2* v);
+		
+		// If this intersects line, return true and set i to intersection point.
+		// Else return false.
+		bool intersect (const Line2* line, Vec2* const i) const;
+	};
+	
+	// Represents a rectangle in R2.
+	class Rect2 {
+	public:
+		Vec2 p;   // center
+		double w; // width
+		double h; // height
+		double a; // rotation angle, in radians
+		
+		Rect2 ();
+		Rect2 (double x, double y, double w, double h);
+		Rect2 (double x, double y, double w, double h, double a);
+		Rect2 (const Vec2* p, double w, double h);
+		Rect2 (const Vec2* p, double w, double h, double a);
+		Rect2 (const Rect2* rect);
+		~Rect2 ();
+		
+		void set (double x, double y, double w, double h);
+		void set (double x, double y, double w, double h, double a);
+		void set (const Vec2* p, double w, double h);
+		void set (const Vec2* p, double w, double h, double a);
+		bool contains (double x, double y) const;
+		bool contains (const Vec2* p) const;
+	};
+	
+	// Represents a coordinate basis in R2.
+	class Basis2 {
+	public:
+		Vec2 u;
+		Vec2 v;
+		
+		Basis2 ();
+		Basis2 (double i, double j);
+		Basis2 (double ux, double uy, double vx, double vy);
+		Basis2 (const Vec2* u, const Vec2* v);
+		Basis2 (const Basis2* basis);
+		~Basis2 ();
+		
+		void set (double i, double j);
+		void set (double ux, double uy, double vx, double vy);
+		void set (const Vec2* u, const Vec2* v);
+		void rescale (double i, double j);
+		void rotate (double a);
+		void rotate (double sina, double cosa);
+		void inverse ();
+		void inverse (const Basis2* basis);
+	};
+	
+	// Represents a coordinate space in R2.
+	class Space2 {
+	public:
+		Vec2 p;   // center
+		Basis2 basis; // change of basis matrices
+		Basis2 inverse;
+		double i; // 1 unit along this x and y axis = i and j units in parent basis
+		double j;
+		double a; // rotation angle from parent space to this space, in radians
+		
+		Space2 ();
+		Space2 (double x, double y);
+		Space2 (double x, double y, double a);
+		Space2 (double x, double y, double i, double j);
+		Space2 (double x, double y, double i, double j, double a);
+		Space2 (const Vec2* p);
+		Space2 (const Vec2* p, double a);
+		Space2 (const Vec2* p, double i, double j);
+		Space2 (const Vec2* p, double i, double j, double a);
+		Space2 (const Space2* space);
+		~Space2 ();
+		
+		void set (double x, double y);
+		void set (double x, double y, double a);
+		void set (double x, double y, double i, double j);
+		void set (double x, double y, double i, double j, double a);
+		void set (const Vec2* p);
+		void set (const Vec2* p, double a);
+		void set (const Vec2* p, double i, double j);
+		void set (const Vec2* p, double i, double j, double a);
+		
+		// Change from this to parent space.
+		void absolute (Vec2* const vec) const;
+		void absolute (Line2* const line) const;
+		void absolute (Rect2* const rect) const;
+		void absolute (Basis2* const basis) const;
+		void absolute (Space2* const space) const;
+		
+		// Change from parent to this space.
+		void relative (Vec2* const vec) const;
+		void relative (Line2* const line) const;
+		void relative (Rect2* const rect) const;
+		void relative (Basis2* const basis) const;
+		void relative (Space2* const space) const;
+	};
+	
+	
 	// vector in R2 or R3
 	class Vec {
 	public:

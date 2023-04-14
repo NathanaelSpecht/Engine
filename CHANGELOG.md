@@ -5,6 +5,15 @@
 
 ## 2023 April
 
+TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
+
+TODO: Change graphics, gui, test, and demo to use vec2, rect2, space2, etc.
+
+April 13:
+- Changed ngmath from rects and hitboxes to vectors and meshes, part 1.
+- Changed ngmath classes (vec, rect, space, etc.) to use linear algebra.
+- Math class names also indicate whether 2d or 3d (instead of function names).
+
 April 06:
 - Button and label code.
 
