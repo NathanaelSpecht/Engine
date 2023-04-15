@@ -1,10 +1,10 @@
 
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
-#include "firedays.h"
+#include "demo.h"
 
 int main (int argc, char** argv) {
-	fd::GameState game;
+	demo::Core game;
 	game.reset();
 	game.loop();
 	game.quit();

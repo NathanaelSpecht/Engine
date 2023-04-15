@@ -49,6 +49,7 @@ void init ();
 void quit ();
 
 // Forward declarations, to avoid "has not been declared" compilation errors.
+
 // ngmath
 class Vec2;
 class Line2;
@@ -56,12 +57,6 @@ class Rect2;
 class Basis2;
 class Space2;
 class Grid2;
-
-class Vec;
-class Rect;
-class Space;
-class Mass;
-
 
 // nggraphics
 class Color;

@@ -7,7 +7,18 @@
 
 TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
 
-TODO: Change demo to use vec2, rect2, space2, etc.
+TODO: Use Eigen. (FOSS high-performance vector and matrix library)
+
+TODO: Add mat2 matrix class.
+Add vec2 and mat2 functions and change ngmath, nggraphics, and nggui to use these.
+The idea here is to prepare for the switch to Eigen, meaning
+vec2 and mat2 will NOT be used long-term, so
+only implement functions that are absolutely nessesary.
+
+April 15:
+- Change demo to use vec2, rect2, space2, etc.
+- Remove unused code in demo.
+- Remove unused ngmath classes.
 
 April 14:
 - Change graphics, gui, and test to use vec2, rect2, space2, etc.
