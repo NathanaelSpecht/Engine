@@ -100,24 +100,172 @@ namespace ng {
 	
 	double scale (double src_w, double dest_w);
 	
-	// Represents a point or vector in R2.
+	// Unary matrix functions
+	// f (a), such that: return <- f(a)
+	
+	// length squared of a
+	// (a.x*a.x)+(a.y*a.y)
+	double lensq (const Vec2* a);
+	
+	// length of a
+	// hypot(a.x, a.y)
+	double len (const Vec2* a);
+	
+	// trace of A
+	// A.a+A.d
+	double tr (const Mat2* A);
+	
+	// determinant of A
+	// (A.a*A.d)-(A.b*A.c)
+	double det (const Mat2* A);
+	
+	// Binary matrix functions
+	// f (a, b), such that: return <- a f b
+	
+	// a dot b
+	// (a.x*b.x)+(a.y*b.y)
+	double dot (const Vec2* a, const Vec2* b);
+	
+	// vector in R2
 	class Vec2 {
 	public:
+		// |x|
+		// |y|
 		double x;
 		double y;
 		
+		// |0|
+		// |0|
 		Vec2 ();
+		// |x|
+		// |y|
 		Vec2 (double x, double y);
+		// |v.x|
+		// |v.y|
 		Vec2 (const Vec2* v);
 		~Vec2 ();
 		
 		void set (double x, double y);
+		
+		// Unary matrix functions
+		// f (a), such that: this <- f(a)
+		// a may be this
+		
+		// normalize a
+		// |a.x/len(a)|
+		// |a.y/len(a)|
+		void unit (const Vec2* a);
+		
+		// Binary matrix functions
+		// f (a, b), such that: this <- a f b
+		// a or b may be this
+		
+		// a+x
+		// |a.x+x|
+		// |a.y+x|
+		void add (const Vec2* a, double x);
+		
+		// a+b
+		// |a.x+b.x|
+		// |a.y+b.y|
+		void add (const Vec2* a, const Vec2* b);
+		
+		// ax
+		// |a.x*x|
+		// |a.y*x|
+		void mul (const Vec2* a, double x);
+		
+		// Av
+		// |(A.a*v.x)+(A.b*v.y)|
+		// |(A.c*v.x)+(A.d*v.y)|
+		void mul (const Mat2* A, const Vec2* v);
+		
 		void rotate (double a);
 		void rotate (double sina, double cosa);
 		void normalize ();
 		void normalize (double length);
 		double length () const;
 		double lengthsq () const;
+	};
+	
+	// vector matrix in R2.
+	// a system of linear equations.
+	class Mat2 {
+	public:
+		// |a b|
+		// |c d|
+		double a;
+		double b;
+		double c;
+		double d;
+		
+		// |1 0|
+		// |0 1|
+		Mat2 ();
+		// |a b|
+		// |c d|
+		Mat2 (double a, double b, double c, double d);
+		// |m.a m.b|
+		// |m.c m.d|
+		Mat2 (const Mat2* m);
+		~Mat2 ();
+		
+		void set (double a, double b, double c, double d);
+		void set_columns (const Vec2* v1, const Vec2* v2);
+		void set_rows (const Vec2* v1, const Vec2* v2);
+		
+		void get_columns (Vec2* const v1, Vec2* const v2) const;
+		void get_rows (Vec2* const v1, Vec2* const v2) const;
+		
+		// Unary matrix functions
+		// f (a), such that: this <- f(a)
+		// a may be this
+		
+		// transpose of A
+		// |A.a A.c|
+		// |A.b A.d|
+		void t (const Mat2* A);
+		
+		// normalize each column of A
+		void unit (const Mat2* A);
+		
+		// adjugate of A
+		// |A.d -A.b|
+		// |-A.c A.a|
+		void adj (const Mat2* A);
+		
+		// if x=det(A) != 0, then:
+		// inverse = mul(adj(A),1/x)
+		void inv (const Mat2* A);
+		
+		// matrix rotation by a radians
+		// |cos(a) -sin(a)|
+		// |sin(a)  cos(a)|
+		void rotation (double a);
+		
+		// Binary matrix functions
+		// f (a, b), such that: this <- a f b
+		// a or b may be this
+		
+		// A+x
+		// |A.a+x A.b+x|
+		// |A.c+x A.d+x|
+		void add (const Mat2* A, double x);
+		
+		// A+B
+		// |A.a+B.a A.b+B.b|
+		// |A.c+B.c A.d+B.d|
+		void add (const Mat2* A, const Mat2* B);
+		
+		// Ax
+		// |A.a*x A.b*x|
+		// |A.c*x A.d*x|
+		void mul (const Mat2* A, double x);
+		
+		// AB
+		// |n.a n.b| = |(a*m.a)+(b*m.c) (a*m.b)+(b*m.d)|
+		// |n.c n.d|   |(c*m.a)+(d*m.c) (c*m.b)+(d*m.d)|
+		void mul (const Mat2* m, Mat2* const n);
 	};
 	
 	// Represents a line segment in R2.

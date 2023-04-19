@@ -52,6 +52,8 @@ void quit ();
 
 // ngmath
 class Vec2;
+class Mat2;
+
 class Line2;
 class Rect2;
 class Basis2;
