@@ -138,65 +138,6 @@ double ng::scale (double src_w, double dest_w) {
 	return dest_w/src_w;
 }
 
-ng::Vec2::Vec2 () {
-	this->x = 0.0;
-	this->y = 0.0;
-}
-
-ng::Vec2::Vec2 (double x, double y) {
-	this->x = x;
-	this->y = y;
-}
-
-ng::Vec2::Vec2 (const Vec2* v) {
-	this->x = v->x;
-	this->y = v->y;
-}
-
-ng::Vec2::~Vec2 () {}
-
-void ng::Vec2::set (double x, double y) {
-	this->x = x;
-	this->y = y;
-}
-
-void ng::Vec2::rotate (double a) {
-	double cosa, sina, x, y;
-	cosa = cos(a);
-	sina = sin(a);
-	x = (this->x * cosa) - (this->y * sina);
-	y = (this->x * sina) + (this->y * cosa);
-	this->x = x;
-	this->y = y;
-}
-
-void ng::Vec2::rotate (double sina, double cosa) {
-	double x, y;
-	x = (this->x * cosa) - (this->y * sina);
-	y = (this->x * sina) + (this->y * cosa);
-	this->x = x;
-	this->y = y;
-}
-
-void ng::Vec2::normalize () {
-	double len = this->length();
-	this->x /= len;
-	this->y /= len;
-}
-
-void ng::Vec2::normalize (double length) {
-	this->x /= length;
-	this->y /= length;
-}
-
-double ng::Vec2::length () const {
-	return std::hypot(this->x, this->y);
-}
-
-double ng::Vec2::lengthsq () const {
-	return (this->x * this->x) + (this->y * this->y);
-}
-
 ng::Line2::Line2 () {
 	this->p.set(0.0, 0.0);
 	this->v.set(0.0, 0.0);
