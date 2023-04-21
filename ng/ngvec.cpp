@@ -3,6 +3,7 @@
 
 #include "ngvec.h"
 
+// matrix functions in R2
 double ng::sqlen (const Vec2& a) {
 	return (a.x*a.x)+(a.y*a.y);
 }
@@ -30,6 +31,16 @@ Vec2 ng::unit (const Vec2& a) {
 	return c;
 }
 
+Vec2 ng::project (const Vec3& a) {
+	Vec2 c(a.x, a.y);
+	return c;
+}
+
+Mat2 ng::project (const Mat3& A) {
+	Mat2 C(A.a, A.b, A.d, A.e);
+	return C;
+}
+
 Mat2 ng::transpose (const Mat2& A) {
 	Mat2 C(A.a,A.c,
 	       A.b,A.d);
@@ -46,6 +57,83 @@ Mat2 ng::inv (const Mat2& A) {
 	return ng::adj(A)*(1.0/ng::det(A));
 }
 
+// TODO
+// matrix functions in R3
+double ng::sqlen (const Vec3& a) {
+	
+}
+
+double ng::len (const Vec3& a) {
+	
+}
+
+double ng::trace (const Mat3& A) {
+	
+}
+
+double ng::det (const Mat3& A) {
+	
+}
+
+double ng::dot (const Vec3& a, const Vec3& b) {
+	
+}
+
+Vec3 ng::unit (const Vec3& a) {
+	
+}
+
+Vec3 ng::augment (const Vec2& a) {
+	
+}
+
+Mat3 ng::augment (const Mat2& A, const Vec2& b) {
+	
+}
+
+Mat3 ng::transpose (const Mat3& A) {
+	
+}
+
+Mat3 ng::adj (const Mat3& A) {
+	
+}
+
+Mat3 ng::inv (const Mat3& A) {
+	
+}
+
+// TODO
+// affine transforms in R2
+Mat3 ng::translate (const Vec2& p) {
+	
+}
+
+Mat3 ng::basis (const Vec2& i, const Vec2& j) {
+	
+}
+
+Mat3 ng::rotate (double a) {
+	
+}
+
+Mat3 ng::space (const Mat3& translate) {
+	
+}
+
+Mat3 ng::space (const Mat3& translate, const Mat3& basis) {
+	
+}
+
+Mat3 ng::space (const Mat3& translate, const Mat3& basis, const Mat3& rotate) {
+	
+}
+
+Mat3 ng::portal (const Mat3& src_space, const Mat3& dest_space) {
+	
+}
+
+// vector in R2
 ng::Vec2::Vec2 () :
 	x(0.0),
 	y(0.0)
@@ -104,6 +192,7 @@ Vec2 ng::Vec2::unit () const {
 	return ng::unit(*this);
 }
 
+// matrix in R2x2
 ng::Mat2::Mat2 () :
 	a(1.0), b(0.0),
 	c(0.0), d(1.0)
@@ -207,6 +296,146 @@ Mat2 ng::Mat2::adj () const {
 
 Mat2 ng::Mat2::inv () const {
 	return ng::inv(*this);
+}
+
+// TODO
+// vector in R3, or augmented vector in R2
+ng::Vec3::Vec3 () :
+	
+{}
+
+ng::Vec3::Vec3 (double x, double y, double z) :
+	
+{}
+
+ng::Vec3::Vec3 (const Vec3& a) :
+	
+{}
+
+void ng::Vec3::set (double x, double y) {
+	
+}
+
+Vec3 ng::Vec3::operator+ (double x) const {
+	
+}
+
+Vec3 ng::Vec3::operator+ (const Vec3& b) const {
+	
+}
+
+Vec3 ng::Vec3::operator* (double x) const {
+	
+}
+
+double ng::Vec3::operator* (const Vec3& b) const {
+	
+}
+
+double ng::Vec3::dot (const Vec3& b) const {
+	
+}
+
+double ng::Vec3::sqlen () const {
+	
+}
+
+double ng::Vec3::len () const {
+	
+}
+
+Vec3 ng::Vec3::unit () const {
+	
+}
+
+// TODO
+// matrix in R3x3, or affine transformation in R2
+ng::Mat3::Mat3 () :
+	
+{}
+
+ng::Mat3::Mat3 (const Vec3& a, const Vec3& b, const Vec3& c) :
+	
+{}
+
+ng::Mat3::Mat3 (const Mat3& A) :
+	
+{}
+
+void ng::Mat3::set (const Vec3& a, const Vec3& b, const Vec3& c) {
+	
+}
+
+void ng::Mat3::set_cols (const Vec3& a, const Vec3& b, const Vec3& c) {
+	
+}
+
+void ng::Mat3::set_rows (const Vec3& a, const Vec3& b, const Vec3& c) {
+	
+}
+
+Vec3 ng::Mat3::col1 () const {
+	
+}
+
+Vec3 ng::Mat3::col2 () const {
+	
+}
+
+Vec3 ng::Mat3::col3 () const {
+	
+}
+
+Vec3 ng::Mat3::row1 () const {
+	
+}
+
+Vec3 ng::Mat3::row2 () const {
+	
+}
+
+Vec3 ng::Mat3::row3 () const {
+	
+}
+
+Mat3 ng::Mat3::operator+ (double x) const {
+	
+}
+
+Mat3 ng::Mat3::operator+ (const Mat3& B) const {
+	
+}
+
+Mat3 ng::Mat3::operator* (double x) const {
+	
+}
+
+Vec3 ng::Mat3::operator* (const Vec3& b) const {
+	
+}
+
+Mat3 ng::Mat3::operator* (const Mat3& B) const {
+	
+}
+
+double ng::Mat3::trace () const {
+	
+}
+
+double ng::Mat3::det () const {
+	
+}
+
+Mat3 ng::Mat3::transpose () const {
+	
+}
+
+Mat3 ng::Mat3::adj () const {
+	
+}
+
+Mat3 ng::Mat3::inv () const {
+	
 }
 
 

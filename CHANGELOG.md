@@ -7,19 +7,17 @@
 
 TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
 
-TODO: Change ngmath, nggraphics, and nggui to use vec2 and mat2.
+TODO: Change nggraphics and nggui to use vec, mat, box, and rect.
 Graphics should be consistent with canvas: center should be (0,0), and
 positive y axis should point up.
 
-TODO: Change ngmath to use ngvec.
-Remove line2, should be 2 vec2s. (points a and b)
-Change rect2, should be 2 vec2s. (point and radius)
-Remove basis2, should be mat2.
-Add special constructors to mat2:
-change-of-origin(x, y), and 
-change-of-basis(i, j, a).
-Change space2, should be 2 mat2s. (change-of-origin and change-of-basis)
-Remove grid2, add grid constructor to space.
+April 20:
+- Add vec3 and mat3 for 2d affine transforms in ngvec.
+- Split rect2 into rect2(x,y,w,h) and box2(x,y,rx,ry).
+- Remove line2, should be 2 vec2s (points a and b).
+- Remove basis2, should be affine transform (mat3).
+- Remove space2, should be affine transform (mat3).
+- Remove grid2, should be affine transform (mat3).
 
 April 19:
 - Move vec2 and mat2 to ngvec.

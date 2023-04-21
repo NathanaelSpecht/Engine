@@ -7,7 +7,8 @@
 #include "ngcore.h"
 
 namespace ng {
-
+	
+	/*
 	// Sides x/y/z may be OR'd together to produce the xy/xz/yz planes.
 	// The xyz space is included for completeness.
 	// 0 or ng::None means "no sides".
@@ -20,28 +21,7 @@ namespace ng {
 		SideYZ = 6,
 		SideXYZ = 7
 	};
-
-	// For all quick math functions, the following applies:
-	//
-	// Cycles per instruction across a variety of x86 platforms:
-	// Source: www.agner.org/optimize | 4. Instruction tables.
-	//
-	// Cycles per function approximated from a generalization of the above.
-	// For most platforms released last decade (as-of 2022):
-	// - if/while is approx. 1 cycle.
-	// - int add/subtract is approx. 1 cycle.
-	// - int multiply is approx. 3 cycles.
-	// - function call/return is approx. 5 cycles.
-	// - int32 divide is approx. 15-20 cycles.
-	// - int64 divide is approx. 15-50 cycles.
-	// - double add/subtract/multiply is approx. 5 cycles.
-	// - double divide is approx. 15 cycles.
-	// - double sqrt is approx. 20 cycles.
-	// - double sin/cos is approx. 50-150 cycles.
-	// - double arctan/tan is approx. 100-150 cycles.
-	//
-	// The "q" at the start of functions means "quick".
-	
+	*/
 	
 	// given x (-int32, int32) and m [1, int16), produces [0, m).
 	// unlike std::mod(x, m), does NOT mirror positive and negative x.
@@ -53,15 +33,12 @@ namespace ng {
 	
 	// Bhaskara I's sine approximation
 	// given degrees x [0, 180], produces sin(x) [0, 1].
-	// 35 cycles.
 	double bhaskara (double x);
 	
 	// given degrees x [0, 360], produces sin(x) [-1, 1].
-	// 35-40 cycles.
 	double qsin (double x);
 	
 	// given degrees x [0, 360], produces cos(x) [-1, 1].
-	// 35-40 cycles.
 	double qcos (double x);
 	
 	// Given x in [x_min, x_max], produce y in [0, 1].
@@ -96,10 +73,53 @@ namespace ng {
 	
 	double columns (double units, double width);
 	
-	double determinant (double a, double b, double c, double d);
+	//double determinant (double a, double b, double c, double d);
 	
 	double scale (double src_w, double dest_w);
 	
+	class Box2 {
+	public:
+		double x; // (x,y) is center
+		double y;
+		double rx; // w/2
+		double ry; // h/2
+		Box2 ();
+		Box2 (double x, double y, double rx, double ry);
+		Box2 (const Box2& box);
+		Box2 (const Rect2& rect);
+		void set (double x, double y, double rx, double ry);
+		void set_p (const Vec2& p);
+		void set_dim (const Vec2& dim);
+		Vec2 p () const; // {x,y}
+		Vec2 dim () const; // {rx,ry}
+		Vec2 i () const; // {rx,0}
+		Vec2 j () const; // {0,ry}
+		Box2& operator= (const Rect2& rect);
+		bool contains (const Vec2& p) const;
+	};
+	
+	class Rect2 {
+	public:
+		double x; // (x,y) is {center.x-rx,center.y-ry}
+		double y;
+		double w;
+		double h;
+		Rect2 ();
+		Rect2 (double x, double y, double w, double h);
+		Rect2 (const Rect2& rect);
+		Rect2 (const Box2& box);
+		void set (double x, double y, double w, double h);
+		void set_p (const Vec2& p);
+		void set_dim (const Vec2& dim);
+		Vec2 p () const; // {x,y}
+		Vec2 dim () const; // {w,h}
+		Vec2 i () const; // {w,0}
+		Vec2 j () const; // {0,h}
+		Rect2& operator= (const Box2& box);
+		bool contains (const Vec2& p) const;
+	};
+	
+	/*
 	// Represents a line segment in R2.
 	class Line2 {
 	public:
@@ -239,8 +259,9 @@ namespace ng {
 		void relative (Vec2* const vec) const;
 		void relative (Rect2* const rect) const;
 	};
+	*/
 	
-}
+} // ng
 
 #endif
 

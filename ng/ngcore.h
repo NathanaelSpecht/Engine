@@ -50,15 +50,19 @@ void quit ();
 
 // Forward declarations, to avoid "has not been declared" compilation errors.
 
-// ngmath
+// ngvec
 class Vec2;
 class Mat2;
+class Vec3;
+class Mat3;
 
-class Line2;
+// ngmath
+//class Line2;
+class Box2;
 class Rect2;
-class Basis2;
-class Space2;
-class Grid2;
+//class Basis2;
+//class Space2;
+//class Grid2;
 
 // nggraphics
 class Color;
