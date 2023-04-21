@@ -11,6 +11,9 @@ TODO: Change nggraphics and nggui to use vec, mat, box, and rect.
 Graphics should be consistent with canvas: center should be (0,0), and
 positive y axis should point up.
 
+April 21:
+- Affine transforms in ngvec.
+
 April 20:
 - Add vec3 and mat3 for 2d affine transforms in ngvec.
 - Split rect2 into rect2(x,y,w,h) and box2(x,y,rx,ry).
