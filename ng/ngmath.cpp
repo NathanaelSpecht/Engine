@@ -24,16 +24,14 @@ double ng::wrap (double x, double m) {
 
 // Bhaskara I's sine approximation
 // given degrees x [0, 180], produces sin(x) [0, 1].
-// 35 cycles.
 double ng::bhaskara (double x) {
-	// Error computed from the graph of y = f(x) - sin((pi*x)/180).
 	// max error of 0.165%. error -> 0 for x -> 0, 30, 90, 150, 180.
 	double p = x * (180.0 - x);
 	return ((4.0 * p) / (40500.0 - p));
 }
 
+// Quick sine approximation
 // given degrees x [0, 360), produces sin(x) [-1, 1].
-// 35-40 cycles.
 double ng::qsin (double x) {
 	if (x <= 180.0) {
 		return ng::bhaskara(x);
@@ -42,8 +40,8 @@ double ng::qsin (double x) {
 	}
 }
 
+// Quick cosine approximation
 // given degrees x [0, 360), produces cos(x) [-1, 1].
-// 35-40 cycles.
 double ng::qcos (double x) {
 	if (x <= 90.0) {
 		return ng::bhaskara(x + 90.0);
@@ -122,6 +120,7 @@ double ng::degrees (double radians) {
 	return radians*57.295779513082; // degrees = radians*180/pi
 }
 
+/*
 double ng::units (double columns, double width) {
 	return width/columns;
 }
@@ -130,15 +129,16 @@ double ng::columns (double units, double width) {
 	return width/units;
 }
 
-/*
+
 double ng::determinant (double a, double b, double c, double d) {
 	return (a * d) - (b * c);
 }
-*/
+
 
 double ng::scale (double src_w, double dest_w) {
 	return dest_w/src_w;
 }
+*/
 
 ng::Box2::Box2 () :
 	x(0.0), y(0.0), rx(0.0), ry(0.0)

@@ -20,16 +20,29 @@ namespace ng {
 		DrawFill = 1
 	};
 	
+	// Switch between window and graphics coordinates.
+	// Window (0,0) is top-left corner, +x points right, and +y points down.
+	// Graphics (0,0) is center, +x points right, and +y points up.
+	// These are used internally by the graphics draw functions.
+	double window_x (double x, double rx);
+	double window_y (double y, double ry);
+	double graphics_x (double x, double rx);
+	double graphics_y (double y, double ry);
+	
+	Rect2 window_rect (const Box2& a, double rx, double ry);
+	SDL_Rect sdl_rect (const Rect2& a);
+	SDL_RendererFlip sdl_flip (int flip);
+	
 	class Color {
 	public:
 		int r;
 		int g;
 		int b;
 		int a;
-		
 		Color ();
-		~Color ();
-		
+		Color (int r, int g, int b);
+		Color (int r, int g, int b, int a);
+		Color (const Color& color);
 		void set (int r, int g, int b);
 		void set (int r, int g, int b, int a);
 	};
@@ -40,47 +53,47 @@ namespace ng {
 		double w;
 		double h;
 		Color color;
-		int flip;
 		
 		Image ();
 		~Image ();
 		
-		void load (Graphics* const, const char* file, const Color* key);
-		void set_color (const Color*);
-		void set_alpha (const Color*);
-		void set_flip (int flip);
+		void load (Graphics* const graphics, const char* file, const Color& key);
+		void set_color (const Color& color);
+		void set_alpha (const Color& color);
 	};
 	
 	class Graphics {
 	public:
 		SDL_Window* window;
 		SDL_Renderer* renderer;
-		double w;
-		double h;
+		double rx;
+		double ry;
 		Color color;
 		
 		Graphics ();
-		~Graphics ();
 		
-		void open (const char* title, double w, double h);
+		void open (const char* title, double rx, double ry);
 		void close ();
-		void set_color (const Color*);
-		void set_alpha (const Color*);
+		void set_color (const Color& color);
+		void set_alpha (const Color& color);
 		void clear ();
 		void draw ();
 		
 		// Draw whole image to whole window.
-		void draw_image (Image* const);
+		void draw_image (Image* const image);
 		
 		// Draw whole image to part of window.
-		void draw_image (Image* const, const Rect2*);
+		void draw_image (Image* const image, const Box2& dest);
 		
 		// Draw part of image to part of window.
-		void draw_image (Image* const, const Rect2*, const Rect2*);
+		void draw_image (Image* const image, const Rect2& src, const Box2& dest);
+		void draw_image (Image* const image, const Rect2& src, const Box2& dest,
+			double angle, int flip);
 		
-		void draw_rect (const Rect2*, int draw);
-		void draw_line (const Line2*);
-		void draw_point (const Vec2*);
+		// Draw shape.
+		void draw_box (const Box2& box, int draw);
+		void draw_line (const Vec2& p1, const Vec2& p2);
+		void draw_point (const Vec2& p);
 	};
 
 }

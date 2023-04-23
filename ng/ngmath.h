@@ -69,13 +69,13 @@ namespace ng {
 	
 	double degrees (double radians);
 	
-	double units (double columns, double width);
+	//double units (double columns, double width);
 	
-	double columns (double units, double width);
+	//double columns (double units, double width);
 	
 	//double determinant (double a, double b, double c, double d);
 	
-	double scale (double src_w, double dest_w);
+	//double scale (double src_w, double dest_w);
 	
 	class Box2 {
 	public:
@@ -100,7 +100,7 @@ namespace ng {
 	
 	class Rect2 {
 	public:
-		double x; // (x,y) is {center.x-rx,center.y-ry}
+		double x; // (x,y) is corner
 		double y;
 		double w;
 		double h;

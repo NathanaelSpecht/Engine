@@ -7,9 +7,14 @@
 
 TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
 
-TODO: Change nggraphics and nggui to use vec, mat, box, and rect.
-Graphics should be consistent with canvas: center should be (0,0), and
-positive y axis should point up.
+TODO: Change nggui to use vec and math changes.
+Change button to use label.
+Remove text, should be std::string.
+
+April 22:
+- Change nggraphics to use vec and math changes.
+- Change graphics to be consistent with canvas: center is (0,0), and
+positive y axis points up.
 
 April 21:
 - Affine transforms in ngvec.

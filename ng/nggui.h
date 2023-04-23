@@ -15,6 +15,7 @@ namespace ng {
 		TileRelease = 1
 	};
 	
+	/*
 	// represents text as a set of lines.
 	class Text {
 	public:
@@ -58,11 +59,12 @@ namespace ng {
 		char next ();
 		const std::string* next_line ();
 	};
+	*/
 	
 	class Tileset {
 	public:
 		Image* image;
-		Grid2 grid;
+		Mat3 tile_space
 		Vec2 offset; // relative to grid
 		
 		Tileset ();
@@ -79,28 +81,26 @@ namespace ng {
 	
 	class Button {
 	public:
-		Text text;
-		Grid2 text_grid;
-		Color text_color;
-		Rect2 rect;
+		Label label;
+		Box2 box;
 		Color fill_color;
 		Color frame_color;
 		
 		Button ();
 		~Button ();
 		
-		void set (const char* str, double text_scale, double x, double y, double w, double h);
-		void set (const char* str, double text_scale, const Color* text_color,
-			double x, double y, double w, double h, const Color* fill, const Color* frame);
+		void set (const std::string& text, const Mat3& text_space);
+		void set (const std::string& text, const Mat3& text_space,
+			const Color* text_color, const Color* fill_color, const Color* frame_color);
 		bool contains (const Vec2* p) const;
 	};
 	
 	class Label {
 	public:
-		Text text;
-		Grid2 text_grid;
+		std::string text;
+		Mat3 text_space
 		Color text_color;
-		Rect2 rect;
+		Box2 text_box;
 		
 		Label ();
 		~Label ();
@@ -115,38 +115,34 @@ namespace ng {
 	public:
 		Graphics* graphics;
 		Canvas* parent;
-		Space2 space;
-		double w; // w and h are relative to space.
-		double h;
-		// root draws to graphics. non-root draws to parent canvas.
-		bool root;
+		bool root; // root draws to graphics. non-root draws to parent canvas.
+		Box2 box;
+		Mat3 space;
 		
 		Canvas ();
-		~Canvas ();
 		
-		void set (Graphics* graphics, double w, double h);
-		void set (Graphics* graphics, double x, double y, double w, double h);
-		void set (Graphics* graphics, const Space2* space, double w, double h);
-		void set (Canvas* canvas, double x, double y, double w, double h);
-		void set (Canvas* canvas, const Space2* space, double w, double h);
-		
-		// Get the bounding box for this canvas, relative to this space.
-		void get_rect (Rect2* const) const;
+		void set (Graphics* graphics, const Mat3& space); // root
+		void set (Canvas* canvas, const Mat3& space); // non-root
 		
 		// Given event mouse point on graphics, find mouse point on this canvas.
 		void get_mouse (Vec2* const) const;
 		
+		// Draw canvas box.
+		void draw (int draw);
+		
 		// Graphics primitives
-		void draw_image (Image* const);
-		void draw_image (Image* const, const Rect2*);
-		void draw_image (Image* const, const Rect2*, const Rect2*);
-		void draw_rect (const Rect2*, int draw);
-		void draw_line (const Line2*);
-		void draw_point (const Vec2*);
+		void draw_image (Image* const image);
+		void draw_image (Image* const image, const Box2& dest);
+		void draw_image (Image* const image, const Rect2& src, const Box2& dest);
+		void draw_image (Image* const image, const Rect2& src, const Box2& dest,
+			double angle, int flip);
+		void draw_box (const Box2& dest, int draw);
+		void draw_line (const Vec2& p1, const Vec2& p2);
+		void draw_point (const Vec2& p);
 		
 		// Advanced graphics
-		void draw_text (Tileset* const, Text* const, const Grid2*);
-		void draw_tile (Tileset* const, const Rect2*, const Rect2*);
+		void draw_text (Tileset* const, const std::string& text, const Mat3& dest_space);
+		void draw_tile (Tileset* const, const Rect2& src, const Box2& dest);
 		
 		// Gui elements
 		void draw_button (Tileset* const, Button* const);

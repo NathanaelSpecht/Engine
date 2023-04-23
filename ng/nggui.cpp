@@ -4,6 +4,7 @@
 #include "nggui.h"
 #include "ngmath.h"
 
+/*
 ng::Text::Text () {
 	this->line = 0;
 	this->i = 0;
@@ -172,6 +173,7 @@ const std::string* ng::Text::next_line () {
 	
 	return &this->buffer[line];
 }
+*/
 
 ng::Tileset::Tileset () {
 	this->image = NULL;
