@@ -61,6 +61,30 @@ SDL_RendererFlip ng::sdl_flip (int flip) {
 	return flip_sdl;
 }
 
+// Draw a message box.
+// These functions may be called at any time, even before ng::init().
+// Blocks execution of main thread until user clicks a button or closes the window.
+void ng::draw_errormsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+	title.c_str(), msg.c_str(), NULL) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
+}
+
+void ng::draw_warningmsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING,
+	title.c_str(), msg.c_str(), NULL) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
+}
+
+void ng::draw_infomsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+	title.c_str(), msg.c_str(), NULL) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
+}
+
 ng::Color::Color () :
 	r(0),
 	g(0),
@@ -238,6 +262,32 @@ void ng::Graphics::set_alpha (const Color& color) {
 	this->color.a = color.a;
 }
 
+void ng::Graphics::set_window_dim (const Vec2& dim) {
+	SDL_SetWindowSize(this->window, static_cast<int>(dim.x), static_cast<int>(dim.y));
+	this->rx = dim.x;
+	this->ry = dim.y;
+}
+
+void ng::Graphics::set_dim (const Vec2& dim) {
+	this->rx = dim.x;
+	this->ry = dim.y;
+}
+
+Vec2 ng::Graphics::window_dim () const {
+	int w = 0;
+	int h = 0;
+	SDL_GetWindowSize(this->window, &w, &h);
+	Vec2 a(static_cast<double>(w),
+	       static_cast<double>(h));
+	return a;
+}
+
+Vec2 ng::Graphics::dim () const {
+	Vec2 a(this->rx,
+	       this->ry);
+	return a;
+}
+
 void ng::Graphics::clear () {
 	if (SDL_RenderClear(this->renderer) != 0) {
 		throw std::runtime_error(SDL_GetError());
@@ -246,6 +296,29 @@ void ng::Graphics::clear () {
 
 void ng::Graphics::draw () {
 	SDL_RenderPresent(this->renderer);
+}
+
+// Draw a message box.
+// Blocks execution of main thread until user clicks a button or closes the window.
+void ng::Graphics::draw_errormsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+	title.c_str(), msg.c_str(), this->window) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
+}
+
+void ng::Graphics::draw_warningmsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING,
+	title.c_str(), msg.c_str(), this->window) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
+}
+
+void ng::Graphics::draw_infomsg (const std::string& title, const std::string& msg) {
+	if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+	title.c_str(), msg.c_str(), this->window) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
 }
 
 // Draw whole image to whole window.

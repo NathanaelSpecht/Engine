@@ -64,51 +64,42 @@ namespace ng {
 	class Tileset {
 	public:
 		Image* image;
-		Mat3 tile_space
-		Vec2 offset; // relative to grid
+		Vec2 p;
+		Mat2 space;
 		
 		Tileset ();
-		~Tileset ();
-		
+		Tileset (Image* image);
+		Tileset (Image* image, const Mat3& tile_space);
 		void set (Image* image);
-		void set (Image* image, double c, double r);
-		void set (Image* image, double x, double y, double c, double r);
-		void set (Image* image, const Vec2* p, double c, double r);
-		void set (Image* image, const Grid2* grid);
-		
-		void absolute (Rect2* const rect) const;
+		void set (Image* image, const Mat3& tile_space);
 	};
 	
 	class Button {
 	public:
-		Label label;
 		Box2 box;
 		Color fill_color;
 		Color frame_color;
 		
 		Button ();
-		~Button ();
-		
-		void set (const std::string& text, const Mat3& text_space);
-		void set (const std::string& text, const Mat3& text_space,
-			const Color* text_color, const Color* fill_color, const Color* frame_color);
-		bool contains (const Vec2* p) const;
+		Button (const Box2& box);
+		Button (const Box2& box, const Color& fill_color, const Color& frame_color);
+		void set (const Box2& box);
+		void set (const Box2& box, const Color& fill_color, const Color& frame_color);
+		bool contains (const Vec2& p) const;
 	};
 	
 	class Label {
 	public:
 		std::string text;
-		Mat3 text_space
-		Color text_color;
-		Box2 text_box;
+		Vec2 p;
+		Mat2 space
+		Color color;
 		
 		Label ();
-		~Label ();
-		
-		void set (const char* str, double lines, double x, double y, double w, double h);
-		void set (const char* str, double lines, const Color* text_color,
-			double x, double y, double w, double h);
-		bool contains (const Vec2* p) const;
+		void set (const std::string& text, const Vec2& p, const Mat2& space);
+		void set (const std::string& text, const Vec2& p, const Mat2& space,
+			const Color& color);
+		bool contains (const Vec2& p) const;
 	};
 	
 	class Canvas {
@@ -117,12 +108,12 @@ namespace ng {
 		Canvas* parent;
 		bool root; // root draws to graphics. non-root draws to parent canvas.
 		Box2 box;
-		Mat3 space;
+		Mat2 space;
 		
 		Canvas ();
 		
-		void set (Graphics* graphics, const Mat3& space); // root
-		void set (Canvas* canvas, const Mat3& space); // non-root
+		void set (Graphics* graphics, const Box2& box, const Mat2& space); // root
+		void set (Canvas* canvas, const Box2& box, const Mat2& space); // non-root
 		
 		// Given event mouse point on graphics, find mouse point on this canvas.
 		void get_mouse (Vec2* const) const;
@@ -141,7 +132,7 @@ namespace ng {
 		void draw_point (const Vec2& p);
 		
 		// Advanced graphics
-		void draw_text (Tileset* const, const std::string& text, const Mat3& dest_space);
+		void draw_text (Tileset* const, const std::string& text, const Mat2& dest_space);
 		void draw_tile (Tileset* const, const Rect2& src, const Box2& dest);
 		
 		// Gui elements

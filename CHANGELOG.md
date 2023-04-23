@@ -11,6 +11,9 @@ TODO: Change nggui to use vec and math changes.
 Change button to use label.
 Remove text, should be std::string.
 
+April 23:
+- Change nggui to use vec and math changes.
+
 April 22:
 - Change nggraphics to use vec and math changes.
 - Change graphics to be consistent with canvas: center is (0,0), and

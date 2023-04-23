@@ -33,6 +33,13 @@ namespace ng {
 	SDL_Rect sdl_rect (const Rect2& a);
 	SDL_RendererFlip sdl_flip (int flip);
 	
+	// Draw a message box.
+	// These functions may be called at any time, even before ng::init().
+	// Blocks execution of main thread until user clicks a button or closes the window.
+	void draw_errormsg (const std::string& title, const std::string& msg);
+	void draw_warningmsg (const std::string& title, const std::string& msg);
+	void draw_infomsg (const std::string& title, const std::string& msg);
+	
 	class Color {
 	public:
 		int r;
@@ -76,8 +83,19 @@ namespace ng {
 		void close ();
 		void set_color (const Color& color);
 		void set_alpha (const Color& color);
+		void set_window_dim (const Vec2& dim);
+		void set_dim (const Vec2& dim);
+		Vec2 window_dim () const;
+		Vec2 dim () const;
+		
 		void clear ();
 		void draw ();
+		
+		// Draw a message box.
+		// Blocks execution of main thread until user clicks a button or closes the window.
+		void draw_errormsg (const std::string& title, const std::string& msg);
+		void draw_warningmsg (const std::string& title, const std::string& msg);
+		void draw_infomsg (const std::string& title, const std::string& msg);
 		
 		// Draw whole image to whole window.
 		void draw_image (Image* const image);
