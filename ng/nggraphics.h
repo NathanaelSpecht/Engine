@@ -5,7 +5,7 @@
 #define NGGRAPHICS_H
 
 #include "ngcore.h"
-#include "ngmath.h"
+#include "ngvec.h"
 
 namespace ng {
 

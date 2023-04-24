@@ -2,6 +2,7 @@
 /* Copyright (C) 2022 - 2023 Nathanael Specht */
 
 #include "nggraphics.h"
+//#include "ngmath.h"
 
 // Switch between window and graphics coordinates.
 // Window (0,0) is top-left corner, +x points right, and +y points down.
@@ -263,7 +264,9 @@ void ng::Graphics::set_alpha (const Color& color) {
 }
 
 void ng::Graphics::set_window_dim (const Vec2& dim) {
-	SDL_SetWindowSize(this->window, static_cast<int>(dim.x), static_cast<int>(dim.y));
+	SDL_SetWindowSize(this->window,
+		static_cast<int>(dim.x*2.0),
+		static_cast<int>(dim.y*2.0));
 	this->rx = dim.x;
 	this->ry = dim.y;
 }
@@ -277,8 +280,8 @@ Vec2 ng::Graphics::window_dim () const {
 	int w = 0;
 	int h = 0;
 	SDL_GetWindowSize(this->window, &w, &h);
-	Vec2 a(static_cast<double>(w),
-	       static_cast<double>(h));
+	Vec2 a(static_cast<double>(w)*0.5,
+	       static_cast<double>(h)*0.5);
 	return a;
 }
 

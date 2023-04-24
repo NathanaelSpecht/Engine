@@ -8,11 +8,24 @@
 TODO: Physics system with vertex-meshes and springs. The meshes can rotate.
 
 TODO: Change nggui to use vec and math changes.
-Change button to use label.
-Remove text, should be std::string.
 
 April 23:
-- Change nggui to use vec and math changes.
+- Change nggui to use vec and math changes (wip).
+- Remove text, should be std::string.
+- Change label to one line only.
+- Change button to use label.
+- Move box and rect into ngvec.
+- Remove affine transforms, should be space:
+	- Space contains both human-readable representation (x, y, i, j, a), and
+	matrix representation (origin, scale, invscale, rotate, invrotate).
+	- Matrices are pre-calculated during construction and set.
+	- Origin, scale, and rotate may be set (p, dim, a) independently.
+	- All this means space mimics the vector transform Av+b for change-of-basis A
+	and change-of-origin b, while faster than the 3x3 affine transform, and
+	still human-readable.
+	- Transformation is a simple multiplication or division (for inverse multiply).
+	- Vectors, boxes, rects, angles, and spaces may all be transformed.
+- ngmath is now only math functions.
 
 April 22:
 - Change nggraphics to use vec and math changes.

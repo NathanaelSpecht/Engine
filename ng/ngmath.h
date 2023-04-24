@@ -77,48 +77,6 @@ namespace ng {
 	
 	//double scale (double src_w, double dest_w);
 	
-	class Box2 {
-	public:
-		double x; // (x,y) is center
-		double y;
-		double rx; // w/2
-		double ry; // h/2
-		Box2 ();
-		Box2 (double x, double y, double rx, double ry);
-		Box2 (const Box2& box);
-		Box2 (const Rect2& rect);
-		void set (double x, double y, double rx, double ry);
-		void set_p (const Vec2& p);
-		void set_dim (const Vec2& dim);
-		Vec2 p () const; // {x,y}
-		Vec2 dim () const; // {rx,ry}
-		Vec2 i () const; // {rx,0}
-		Vec2 j () const; // {0,ry}
-		Box2& operator= (const Rect2& rect);
-		bool contains (const Vec2& p) const;
-	};
-	
-	class Rect2 {
-	public:
-		double x; // (x,y) is corner
-		double y;
-		double w;
-		double h;
-		Rect2 ();
-		Rect2 (double x, double y, double w, double h);
-		Rect2 (const Rect2& rect);
-		Rect2 (const Box2& box);
-		void set (double x, double y, double w, double h);
-		void set_p (const Vec2& p);
-		void set_dim (const Vec2& dim);
-		Vec2 p () const; // {x,y}
-		Vec2 dim () const; // {w,h}
-		Vec2 i () const; // {w,0}
-		Vec2 j () const; // {0,h}
-		Rect2& operator= (const Box2& box);
-		bool contains (const Vec2& p) const;
-	};
-	
 	/*
 	// Represents a line segment in R2.
 	class Line2 {

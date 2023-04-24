@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <vector>
+#include <string>
 
 #include "SDL.h"
 
@@ -53,13 +54,16 @@ void quit ();
 // ngvec
 class Vec2;
 class Mat2;
-class Vec3;
-class Mat3;
+class Box2;
+class Rect2;
+class Space2;
+//class Vec3;
+//class Mat3;
 
 // ngmath
 //class Line2;
-class Box2;
-class Rect2;
+//class Box2;
+//class Rect2;
 //class Basis2;
 //class Space2;
 //class Grid2;
@@ -70,7 +74,7 @@ class Image;
 class Graphics;
 
 // nggui
-class Text;
+//class Text;
 class Tileset;
 class Button;
 class Label;
